@@ -51,5 +51,13 @@ export type BackContract = {
             },
             body: Partial<Highlight>,
         },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+                highlightId: string,
+            },
+        },
     },
 };
