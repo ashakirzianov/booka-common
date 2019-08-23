@@ -3,13 +3,17 @@ export type AuthContract = {
 };
 export type PathMethodContract = {
     return: object | string | number | boolean,
-    params?: object,
-    query?: object,
+    params?: { [k: string]: string | number },
+    query?: { [k: string]: string | number },
     files?: string,
+    body?: object,
 } & Partial<AuthContract>;
 export type PathContract = {
     get?: PathMethodContract,
     post?: PathMethodContract,
+    patch?: PathMethodContract,
+    put?: PathMethodContract,
+    delete?: PathMethodContract,
 };
 
 export type ApiContract = {

@@ -1,16 +1,7 @@
 import { BookObject } from './bookFormat';
-import { BookCollection } from './libContract';
-
-export type AuthToken = {
-    token: string,
-};
-
-export type UserInfo = {
-    name: string,
-    pictureUrl?: string,
-};
-
-export type UserBooks = BookCollection;
+import { AuthToken, UserInfo, UserBooks } from './user';
+import { BookCollection } from './bookCollection';
+import { Highlight } from './highlights';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -33,6 +24,40 @@ export type BackContract = {
             return: string,
             files: 'book',
             auth: string,
+        },
+    },
+    '/highlights': {
+        get: {
+            return: Highlight[],
+            auth: string,
+            query: {
+                bookId: string,
+            },
+        },
+        post: {
+            return: string,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: Highlight,
+        },
+        patch: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+                highlightId: string,
+            },
+            body: Partial<Highlight>,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+                highlightId: string,
+            },
         },
     },
 };
