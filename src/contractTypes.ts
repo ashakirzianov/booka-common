@@ -6,6 +6,7 @@ export type PathMethodContract = {
     params?: object,
     query?: object,
     files?: string,
+    body?: object,
 } & Partial<AuthContract>;
 export type PathContract = {
     get?: PathMethodContract,
