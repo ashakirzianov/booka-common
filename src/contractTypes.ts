@@ -10,6 +10,9 @@ export type PathMethodContract = {
 export type PathContract = {
     get?: PathMethodContract,
     post?: PathMethodContract,
+    patch?: PathMethodContract,
+    put?: PathMethodContract,
+    delete?: PathMethodContract,
 };
 
 export type ApiContract = {
