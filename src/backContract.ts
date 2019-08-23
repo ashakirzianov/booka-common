@@ -39,8 +39,8 @@ export type BackContract = {
             auth: string,
             query: {
                 bookId: string,
-                highlight: Highlight,
             },
+            body: Highlight,
         },
         patch: {
             return: boolean,
@@ -48,8 +48,8 @@ export type BackContract = {
             query: {
                 bookId: string,
                 highlightId: string,
-                highlight: Partial<Highlight>,
             },
+            body: Partial<Highlight>,
         },
     },
 };
