@@ -1,16 +1,6 @@
 import { BookObject } from './bookFormat';
-import { BookCollection } from './libContract';
-
-export type AuthToken = {
-    token: string,
-};
-
-export type UserInfo = {
-    name: string,
-    pictureUrl?: string,
-};
-
-export type UserBooks = BookCollection;
+import { AuthToken, UserInfo, UserBooks } from './user';
+import { BookCollection } from './bookCollection';
 
 export type BackContract = {
     '/auth/fbtoken': {
