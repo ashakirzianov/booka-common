@@ -2,6 +2,7 @@ import {
     BookNode, HasSubnodes, ChapterNode, ParagraphNode, Span,
     SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan,
     AttributeName, VolumeNode, ImageNode, ImageId,
+    ObjectId, IdDictionary,
 } from './bookFormat';
 
 export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
@@ -109,4 +110,10 @@ export function collectImageIds(bn: BookNode): ImageId[] {
             // TODO: assert never?
             return [];
     }
+}
+
+export function resolveId(id: ObjectId, dictionary: IdDictionary): string | undefined {
+    const objectDic = dictionary[id.kind];
+
+    return objectDic[id.reference];
 }
