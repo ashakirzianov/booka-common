@@ -1,4 +1,4 @@
-import { BookObject, BookCollection } from './model';
+import { BookObject, BookCollection } from '../model';
 
 export type LibContract = {
     '/single': {
