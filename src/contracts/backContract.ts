@@ -1,6 +1,6 @@
 import {
     Book, BookCollection, Highlight, Bookmark,
-    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData, Vote, VoteKind,
+    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData, Vote, VoteKind, NoteData, Note,
 } from '../model';
 import { HasId } from './helpers';
 
@@ -157,6 +157,42 @@ export type BackContract = {
             query: {
                 commentId: string,
             },
+        },
+    },
+    '/notes': {
+        post: {
+            return: HasId,
+            auth: string,
+            body: NoteData,
+        },
+        patch: {
+            return: boolean,
+            auth: string,
+            query: {
+                noteId: string,
+            },
+            body: Partial<NoteData>,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                noteId: string,
+            },
+        },
+    },
+    '/notes/single': {
+        return: Note & HasId,
+        auth: string,
+        query: {
+            noteId: string,
+        },
+    },
+    '/notes/many': {
+        return: Array<Note & HasId>,
+        auth: string,
+        query: {
+            bookId?: string,
         },
     },
 };

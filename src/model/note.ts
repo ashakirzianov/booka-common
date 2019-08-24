@@ -1,11 +1,11 @@
 import { GeneratedContentNode } from './nodes';
 
-export type NoteDate = {
+export type NoteData = {
     content: GeneratedContentNode[],
     title?: string,
 };
 
 export type Note = {
-    data: NoteDate,
+    data: NoteData,
     lastEdited: Date,
 };
