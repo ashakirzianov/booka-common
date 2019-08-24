@@ -2,6 +2,8 @@ import { BookObject } from './bookFormat';
 import { AuthToken, UserInfo, UserBooks } from './user';
 import { BookCollection } from './bookCollection';
 import { Highlight } from './highlights';
+import { Bookmark } from './bookmarks';
+import { HasId } from './helpers';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -28,14 +30,14 @@ export type BackContract = {
     },
     '/highlights': {
         get: {
-            return: Highlight[],
+            return: Array<Highlight & HasId>,
             auth: string,
             query: {
                 bookId: string,
             },
         },
         post: {
-            return: string,
+            return: HasId,
             auth: string,
             query: {
                 bookId: string,
@@ -58,6 +60,41 @@ export type BackContract = {
                 bookId: string,
                 highlightId: string,
             },
+        },
+    },
+    '/bookmarks': {
+        get: {
+            return: Array<Bookmark & HasId>,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+        },
+        post: {
+            return: HasId[],
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: Bookmark[],
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                id: string,
+                bookId: string,
+            },
+        },
+    },
+    '/bookmarks/current': {
+        put: {
+            return: HasId,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: Pick<Bookmark, 'source' | 'created' | 'location'>,
         },
     },
 };
