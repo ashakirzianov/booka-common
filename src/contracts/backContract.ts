@@ -1,6 +1,6 @@
 import {
     Book, BookCollection, Highlight, Bookmark,
-    AuthToken, UserInfo, UserBooks,
+    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData,
 } from '../model';
 import { HasId } from './helpers';
 
@@ -94,6 +94,45 @@ export type BackContract = {
                 bookId: string,
             },
             body: Pick<Bookmark, 'source' | 'created' | 'location'>,
+        },
+    },
+    '/comments': {
+        get: {
+            return: Array<Comment & HasId>,
+            body: CommentLocation,
+        },
+        post: {
+            return: HasId,
+            auth: string,
+            body: {
+                location: CommentLocation,
+                comment: CommentData,
+            },
+        },
+        patch: {
+            return: boolean,
+            auth: string,
+            query: {
+                commentId: string,
+            },
+            body: Partial<CommentData>,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                commentId: string,
+            },
+        },
+    },
+    '/subcomments': {
+        post: {
+            return: HasId,
+            auth: string,
+            query: {
+                commentId: string,
+            },
+            body: CommentData,
         },
     },
 };
