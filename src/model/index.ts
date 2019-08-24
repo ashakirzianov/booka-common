@@ -1,6 +1,7 @@
 export * from './bookCollection';
 export * from './bookmarks';
 export * from './nodes';
+export * from './note';
 export * from './book';
 export * from './bookRange';
 export * from './comment';

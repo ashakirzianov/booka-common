@@ -49,5 +49,6 @@ export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
     | ChapterNode | ParagraphNode | ImageNode
+    | QuoteNode
     | VolumeNode
     ;
