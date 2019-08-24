@@ -1,9 +1,9 @@
 import { Span } from './span';
+import { BookRange } from './bookRange';
 
-export type BookSpan = Span;
 export type ParagraphNode = {
     node: 'paragraph',
-    span: BookSpan,
+    span: Span,
 };
 
 export type ChapterTitle = string[];
@@ -34,7 +34,18 @@ export type VolumeNode = {
     nodes: BookContentNode[],
 };
 
+export type BookId = string;
+export type Quote = {
+    bookId: BookId,
+    range: BookRange,
+};
+export type QuoteNode = {
+    node: 'quote',
+    quote: Quote,
+};
+
 export type BookContentNode = ChapterNode | ParagraphNode | ImageNode;
+export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
     | ChapterNode | ParagraphNode | ImageNode
