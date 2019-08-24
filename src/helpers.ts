@@ -1,5 +1,5 @@
 export type HasId = {
-    id: string,
+    _id: string,
 };
 
 export type WithId<T> = T & HasId;
