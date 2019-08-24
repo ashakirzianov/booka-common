@@ -1,8 +1,9 @@
 import { Span } from './span';
 
+export type BookSpan = Span;
 export type ParagraphNode = {
     node: 'paragraph',
-    span: Span,
+    span: BookSpan,
 };
 
 export type ChapterTitle = string[];

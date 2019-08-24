@@ -25,19 +25,19 @@ export function isImage(bn: BookNode): bn is ImageNode {
     return bn.node === 'image';
 }
 
-export function isSimple(span: Span): span is SimpleSpan {
+export function isSimpleSpan(span: Span): span is SimpleSpan {
     return typeof span === 'string';
 }
 
-export function isFootnote(span: Span): span is FootnoteSpan {
+export function isFootnoteSpan(span: Span): span is FootnoteSpan {
     return typeof span === 'object' && span.span === 'note';
 }
 
-export function isAttributed(span: Span): span is AttributedSpan {
+export function isAttributedSpan(span: Span): span is AttributedSpan {
     return typeof span === 'object' && span.span === 'attrs';
 }
 
-export function isCompound(span: Span): span is CompoundSpan {
+export function isCompoundSpan(span: Span): span is CompoundSpan {
     return typeof span === 'object' && span.span === 'compound';
 }
 
@@ -67,7 +67,7 @@ export function paragraphNode(span: Span): ParagraphNode {
 }
 
 export function attrs(span: Span) {
-    const arr = isAttributed(span) && span.attrs
+    const arr = isAttributedSpan(span) && span.attrs
         ? span.attrs
         : [];
 
