@@ -1,4 +1,4 @@
-import { BookObject } from './bookFormat';
+import { BookObject } from './model';
 import { AuthToken, UserInfo, UserBooks } from './user';
 import { BookCollection } from './bookCollection';
 import { Highlight } from './highlights';

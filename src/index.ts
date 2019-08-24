@@ -1,6 +1,6 @@
+export * from './model';
 export * from './backContract';
 export * from './bookCollection';
-export * from './bookFormat';
 export * from './bookmarks';
 export * from './bookRange';
 export * from './bookUtils';

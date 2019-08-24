@@ -3,7 +3,7 @@ import {
     SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan,
     AttributeName, VolumeNode, ImageNode, ImageId,
     ObjectId, IdDictionary,
-} from './bookFormat';
+} from './model';
 
 export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume';
