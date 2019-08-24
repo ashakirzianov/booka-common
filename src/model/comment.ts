@@ -6,6 +6,7 @@ export type CommentLocation = {
     path: BookPath,
 };
 export type CommentKind = 'question' | 'statement';
+export type CommentContentNode = GeneratedContentNode;
 export type CommentData = {
     kind: CommentKind,
     content: GeneratedContentNode[],

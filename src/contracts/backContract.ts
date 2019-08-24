@@ -182,17 +182,21 @@ export type BackContract = {
         },
     },
     '/notes/single': {
-        return: Note & HasId,
-        auth: string,
-        query: {
-            noteId: string,
+        get: {
+            return: Note & HasId,
+            auth: string,
+            query: {
+                noteId: string,
+            },
         },
     },
     '/notes/many': {
-        return: Array<Note & HasId>,
-        auth: string,
-        query: {
-            bookId?: string,
+        get: {
+            return: Array<Note & HasId>,
+            auth: string,
+            query: {
+                bookId?: string,
+            },
         },
     },
 };
