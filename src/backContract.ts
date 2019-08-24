@@ -3,6 +3,7 @@ import { AuthToken, UserInfo, UserBooks } from './user';
 import { BookCollection } from './bookCollection';
 import { Highlight } from './highlights';
 import { Bookmark } from './bookmarks';
+import { HasId } from './helpers';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -29,14 +30,14 @@ export type BackContract = {
     },
     '/highlights': {
         get: {
-            return: Highlight[],
+            return: Array<Highlight & HasId>,
             auth: string,
             query: {
                 bookId: string,
             },
         },
         post: {
-            return: string,
+            return: HasId,
             auth: string,
             query: {
                 bookId: string,
@@ -63,14 +64,14 @@ export type BackContract = {
     },
     '/bookmarks': {
         get: {
-            return: Bookmark[],
+            return: Array<Bookmark & HasId>,
             auth: string,
             query: {
                 bookId: string,
             },
         },
         post: {
-            return: string,
+            return: HasId,
             auth: string,
             query: {
                 bookId: string,
@@ -78,7 +79,7 @@ export type BackContract = {
             body: Bookmark[],
         },
         put: {
-            return: string,
+            return: HasId,
             auth: string,
             query: {
                 bookId: string,
