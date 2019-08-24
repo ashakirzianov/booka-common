@@ -11,7 +11,7 @@ export type ChapterNode = {
     node: 'chapter',
     level: number,
     title: ChapterTitle,
-    nodes: ContentNode[],
+    nodes: BookContentNode[],
 };
 
 export type ImageReference = {
@@ -22,7 +22,6 @@ export type ImageNode = {
     node: 'image',
     id: ImageReference,
 };
-export type ContentNode = ChapterNode | ParagraphNode | ImageNode;
 
 export type BookMeta = {
     title: string,
@@ -32,8 +31,12 @@ export type BookMeta = {
 export type VolumeNode = {
     node: 'volume',
     meta: BookMeta,
-    nodes: ContentNode[],
+    nodes: BookContentNode[],
 };
 
-export type BookNode = VolumeNode | ContentNode;
+export type BookContentNode = ChapterNode | ParagraphNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
+export type Node =
+    | ChapterNode | ParagraphNode | ImageNode
+    | VolumeNode
+    ;

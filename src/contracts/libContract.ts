@@ -1,10 +1,10 @@
-import { BookObject, BookCollection } from '../model';
+import { Book, BookCollection } from '../model';
 
 export type LibContract = {
     '/single': {
         get: {
             query: { id: string },
-            return: BookObject,
+            return: Book,
         },
     },
     '/all': {

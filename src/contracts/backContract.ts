@@ -1,5 +1,5 @@
 import {
-    BookObject, BookCollection, Highlight, Bookmark,
+    Book, BookCollection, Highlight, Bookmark,
     AuthToken, UserInfo, UserBooks,
 } from '../model';
 import { HasId } from './helpers';
@@ -15,7 +15,7 @@ export type BackContract = {
     '/me/books': { get: { return: UserBooks, auth: string } },
     '/book/single': {
         get: {
-            return: BookObject,
+            return: Book,
             query: { id: string },
         },
     },

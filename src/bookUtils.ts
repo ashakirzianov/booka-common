@@ -1,27 +1,27 @@
 import {
-    BookNode, HasSubnodes, ChapterNode, ParagraphNode, Span,
+    Node, HasSubnodes, ChapterNode, ParagraphNode, Span,
     SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan,
     AttributeName, VolumeNode, ImageNode, ImageReference,
     BookReference, RefDictionary,
 } from './model';
 
-export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
+export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume';
 }
 
-export function isVolume(bn: BookNode): bn is VolumeNode {
+export function isVolume(bn: Node): bn is VolumeNode {
     return bn.node === 'volume';
 }
 
-export function isChapter(bn: BookNode): bn is ChapterNode {
+export function isChapter(bn: Node): bn is ChapterNode {
     return bn.node === 'chapter';
 }
 
-export function isParagraph(bn: BookNode): bn is ParagraphNode {
+export function isParagraph(bn: Node): bn is ParagraphNode {
     return bn.node === 'paragraph';
 }
 
-export function isImage(bn: BookNode): bn is ImageNode {
+export function isImage(bn: Node): bn is ImageNode {
     return bn.node === 'image';
 }
 
@@ -41,7 +41,7 @@ export function isCompoundSpan(span: Span): span is CompoundSpan {
     return typeof span === 'object' && span.span === 'compound';
 }
 
-export function children(node: BookNode) {
+export function nodeChildren(node: Node) {
     return hasSubnodes(node) ? node.nodes : [];
 }
 
@@ -55,18 +55,7 @@ export function assign(...attributes: AttributeName[]) {
     };
 }
 
-export function compoundSpan(spans: Span[]): Span {
-    return { span: 'compound', spans };
-}
-
-export function paragraphNode(span: Span): ParagraphNode {
-    return {
-        node: 'paragraph',
-        span,
-    };
-}
-
-export function attrs(span: Span) {
+export function spanAttrs(span: Span) {
     const arr = isAttributedSpan(span) && span.attrs
         ? span.attrs
         : [];
@@ -87,11 +76,11 @@ export function volumeToString(volume: VolumeNode) {
     return JSON.stringify(volume);
 }
 
-export function nodeToString(bn: BookNode) {
+export function nodeToString(bn: Node) {
     return JSON.stringify(bn);
 }
 
-export function collectImageIds(bn: BookNode): ImageReference[] {
+export function collectImageIds(bn: Node): ImageReference[] {
     switch (bn.node) {
         case 'chapter':
             return bn.nodes
