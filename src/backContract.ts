@@ -93,9 +93,8 @@ export type BackContract = {
             auth: string,
             query: {
                 bookId: string,
-                source: string,
             },
-            body: Bookmark,
+            body: Pick<Bookmark, 'source' | 'created' | 'location'>,
         },
     },
 };
