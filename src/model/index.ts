@@ -5,3 +5,4 @@ export * from './bookObject';
 export * from './bookRange';
 export * from './highlights';
 export * from './span';
+export * from './user';

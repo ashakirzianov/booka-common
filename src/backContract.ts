@@ -1,7 +1,7 @@
 import {
     BookObject, BookCollection, Highlight, Bookmark,
+    AuthToken, UserInfo, UserBooks,
 } from './model';
-import { AuthToken, UserInfo, UserBooks } from './user';
 import { HasId } from './helpers';
 
 export type BackContract = {
