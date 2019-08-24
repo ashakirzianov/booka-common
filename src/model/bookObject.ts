@@ -1,14 +1,12 @@
-import { VolumeNode, ImageId } from './bookNode';
+import { VolumeNode, ImageReference } from './bookNode';
 
-// TODO: rename 'Reference'
-export type ObjectId = ImageId;
-// TODO: rename 'RefDictionary'
-export type IdDictionary = {
-    [kind in ObjectId['kind']]: {
+export type BookReference = ImageReference;
+export type RefDictionary = {
+    [kind in BookReference['ref']]: {
         [key: string]: string | undefined;
     };
 };
 export type BookObject = {
     volume: VolumeNode,
-    idDictionary: IdDictionary,
+    idDictionary: RefDictionary,
 };

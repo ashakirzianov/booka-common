@@ -1,8 +1,8 @@
 import {
     BookNode, HasSubnodes, ChapterNode, ParagraphNode, Span,
     SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan,
-    AttributeName, VolumeNode, ImageNode, ImageId,
-    ObjectId, IdDictionary,
+    AttributeName, VolumeNode, ImageNode, ImageReference,
+    BookReference, RefDictionary,
 } from './model';
 
 export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
@@ -91,7 +91,7 @@ export function nodeToString(bn: BookNode) {
     return JSON.stringify(bn);
 }
 
-export function collectImageIds(bn: BookNode): ImageId[] {
+export function collectImageIds(bn: BookNode): ImageReference[] {
     switch (bn.node) {
         case 'chapter':
             return bn.nodes
@@ -112,8 +112,8 @@ export function collectImageIds(bn: BookNode): ImageId[] {
     }
 }
 
-export function resolveId(id: ObjectId, dictionary: IdDictionary): string | undefined {
-    const objectDic = dictionary[id.kind];
+export function resolveRef(id: BookReference, dictionary: RefDictionary): string | undefined {
+    const objectDic = dictionary[id.ref];
 
-    return objectDic[id.reference];
+    return objectDic[id.id];
 }

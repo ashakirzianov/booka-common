@@ -13,23 +13,20 @@ export type ChapterNode = {
     nodes: ContentNode[],
 };
 
-// TODO: rename 'ImageReference'
-export type ImageId = {
-    // TODO: rename 'ref'
-    kind: 'image',
-    // TODO: rename 'id'
-    reference: string,
+export type ImageReference = {
+    ref: 'image',
+    id: string,
 };
 export type ImageNode = {
     node: 'image',
-    id: ImageId,
+    id: ImageReference,
 };
 export type ContentNode = ChapterNode | ParagraphNode | ImageNode;
 
 export type BookMeta = {
     title: string,
     author?: string,
-    coverImageId?: ImageId,
+    coverImageId?: ImageReference,
 };
 export type VolumeNode = {
     node: 'volume',
