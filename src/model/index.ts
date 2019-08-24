@@ -7,3 +7,4 @@ export * from './comment';
 export * from './highlights';
 export * from './span';
 export * from './user';
+export * from './vote';
