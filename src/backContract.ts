@@ -2,6 +2,7 @@ import { BookObject } from './bookFormat';
 import { AuthToken, UserInfo, UserBooks } from './user';
 import { BookCollection } from './bookCollection';
 import { Highlight } from './highlights';
+import { Bookmark } from './bookmarks';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -57,6 +58,40 @@ export type BackContract = {
             query: {
                 bookId: string,
                 highlightId: string,
+            },
+        },
+    },
+    '/bookmarks': {
+        get: {
+            return: Bookmark[],
+            auth: string,
+            query: {
+                bookId: string,
+            },
+        },
+        post: {
+            return: string,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: Bookmark[],
+        },
+        put: {
+            return: string,
+            auth: string,
+            query: {
+                bookId: string,
+                source: string,
+            },
+            body: Bookmark,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                id: string,
+                bookId: string,
             },
         },
     },
