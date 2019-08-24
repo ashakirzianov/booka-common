@@ -5,6 +5,7 @@ export * from './bookmarks';
 export * from './bookRange';
 export * from './bookUtils';
 export * from './contractTypes';
+export * from './helpers';
 export * from './highlights';
 export * from './libContract';
 export * from './user';
