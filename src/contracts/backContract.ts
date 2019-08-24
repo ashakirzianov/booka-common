@@ -1,6 +1,6 @@
 import {
     Book, BookCollection, Highlight, Bookmark,
-    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData,
+    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData, Vote, VoteKind,
 } from '../model';
 import { HasId } from './helpers';
 
@@ -133,6 +133,30 @@ export type BackContract = {
                 commentId: string,
             },
             body: CommentData,
+        },
+    },
+    '/votes': {
+        get: {
+            return: Array<Vote | HasId>,
+            auth: string,
+            query: {
+                bookId?: string,
+            },
+        },
+        post: {
+            return: HasId,
+            auth: string,
+            query: {
+                commentId: string,
+                kind: VoteKind,
+            },
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                commentId: string,
+            },
         },
     },
 };
