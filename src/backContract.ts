@@ -71,21 +71,12 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: HasId[],
             auth: string,
             query: {
                 bookId: string,
             },
             body: Bookmark[],
-        },
-        put: {
-            return: HasId,
-            auth: string,
-            query: {
-                bookId: string,
-                source: string,
-            },
-            body: Bookmark,
         },
         delete: {
             return: boolean,
@@ -94,6 +85,17 @@ export type BackContract = {
                 id: string,
                 bookId: string,
             },
+        },
+    },
+    '/bookmarks/current': {
+        put: {
+            return: HasId,
+            auth: string,
+            query: {
+                bookId: string,
+                source: string,
+            },
+            body: Bookmark,
         },
     },
 };
