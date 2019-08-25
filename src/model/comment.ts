@@ -5,6 +5,11 @@ export type CommentLocation = {
     bookId: string,
     path: BookPath,
 };
+export type CommentDescription = {
+    commentId: string,
+    location: CommentLocation,
+    textPreview: string,
+};
 export type CommentKind = 'question' | 'statement';
 export type CommentContentNode = GeneratedContentNode;
 export type CommentData = {
