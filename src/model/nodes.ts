@@ -20,7 +20,7 @@ export type ImageReference = {
 };
 export type ImageNode = {
     node: 'image',
-    id: ImageReference,
+    ref: ImageReference,
 };
 
 export type BookMeta = {

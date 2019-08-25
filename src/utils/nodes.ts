@@ -35,19 +35,19 @@ export function nodeToString(bn: Node) {
     return JSON.stringify(bn);
 }
 
-export function collectImageIds(bn: Node): ImageReference[] {
+export function collectImageRefs(bn: Node): ImageReference[] {
     switch (bn.node) {
         case 'chapter':
             return bn.nodes
-                .map(collectImageIds)
+                .map(collectImageRefs)
                 .reduce((all, one) => all.concat(one), []);
         case 'image':
-            return [bn.id];
+            return [bn.ref];
         case 'paragraph':
             return [];
         case 'volume':
             return bn.nodes
-                .map(collectImageIds)
+                .map(collectImageRefs)
                 .reduce((all, one) => all.concat(one), [])
                 .concat(bn.meta.coverImageId ? [bn.meta.coverImageId] : []);
         default:
@@ -56,7 +56,7 @@ export function collectImageIds(bn: Node): ImageReference[] {
     }
 }
 
-export function collectBookIds(nodes: Node[]): string[] {
+export function collectReferencedBookIds(nodes: Node[]): string[] {
     const result = [] as string[];
     for (const node of nodes) {
         switch (node.node) {
@@ -65,7 +65,7 @@ export function collectBookIds(nodes: Node[]): string[] {
                 break;
             case 'volume':
             case 'chapter':
-                result.push(...collectBookIds(node.nodes));
+                result.push(...collectReferencedBookIds(node.nodes));
                 break;
             default:
                 break;
