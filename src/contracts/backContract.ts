@@ -154,7 +154,7 @@ export type BackContract = {
             return: boolean,
             auth: string,
             query: {
-                commentId: string,
+                voteId: string,
             },
         },
     },
