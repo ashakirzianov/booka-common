@@ -1,6 +1,8 @@
 import {
     Book, BookCollection, Highlight, Bookmark,
-    AuthToken, UserInfo, UserBooks, CommentLocation, CommentData, Vote, VoteKind, NoteData, Note,
+    AuthToken, UserInfo, UserBooks,
+    Comment, CommentLocation, CommentData, Vote, VoteKind,
+    NoteData, Note,
 } from '../model';
 import { HasId } from './helpers';
 
