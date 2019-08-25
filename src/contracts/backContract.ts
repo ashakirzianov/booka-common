@@ -47,7 +47,6 @@ export type BackContract = {
             return: boolean,
             auth: string,
             query: {
-                bookId: string,
                 highlightId: string,
             },
             body: Partial<Highlight>,
@@ -56,7 +55,6 @@ export type BackContract = {
             return: boolean,
             auth: string,
             query: {
-                bookId: string,
                 highlightId: string,
             },
         },
@@ -82,7 +80,6 @@ export type BackContract = {
             auth: string,
             query: {
                 id: string,
-                bookId: string,
             },
         },
     },
