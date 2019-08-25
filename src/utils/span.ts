@@ -44,3 +44,23 @@ function attrObject(attributes: AttributeName[]): AttributesObject {
         .reduce((as, a) =>
             ({ ...as, [a]: true }), {} as AttributesObject);
 }
+
+export function extractSpanText(span: Span): string {
+    if (typeof span === 'string') {
+        return span;
+    }
+
+    switch (span.span) {
+        case 'attrs':
+            return extractSpanText(span);
+        case 'note':
+            return extractSpanText(span.content);
+        case 'compound':
+            return span.spans
+                .map(extractSpanText)
+                .join('');
+        default:
+            // TODO: assert never ?
+            return '';
+    }
+}
