@@ -21,4 +21,5 @@ export type Comment = CommentData & {
     children: Comment[],
     rating: number,
     lastEdited: Date,
+    location: CommentLocation,
 };
