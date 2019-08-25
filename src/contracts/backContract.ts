@@ -15,14 +15,14 @@ export type BackContract = {
     },
     '/me/info': { get: { return: UserInfo, auth: string } },
     '/me/books': { get: { return: UserBooks, auth: string } },
-    '/book/single': {
+    '/books/single': {
         get: {
             return: Book,
             query: { id: string },
         },
     },
-    '/book/all': { get: { return: BookCollection } },
-    '/book/upload': {
+    '/books/all': { get: { return: BookCollection } },
+    '/books/upload': {
         post: {
             return: string,
             files: 'book',
