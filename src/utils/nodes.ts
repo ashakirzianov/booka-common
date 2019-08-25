@@ -55,3 +55,38 @@ export function collectImageIds(bn: Node): ImageReference[] {
             return [];
     }
 }
+
+export function collectBookIds(nodes: Node[]): string[] {
+    const result = [] as string[];
+    for (const node of nodes) {
+        switch (node.node) {
+            case 'quote':
+                result.push(node.quote.bookId);
+                break;
+            case 'volume':
+            case 'chapter':
+                result.push(...collectBookIds(node.nodes));
+                break;
+            default:
+                break;
+        }
+    }
+    return result;
+}
+
+export function* iterateNodes(nodes: Node[]) {
+    for (const node of nodes) {
+        yield* iterateNode(node);
+    }
+}
+
+export function* iterateNode(node: Node): IterableIterator<Node> {
+    yield node;
+    switch (node.node) {
+        case 'chapter':
+        case 'volume':
+            yield* iterateNodes(node.nodes);
+            break;
+        case 'image':
+    }
+}
