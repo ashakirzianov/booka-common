@@ -1,10 +1,11 @@
 export type AuthContract = {
     auth: string,
 };
+export type QueryType = string | string[] | number | number[] | boolean | boolean[] | undefined;
 export type PathMethodContract = {
     return: object | string | number | boolean,
     params?: { [k: string]: string | number },
-    query?: { [k: string]: string | number | undefined },
+    query?: { [k: string]: QueryType },
     files?: string,
     body?: object,
 } & Partial<AuthContract>;
