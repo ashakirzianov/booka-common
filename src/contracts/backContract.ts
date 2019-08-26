@@ -136,10 +136,14 @@ export type BackContract = {
     },
     '/votes': {
         get: {
-            return: Array<Vote | HasId>,
+            return: {
+                votes: Array<Vote | HasId>,
+                nextPage?: number,
+            },
             auth: string,
             query: {
                 bookId?: string,
+                page?: number,
             },
         },
         post: {
