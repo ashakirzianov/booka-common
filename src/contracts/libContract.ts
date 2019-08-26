@@ -10,6 +10,12 @@ export type LibContract = {
     '/all': {
         get: { return: BookCollection },
     },
+    '/info': {
+        get: {
+            return: BookCollection,
+            query: { ids: string[] },
+        },
+    },
     '/upload': {
         post: {
             return: string,
