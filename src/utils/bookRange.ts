@@ -1,9 +1,4 @@
-export type BookPath = number[];
-
-export type BookRange = {
-    start: BookPath,
-    end?: BookPath,
-};
+import { BookPath, BookRange } from '../model';
 
 export function leadPath(): BookPath {
     return [0];
@@ -76,7 +71,7 @@ export function pathLessThan(left: BookPath, right: BookPath): boolean {
     return comparePaths(left, right) === -1;
 }
 
-export function isPrefix(left: BookPath, right: BookPath) {
+export function isSubpath(left: BookPath, right: BookPath) {
     if (left.length <= right.length) {
         return left.every((p, i) => p === right[i]);
     } else {
@@ -85,7 +80,7 @@ export function isPrefix(left: BookPath, right: BookPath) {
 }
 
 export function isFirstSubpath(left: BookPath, right: BookPath) {
-    if (!isPrefix(left, right)) {
+    if (!isSubpath(left, right)) {
         return false;
     }
 
