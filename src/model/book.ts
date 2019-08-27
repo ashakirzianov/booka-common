@@ -1,4 +1,4 @@
-import { VolumeNode, ImageReference, BookContentNode } from './nodes';
+import { VolumeNode, ImageReference } from './nodes';
 
 export type BookReference = ImageReference;
 export type RefDictionary = {

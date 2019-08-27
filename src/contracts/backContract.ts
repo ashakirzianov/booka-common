@@ -2,9 +2,11 @@ import {
     Book, BookCollection, Highlight, Bookmark,
     AuthToken, UserInfo, UserBooks,
     Comment, CommentLocation, CommentData, Vote, VoteKind,
-    NoteData, Note,
+    NoteData, Note, BookInfo, IssueReportKind,
 } from '../model';
-import { HasId } from './helpers';
+import { HasId, Page } from './helpers';
+import { KnownTag, KnownTagName } from '../model/tag';
+import { BookEvent } from '../model/history';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -27,6 +29,16 @@ export type BackContract = {
             return: string,
             files: 'book',
             auth: string,
+        },
+    },
+    '/books': {
+        get: {
+            return: Page<BookInfo>,
+            auth: string,
+            query: {
+                tags?: string[],
+                page?: number,
+            },
         },
     },
     '/highlights': {
@@ -136,10 +148,7 @@ export type BackContract = {
     },
     '/votes': {
         get: {
-            return: {
-                votes: Array<Vote | HasId>,
-                nextPage?: number,
-            },
+            return: Page<Vote & HasId>,
             auth: string,
             query: {
                 bookId?: string,
@@ -199,6 +208,57 @@ export type BackContract = {
             auth: string,
             query: {
                 bookId?: string,
+            },
+        },
+    },
+    '/tags': {
+        post: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: KnownTag,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+                tag: KnownTagName,
+            },
+        },
+    },
+    '/history/books': {
+        get: {
+            return: Page<BookEvent & HasId>,
+            auth: string,
+            query: {
+                page?: number,
+            },
+        },
+        post: {
+            return: HasId,
+            auth: string,
+            query: {
+                bookId: string[],
+            },
+        }
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                id: string[],
+            },
+        },
+    },
+    '/report': {
+        post: {
+            return: boolean,
+            auth: string,
+            query: {
+                commentId: string,
+                kind: IssueReportKind,
             },
         },
     },

@@ -3,6 +3,7 @@ export type OpenBookEvent = {
     date: Date,
     bookId: string,
 };
+export type BookEvent = OpenBookEvent;
 
 export type HistoryEvent = OpenBookEvent;
 export type HistoryEventKind = HistoryEvent['kind'];
