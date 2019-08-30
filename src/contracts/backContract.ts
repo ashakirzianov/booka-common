@@ -1,5 +1,5 @@
 import {
-    Book, BookCollection, Highlight, Bookmark,
+    Book, Highlight, Bookmark,
     AuthToken, UserInfo, UserBooks,
     Comment, CommentLocation, CommentData, Vote, VoteKind,
     NoteData, Note, BookInfo, IssueReportKind,
@@ -23,7 +23,12 @@ export type BackContract = {
             query: { id: string },
         },
     },
-    '/books/all': { get: { return: BookCollection } },
+    '/books/all': {
+        get: {
+            return: Page<Book>,
+            query: { page?: number },
+        },
+    },
     '/books/upload': {
         post: {
             return: string,

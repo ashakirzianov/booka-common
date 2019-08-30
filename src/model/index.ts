@@ -1,5 +1,4 @@
 export * from './book';
-export * from './bookCollection';
 export * from './bookmarks';
 export * from './bookRange';
 export * from './comment';

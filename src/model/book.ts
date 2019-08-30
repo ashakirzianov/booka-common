@@ -1,4 +1,5 @@
 import { VolumeNode, ImageReference } from './nodes';
+import { KnownTag } from './tag';
 
 export type BookReference = ImageReference;
 export type RefDictionary = {
@@ -9,4 +10,12 @@ export type RefDictionary = {
 export type Book = {
     volume: VolumeNode,
     idDictionary: RefDictionary,
+};
+
+export type BookInfo = {
+    id: string,
+    title: string,
+    author?: string,
+    cover?: string,
+    tags: KnownTag[],
 };

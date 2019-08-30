@@ -1,4 +1,5 @@
-import { Book, BookCollection } from '../model';
+import { Book } from '../model';
+import { Page } from './helpers';
 
 export type LibContract = {
     '/single': {
@@ -8,11 +9,14 @@ export type LibContract = {
         },
     },
     '/all': {
-        get: { return: BookCollection },
+        get: {
+            return: Page<Book>,
+            query: { page?: number },
+        },
     },
     '/info': {
         get: {
-            return: BookCollection,
+            return: Page<Book>,
             query: { ids: string[] },
         },
     },
