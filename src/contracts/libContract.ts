@@ -14,10 +14,10 @@ export type LibContract = {
         }>,
     },
     '/info': {
-        get: Paginate<{
+        get: {
             return: BookInfo[],
             query: { ids: string[] },
-        }>,
+        },
     },
     '/upload': {
         post: {
