@@ -1,4 +1,5 @@
 export type OpenBookEvent = {
+    _id: string,
     kind: 'book-open',
     date: Date,
     bookId: string,

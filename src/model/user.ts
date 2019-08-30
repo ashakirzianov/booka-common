@@ -3,6 +3,7 @@ export type AuthToken = {
 };
 
 export type UserInfo = {
+    _id: string,
     name: string,
     pictureUrl?: string,
 };

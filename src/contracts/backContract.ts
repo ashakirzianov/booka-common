@@ -46,7 +46,7 @@ export type BackContract = {
     },
     '/highlights': {
         get: {
-            return: Array<Highlight & HasId>,
+            return: Highlight[],
             auth: string,
             query: {
                 bookId: string,
@@ -78,7 +78,7 @@ export type BackContract = {
     },
     '/bookmarks': {
         get: {
-            return: Array<Bookmark & HasId>,
+            return: Bookmark[],
             auth: string,
             query: {
                 bookId: string,
@@ -112,7 +112,7 @@ export type BackContract = {
     },
     '/comments': {
         get: {
-            return: Array<Comment & HasId>,
+            return: Comment[],
             body: CommentLocation,
         },
         post: {
@@ -151,7 +151,7 @@ export type BackContract = {
     },
     '/votes': {
         get: Paginate<{
-            return: Array<Vote & HasId>,
+            return: Vote[],
             auth: string,
             query: {
                 bookId?: string,
@@ -197,7 +197,7 @@ export type BackContract = {
     },
     '/notes/single': {
         get: {
-            return: Note & HasId,
+            return: Note,
             auth: string,
             query: {
                 noteId: string,
@@ -206,7 +206,7 @@ export type BackContract = {
     },
     '/notes/many': {
         get: {
-            return: Array<Note & HasId>,
+            return: Note[],
             auth: string,
             query: {
                 bookId?: string,
@@ -233,7 +233,7 @@ export type BackContract = {
     },
     '/history/books': {
         get: Paginate<{
-            return: Array<BookEvent & HasId>,
+            return: BookEvent[],
             auth: string,
             query: {
                 page?: number,

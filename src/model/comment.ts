@@ -18,6 +18,7 @@ export type CommentData = {
 };
 
 export type Comment = CommentData & {
+    _id: string,
     children: Comment[],
     rating: number,
     lastEdited: Date,

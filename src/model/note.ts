@@ -7,6 +7,7 @@ export type NoteData = {
 };
 
 export type Note = {
+    _id: string,
     data: NoteData,
     lastEdited: Date,
 };
