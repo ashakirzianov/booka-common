@@ -25,7 +25,7 @@ export type BackContract = {
     },
     '/books/all': {
         get: Paginate<{
-            return: Book[],
+            return: BookInfo[],
         }>,
     },
     '/books/upload': {
