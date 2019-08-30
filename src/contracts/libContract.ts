@@ -2,7 +2,7 @@ import { Book, BookInfo } from '../model';
 import { Paginate } from './helpers';
 
 export type LibContract = {
-    '/single': {
+    '/download': {
         get: {
             query: { id: string },
             return: Book,
