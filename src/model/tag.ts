@@ -8,6 +8,7 @@ export type ImpressionTag =
 export type UserTag =
     | ImpressionTag
     | Tag<'finished'> | Tag<'want-to-read'> | Tag<'current'> | Tag<'in-library'>
+    | Tag<'uploaded'>
     ;
 
 export type KnownTag = UserTag;
