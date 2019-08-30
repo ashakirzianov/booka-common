@@ -2,12 +2,8 @@ export type AuthToken = {
     token: string,
 };
 
-export type UserInfo = {
+export type AccountInfo = {
     _id: string,
     name: string,
     pictureUrl?: string,
-};
-
-export type UserBooks = {
-    books: string[],
 };

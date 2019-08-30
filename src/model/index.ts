@@ -9,5 +9,5 @@ export * from './note';
 export * from './report';
 export * from './span';
 export * from './tag';
-export * from './user';
+export * from './account';
 export * from './vote';

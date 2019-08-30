@@ -1,6 +1,6 @@
 import {
     Book, Highlight, Bookmark,
-    AuthToken, UserInfo, UserBooks,
+    AuthToken, AccountInfo,
     Comment, CommentLocation, CommentData, Vote, VoteKind,
     NoteData, Note, BookInfo, IssueReportKind,
 } from '../model';
@@ -15,8 +15,7 @@ export type BackContract = {
             query: { token: string },
         },
     },
-    '/me/info': { get: { return: UserInfo, auth: string } },
-    '/me/books': { get: { return: UserBooks, auth: string } },
+    '/me/info': { get: { return: AccountInfo, auth: string } },
     '/books/single': {
         get: {
             return: Book,
