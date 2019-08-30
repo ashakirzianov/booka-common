@@ -1,14 +1,23 @@
-import { Book, BookCollection } from '../model';
+import { Book, BookInfo } from '../model';
+import { Paginate } from './helpers';
 
 export type LibContract = {
-    '/single': {
+    '/download': {
         get: {
             query: { id: string },
             return: Book,
         },
     },
     '/all': {
-        get: { return: BookCollection },
+        get: Paginate<{
+            return: BookInfo[],
+        }>,
+    },
+    '/info': {
+        get: {
+            return: BookInfo[],
+            query: { ids: string[] },
+        },
     },
     '/upload': {
         post: {

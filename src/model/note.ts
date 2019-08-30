@@ -6,7 +6,7 @@ export type NoteData = {
     title?: string,
 };
 
-export type Note = {
-    data: NoteData,
+export type Note = NoteData & {
+    _id: string,
     lastEdited: Date,
 };

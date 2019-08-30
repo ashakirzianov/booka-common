@@ -1,10 +1,12 @@
 import {
-    Book, BookCollection, Highlight, Bookmark,
+    Book, Highlight, Bookmark,
     AuthToken, UserInfo, UserBooks,
     Comment, CommentLocation, CommentData, Vote, VoteKind,
-    NoteData, Note,
+    NoteData, Note, BookInfo, IssueReportKind,
 } from '../model';
-import { HasId } from './helpers';
+import { HasId, Paginate } from './helpers';
+import { KnownTag, KnownTagName } from '../model/tag';
+import { BookEvent } from '../model/history';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -21,7 +23,11 @@ export type BackContract = {
             query: { id: string },
         },
     },
-    '/books/all': { get: { return: BookCollection } },
+    '/books/all': {
+        get: Paginate<{
+            return: BookInfo[],
+        }>,
+    },
     '/books/upload': {
         post: {
             return: string,
@@ -29,9 +35,18 @@ export type BackContract = {
             auth: string,
         },
     },
+    '/books': {
+        get: Paginate<{
+            return: BookInfo[],
+            auth: string,
+            query: {
+                tags?: string[],
+            },
+        }>,
+    },
     '/highlights': {
         get: {
-            return: Array<Highlight & HasId>,
+            return: Highlight[],
             auth: string,
             query: {
                 bookId: string,
@@ -63,7 +78,7 @@ export type BackContract = {
     },
     '/bookmarks': {
         get: {
-            return: Array<Bookmark & HasId>,
+            return: Bookmark[],
             auth: string,
             query: {
                 bookId: string,
@@ -97,7 +112,7 @@ export type BackContract = {
     },
     '/comments': {
         get: {
-            return: Array<Comment & HasId>,
+            return: Comment[],
             body: CommentLocation,
         },
         post: {
@@ -135,13 +150,13 @@ export type BackContract = {
         },
     },
     '/votes': {
-        get: {
-            return: Array<Vote | HasId>,
+        get: Paginate<{
+            return: Vote[],
             auth: string,
             query: {
                 bookId?: string,
             },
-        },
+        }>,
         post: {
             return: HasId,
             auth: string,
@@ -182,7 +197,7 @@ export type BackContract = {
     },
     '/notes/single': {
         get: {
-            return: Note & HasId,
+            return: Note,
             auth: string,
             query: {
                 noteId: string,
@@ -191,10 +206,61 @@ export type BackContract = {
     },
     '/notes/many': {
         get: {
-            return: Array<Note & HasId>,
+            return: Note[],
             auth: string,
             query: {
                 bookId?: string,
+            },
+        },
+    },
+    '/tags': {
+        post: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+            },
+            body: KnownTag,
+        },
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string,
+                tag: KnownTagName,
+            },
+        },
+    },
+    '/history/books': {
+        get: Paginate<{
+            return: BookEvent[],
+            auth: string,
+            query: {
+                page?: number,
+            },
+        }>,
+        post: {
+            return: boolean,
+            auth: string,
+            query: {
+                bookId: string[],
+            },
+        }
+        delete: {
+            return: boolean,
+            auth: string,
+            query: {
+                id: string[],
+            },
+        },
+    },
+    '/report': {
+        post: {
+            return: boolean,
+            auth: string,
+            query: {
+                commentId: string,
+                kind: IssueReportKind,
             },
         },
     },
