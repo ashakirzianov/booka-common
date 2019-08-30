@@ -7,7 +7,7 @@ export type CommentLocation = {
 };
 export type CommentDescription = {
     commentId: string,
-    location: CommentLocation,
+    location?: CommentLocation,
     textPreview: string,
 };
 export type CommentKind = 'question' | 'statement';
@@ -22,5 +22,5 @@ export type Comment = CommentData & {
     children: Comment[],
     rating: number,
     lastEdited: Date,
-    location: CommentLocation,
+    location?: CommentLocation,
 };
