@@ -4,7 +4,7 @@ import {
     Comment, CommentLocation, CommentData, Vote, VoteKind,
     NoteData, Note, BookInfo, IssueReportKind,
 } from '../model';
-import { HasId, Page } from './helpers';
+import { HasId, Paginate } from './helpers';
 import { KnownTag, KnownTagName } from '../model/tag';
 import { BookEvent } from '../model/history';
 
@@ -24,10 +24,9 @@ export type BackContract = {
         },
     },
     '/books/all': {
-        get: {
-            return: Page<Book>,
-            query: { page?: number },
-        },
+        get: Paginate<{
+            return: Book[],
+        }>,
     },
     '/books/upload': {
         post: {
@@ -37,14 +36,13 @@ export type BackContract = {
         },
     },
     '/books': {
-        get: {
-            return: Page<BookInfo>,
+        get: Paginate<{
+            return: BookInfo[],
             auth: string,
             query: {
                 tags?: string[],
-                page?: number,
             },
-        },
+        }>,
     },
     '/highlights': {
         get: {
@@ -152,14 +150,13 @@ export type BackContract = {
         },
     },
     '/votes': {
-        get: {
-            return: Page<Vote & HasId>,
+        get: Paginate<{
+            return: Array<Vote & HasId>,
             auth: string,
             query: {
                 bookId?: string,
-                page?: number,
             },
-        },
+        }>,
         post: {
             return: HasId,
             auth: string,
@@ -235,13 +232,13 @@ export type BackContract = {
         },
     },
     '/history/books': {
-        get: {
-            return: Page<BookEvent & HasId>,
+        get: Paginate<{
+            return: Array<BookEvent & HasId>,
             auth: string,
             query: {
                 page?: number,
             },
-        },
+        }>,
         post: {
             return: HasId,
             auth: string,
