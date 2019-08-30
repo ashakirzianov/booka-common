@@ -240,7 +240,7 @@ export type BackContract = {
             },
         }>,
         post: {
-            return: HasId,
+            return: boolean,
             auth: string,
             query: {
                 bookId: string[],
