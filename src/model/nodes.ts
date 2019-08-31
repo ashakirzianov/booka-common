@@ -16,12 +16,12 @@ export type ChapterNode = {
 
 export type ImageUrlNode = {
     node: 'image-url',
-    id?: string,
+    id: string,
     url: string,
 };
 export type ImageDataNode = {
     node: 'image-data',
-    id?: string,
+    id: string,
     data: Buffer,
 };
 export type ImageNode = ImageUrlNode | ImageDataNode;
