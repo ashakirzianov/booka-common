@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageRefNode, ImageReference,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode,
 } from '../model';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
@@ -19,8 +19,8 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
     return bn.node === 'paragraph';
 }
 
-export function isImageRef(bn: Node): bn is ImageRefNode {
-    return bn.node === 'image-ref';
+export function isImage(bn: Node): bn is ImageNode {
+    return bn.node === 'image-url' || bn.node === 'image-data';
 }
 
 export function nodeChildren(node: Node) {
@@ -35,21 +35,25 @@ export function nodeToString(bn: Node) {
     return JSON.stringify(bn);
 }
 
-export function collectImageRefs(bn: Node): ImageReference[] {
+export function collectImageIds(bn: Node): string[] {
     switch (bn.node) {
         case 'chapter':
             return bn.nodes
-                .map(collectImageRefs)
+                .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), []);
-        case 'image-ref':
-            return [bn.ref];
+        case 'image-url':
+        case 'image-data':
+            return bn.id ? [bn.id] : [];
         case 'paragraph':
             return [];
         case 'volume':
+            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.id
+                ? [bn.meta.coverImageNode.id]
+                : [];
             return bn.nodes
-                .map(collectImageRefs)
+                .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), [])
-                .concat(bn.meta.coverImageId ? [bn.meta.coverImageId] : []);
+                .concat(coverIds);
         default:
             // TODO: assert never?
             return [];

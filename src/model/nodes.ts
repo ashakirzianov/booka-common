@@ -14,14 +14,6 @@ export type ChapterNode = {
     nodes: BookContentNode[],
 };
 
-export type ImageReference = {
-    ref: 'image',
-    id: string,
-};
-export type ImageRefNode = {
-    node: 'image-ref',
-    ref: ImageReference,
-};
 export type ImageUrlNode = {
     node: 'image-url',
     id?: string,
@@ -32,12 +24,12 @@ export type ImageDataNode = {
     id?: string,
     data: Buffer,
 };
-export type ImageNode = ImageRefNode | ImageUrlNode | ImageDataNode;
+export type ImageNode = ImageUrlNode | ImageDataNode;
 
 export type BookMeta = {
     title: string,
     author?: string,
-    coverImageId?: ImageReference,
+    coverImageNode?: ImageNode,
 };
 export type VolumeNode = {
     node: 'volume',
