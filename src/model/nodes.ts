@@ -18,10 +18,19 @@ export type ImageReference = {
     ref: 'image',
     id: string,
 };
-export type ImageNode = {
-    node: 'image',
+export type ImageRefNode = {
+    node: 'image-ref',
     ref: ImageReference,
 };
+export type ImageUrlNode = {
+    node: 'image-url',
+    url: string,
+};
+export type ImageDataNode = {
+    node: 'image-data',
+    data: Buffer,
+};
+export type ImageNode = ImageRefNode | ImageUrlNode | ImageDataNode;
 
 export type BookMeta = {
     title: string,

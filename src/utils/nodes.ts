@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, ImageReference,
+    VolumeNode, ChapterNode, ParagraphNode, ImageRefNode, ImageReference,
 } from '../model';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
@@ -19,8 +19,8 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
     return bn.node === 'paragraph';
 }
 
-export function isImage(bn: Node): bn is ImageNode {
-    return bn.node === 'image';
+export function isImageRef(bn: Node): bn is ImageRefNode {
+    return bn.node === 'image-ref';
 }
 
 export function nodeChildren(node: Node) {
@@ -41,7 +41,7 @@ export function collectImageRefs(bn: Node): ImageReference[] {
             return bn.nodes
                 .map(collectImageRefs)
                 .reduce((all, one) => all.concat(one), []);
-        case 'image':
+        case 'image-ref':
             return [bn.ref];
         case 'paragraph':
             return [];
@@ -87,6 +87,5 @@ export function* iterateNode(node: Node): IterableIterator<Node> {
         case 'volume':
             yield* iterateNodes(node.nodes);
             break;
-        case 'image':
     }
 }
