@@ -24,10 +24,12 @@ export type ImageRefNode = {
 };
 export type ImageUrlNode = {
     node: 'image-url',
+    id?: string,
     url: string,
 };
 export type ImageDataNode = {
     node: 'image-data',
+    id?: string,
     data: Buffer,
 };
 export type ImageNode = ImageRefNode | ImageUrlNode | ImageDataNode;
