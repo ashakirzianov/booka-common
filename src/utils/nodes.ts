@@ -2,6 +2,7 @@ import {
     Node, HasSubnodes,
     VolumeNode, ChapterNode, ParagraphNode, ImageNode,
 } from '../model';
+import { extractSpanText } from './span';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume';
@@ -91,5 +92,19 @@ export function* iterateNode(node: Node): IterableIterator<Node> {
         case 'volume':
             yield* iterateNodes(node.nodes);
             break;
+    }
+}
+
+export function extractNodeText(node: Node): string {
+    switch (node.node) {
+        case 'chapter':
+        case 'volume':
+            return node.nodes
+                .map(extractNodeText)
+                .join('');
+        case 'paragraph':
+            return extractSpanText(node.span);
+        default:
+            return '';
     }
 }
