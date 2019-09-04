@@ -6,3 +6,9 @@ export function tagValue<N extends KnownTagName>(tags: KnownTag[], name: N): Kno
         ? tag.value as KnownTagValue<N>
         : null;
 }
+
+export function tagValues<N extends KnownTagName>(tags: KnownTag[], name: N): Array<KnownTagValue<N>> {
+    const filtered = tags.filter(t => t.tag === name);
+    const values = filtered.map(t => t.value);
+    return values as Array<KnownTagValue<N>>;
+}
