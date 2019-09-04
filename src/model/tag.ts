@@ -20,4 +20,5 @@ export type UserTag =
 
 export type BookMetaTag =
     | Tag<'pg-index', number>
+    | Tag<'title', string> | Tag<'author', string> | Tag<'cover-ref', string>
     ;
