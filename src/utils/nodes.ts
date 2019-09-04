@@ -108,3 +108,8 @@ export function extractNodeText(node: Node): string {
             return '';
     }
 }
+
+export function isEmptyNode(node: Node): boolean {
+    const text = extractNodeText(node);
+    return text ? true : false;
+}

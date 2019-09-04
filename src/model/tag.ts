@@ -23,4 +23,11 @@ export type BookMetaTag =
     | Tag<'title', string> | Tag<'author', string> | Tag<'cover-ref', string>
     | Tag<'language', string>
     | Tag<'subject', string>
+    | Tag<'publish-year', number> | Tag<'publish-city', string>
+    | Tag<'translator', string>
+    | Tag<'publisher', string>
+    | Tag<'description', string>
+    | Tag<'series', string>
+    | Tag<'ISBN', string>
+    | Tag<'rights', string>
     ;
