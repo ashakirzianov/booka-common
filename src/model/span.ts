@@ -1,5 +1,5 @@
 export type AttributeName = 'italic' | 'bold' | 'poem' | 'line' | 'quote';
-export type SimpleSpan = string;
+export type SimpleSpan = string & { span?: undefined };
 export type AttributedSpan = {
     span: 'attrs',
     content: Span,
