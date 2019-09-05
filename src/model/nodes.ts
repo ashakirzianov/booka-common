@@ -1,4 +1,4 @@
-import { Span } from './span';
+import { Span, AttributeName } from './span';
 import { BookRange } from './bookRange';
 import { KnownTag } from './tag';
 
@@ -49,6 +49,10 @@ export type QuoteNode = DefNode<'quote'> & {
 
 export type RefNode = DefNode<'ref'> & {
     to: string,
+    content: RawBookNode,
+};
+export type ImageRefNode = DefNode<'image-ref'> & {
+    imageId: string,
 };
 export type TitleNode = DefNode<'title'> & {
     title: string[],
@@ -57,21 +61,30 @@ export type TitleNode = DefNode<'title'> & {
 export type TagNode = DefNode<'tag'> & {
     tag: KnownTag,
 };
+export type SpanNode = DefNode<'span'> & {
+    span: Span,
+};
 export type IgnoreNode = DefNode<'ignore'>;
 export type RawContainerNode = DefNode<'container'> & {
     nodes: RawBookNode[],
 };
+export type AttrNode = DefNode<'attr'> & {
+    attributes: AttributeName[],
+    content: RawBookNode,
+};
 export type RawBookNode =
-    | RefNode | TitleNode | TagNode | IgnoreNode
+    | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
+    | AttrNode
     | RawContainerNode
-    | ParagraphNode | ImageNode
+    | ImageNode
     ;
 
 export type BookContentNode = ChapterNode | ParagraphNode | ImageNode;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
-    | ChapterNode | ParagraphNode | ImageNode
+    | BookContentNode
+    | RawBookNode
     | QuoteNode
     | VolumeNode
     ;

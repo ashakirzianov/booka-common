@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, RawBookNode, BookContentNode,
 } from '../model';
 import { extractSpanText } from './span';
 
@@ -112,4 +112,20 @@ export function extractNodeText(node: Node): string {
 export function isEmptyNode(node: Node): boolean {
     const text = extractNodeText(node);
     return text ? true : false;
+}
+
+export function containedNodes(node: BookContentNode): BookContentNode[];
+export function containedNodes(node: RawBookNode): RawBookNode[];
+export function containedNodes(node: Node): Node[] {
+    switch (node.node) {
+        case 'chapter':
+        case 'container':
+        case 'volume':
+            return node.nodes;
+        case 'attr':
+        case 'ref':
+            return [node.content];
+        default:
+            return [];
+    }
 }

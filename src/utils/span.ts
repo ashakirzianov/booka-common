@@ -52,7 +52,6 @@ function attrObject(attributes: AttributeName[]): AttributesObject {
 export function extractSpanText(span: Span): string {
     switch (span.span) {
         case 'attrs':
-            return extractSpanText(span);
         case 'note':
             return extractSpanText(span.content);
         case 'compound':
