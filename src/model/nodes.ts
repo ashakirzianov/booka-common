@@ -1,26 +1,27 @@
 import { Span } from './span';
 import { BookRange } from './bookRange';
 
-export type ParagraphNode = {
-    node: 'paragraph',
+type DefNode<N extends string> = {
+    node: N,
+    ref?: string,
+};
+
+export type ParagraphNode = DefNode<'paragraph'> & {
     span: Span,
 };
 
 export type ChapterTitle = string[];
-export type ChapterNode = {
-    node: 'chapter',
+export type ChapterNode = DefNode<'chapter'> & {
     level: number,
     title: ChapterTitle,
     nodes: BookContentNode[],
 };
 
-export type ImageUrlNode = {
-    node: 'image-url',
+export type ImageUrlNode = DefNode<'image-url'> & {
     id: string,
     url: string,
 };
-export type ImageDataNode = {
-    node: 'image-data',
+export type ImageDataNode = DefNode<'image-data'> & {
     id: string,
     data: Buffer,
 };
@@ -31,8 +32,7 @@ export type BookMeta = {
     author?: string,
     coverImageNode?: ImageNode,
 };
-export type VolumeNode = {
-    node: 'volume',
+export type VolumeNode = DefNode<'volume'> & {
     meta: BookMeta,
     nodes: BookContentNode[],
 };
@@ -42,8 +42,7 @@ export type Quote = {
     bookId: BookId,
     range: BookRange,
 };
-export type QuoteNode = {
-    node: 'quote',
+export type QuoteNode = DefNode<'quote'> & {
     quote: Quote,
 };
 
