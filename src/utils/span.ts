@@ -22,7 +22,7 @@ export function isCompoundSpan(span: Span): span is CompoundSpan {
     return span.span === 'compound';
 }
 
-export function assign(...attributes: AttributeName[]) {
+export function assignAttributes(...attributes: AttributeName[]) {
     return (span: Span): AttributedSpan => {
         return {
             span: 'attrs',
