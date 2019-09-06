@@ -29,7 +29,7 @@ export type ImageDataNode = DefNode<'image-data'> & {
 export type ImageNode = ImageUrlNode | ImageDataNode;
 
 export type BookMeta = {
-    title: string,
+    title?: string,
     author?: string,
     coverImageNode?: ImageNode,
 };
