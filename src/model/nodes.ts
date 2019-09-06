@@ -58,6 +58,9 @@ export type TitleNode = DefNode<'title'> & {
     title: string[],
     level: number,
 };
+export type TagNode = DefNode<'tag'> & {
+    tag: KnownTag,
+};
 export type SpanNode = DefNode<'span'> & {
     span: Span,
 };
@@ -70,7 +73,7 @@ export type AttrNode = DefNode<'attr'> & {
     content: RawBookNode,
 };
 export type RawBookNode =
-    | RefNode | ImageRefNode | TitleNode | SpanNode | IgnoreNode
+    | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
     | AttrNode
     | RawContainerNode
     | ImageNode
