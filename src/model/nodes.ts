@@ -65,7 +65,7 @@ export type SpanNode = DefNode<'span'> & {
     span: Span,
 };
 export type IgnoreNode = DefNode<'ignore'>;
-export type RawContainerNode = DefNode<'container'> & {
+export type RawContainerNode = DefNode<'compound-raw'> & {
     nodes: RawBookNode[],
 };
 export type AttrNode = DefNode<'attr'> & {

@@ -119,7 +119,7 @@ export function containedNodes(node: RawBookNode): RawBookNode[];
 export function containedNodes(node: Node): Node[] {
     switch (node.node) {
         case 'chapter':
-        case 'container':
+        case 'compound-raw':
         case 'volume':
             return node.nodes;
         case 'attr':
