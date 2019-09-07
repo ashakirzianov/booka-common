@@ -54,7 +54,7 @@ export type RefNode = DefNode<'ref'> & {
 export type ImageRefNode = DefNode<'image-ref'> & {
     imageId: string,
 };
-export type TitleNode = DefNode<'title'> & {
+export type TitleNode = DefNode<'chapter-title'> & {
     title: string[],
     level: number,
 };
