@@ -1,7 +1,8 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, ImageReference,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, RawBookNode, BookContentNode,
 } from '../model';
+import { extractSpanText } from './span';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume';
@@ -20,7 +21,7 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
 }
 
 export function isImage(bn: Node): bn is ImageNode {
-    return bn.node === 'image';
+    return bn.node === 'image-url' || bn.node === 'image-data';
 }
 
 export function nodeChildren(node: Node) {
@@ -35,21 +36,25 @@ export function nodeToString(bn: Node) {
     return JSON.stringify(bn);
 }
 
-export function collectImageRefs(bn: Node): ImageReference[] {
+export function collectImageIds(bn: Node): string[] {
     switch (bn.node) {
         case 'chapter':
             return bn.nodes
-                .map(collectImageRefs)
+                .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), []);
-        case 'image':
-            return [bn.ref];
+        case 'image-url':
+        case 'image-data':
+            return bn.id ? [bn.id] : [];
         case 'paragraph':
             return [];
         case 'volume':
+            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.id
+                ? [bn.meta.coverImageNode.id]
+                : [];
             return bn.nodes
-                .map(collectImageRefs)
+                .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), [])
-                .concat(bn.meta.coverImageId ? [bn.meta.coverImageId] : []);
+                .concat(coverIds);
         default:
             // TODO: assert never?
             return [];
@@ -87,6 +92,40 @@ export function* iterateNode(node: Node): IterableIterator<Node> {
         case 'volume':
             yield* iterateNodes(node.nodes);
             break;
-        case 'image':
+    }
+}
+
+export function extractNodeText(node: Node): string {
+    switch (node.node) {
+        case 'chapter':
+        case 'volume':
+            return node.nodes
+                .map(extractNodeText)
+                .join('');
+        case 'paragraph':
+            return extractSpanText(node.span);
+        default:
+            return '';
+    }
+}
+
+export function isEmptyNode(node: Node): boolean {
+    const text = extractNodeText(node);
+    return text ? true : false;
+}
+
+export function containedNodes(node: BookContentNode): BookContentNode[];
+export function containedNodes(node: RawBookNode): RawBookNode[];
+export function containedNodes(node: Node): Node[] {
+    switch (node.node) {
+        case 'chapter':
+        case 'compound-raw':
+        case 'volume':
+            return node.nodes;
+        case 'attr':
+        case 'ref':
+            return [node.content];
+        default:
+            return [];
     }
 }
