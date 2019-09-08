@@ -1,6 +1,7 @@
 import { VolumeNode } from './nodes';
 import { KnownTag } from './tag';
 
+export type BookLicense = 'unknown' | 'public-domain-us';
 export type EpubBookSource = {
     source: 'epub',
     kind: string,
