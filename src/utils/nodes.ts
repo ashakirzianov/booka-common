@@ -122,7 +122,6 @@ export function containedNodes(node: Node): Node[] {
         case 'compound-raw':
         case 'volume':
             return node.nodes;
-        case 'attr':
         case 'ref':
             return [node.content];
         default:

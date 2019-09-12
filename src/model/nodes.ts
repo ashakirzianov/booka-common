@@ -68,13 +68,8 @@ export type IgnoreNode = DefNode<'ignore'>;
 export type RawContainerNode = DefNode<'compound-raw'> & {
     nodes: RawBookNode[],
 };
-export type AttrNode = DefNode<'attr'> & {
-    attributes: AttributeName[],
-    content: RawBookNode,
-};
 export type RawBookNode =
     | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
-    | AttrNode
     | RawContainerNode
     | ImageNode
     ;
