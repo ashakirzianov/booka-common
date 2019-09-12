@@ -1,6 +1,5 @@
 import { Span } from './span';
 import { BookRange } from './bookRange';
-import { KnownTag } from './tag';
 import { SupportSemantic } from './semantic';
 
 type DefNode<N extends string> = {
@@ -52,36 +51,12 @@ export type QuoteNode = DefNode<'quote'> & {
     quote: Quote,
 };
 
-export type ImageRefNode = DefNode<'image-ref'> & {
-    imageId: string,
-};
-export type TitleNode = DefNode<'chapter-title'> & {
-    title: string[],
-    level: number,
-};
-export type TagNode = DefNode<'tag'> & {
-    tag: KnownTag,
-};
-export type SpanNode = DefNode<'span'> & {
-    span: Span,
-};
-export type IgnoreNode = DefNode<'ignore'>;
-export type RawCompoundNode = SupportSemantic<DefNode<'compound-raw'> & {
-    nodes: RawBookNode[],
-}, 'footnote'>;
-export type RawBookNode =
-    | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
-    | RawCompoundNode
-    | ImageNode
-    ;
-
 export type BookContentNode =
     | ChapterNode | GroupNode | ParagraphNode | ImageNode;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
     | BookContentNode
-    | RawBookNode
     | QuoteNode
     | VolumeNode
     ;
