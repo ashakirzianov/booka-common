@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, RawBookNode, BookContentNode,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, RawBookNode, BookContentNode, GroupNode,
 } from '../model';
 import { extractSpanText } from './span';
 
@@ -22,6 +22,10 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
 
 export function isImage(bn: Node): bn is ImageNode {
     return bn.node === 'image-url' || bn.node === 'image-data';
+}
+
+export function isGroup(bn: Node): bn is GroupNode {
+    return bn.node === 'group';
 }
 
 export function nodeChildren(node: Node) {

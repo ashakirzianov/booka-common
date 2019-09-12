@@ -7,6 +7,7 @@ export * from './history';
 export * from './nodes';
 export * from './note';
 export * from './report';
+export * from './semantic';
 export * from './span';
 export * from './tag';
 export * from './account';

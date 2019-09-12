@@ -12,6 +12,10 @@ export type ParagraphNode = DefNode<'paragraph'> & {
     span: Span,
 };
 
+export type GroupNode = SupportSemantic<DefNode<'group'> & {
+    nodes: BookContentNode[],
+}, 'footnote'>;
+
 export type ChapterTitle = string[];
 export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     level: number,
@@ -62,17 +66,17 @@ export type SpanNode = DefNode<'span'> & {
     span: Span,
 };
 export type IgnoreNode = DefNode<'ignore'>;
-export type RawCompoundNode = DefNode<'compound-raw'> & {
+export type RawCompoundNode = SupportSemantic<DefNode<'compound-raw'> & {
     nodes: RawBookNode[],
-    title?: string[],
-};
+}, 'footnote'>;
 export type RawBookNode =
     | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
     | RawCompoundNode
     | ImageNode
     ;
 
-export type BookContentNode = ChapterNode | ParagraphNode | ImageNode;
+export type BookContentNode =
+    | ChapterNode | GroupNode | ParagraphNode | ImageNode;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
