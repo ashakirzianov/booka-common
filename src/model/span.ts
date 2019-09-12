@@ -16,17 +16,14 @@ export type CompoundSpan = {
     span: 'compound',
     spans: Span[],
 };
-export type FootnoteId = string;
-export type FootnoteSpan = {
+export type RefSpan = {
     span: 'note',
+    refId: string,
     content: Span,
-    footnote: Span,
-    id: FootnoteId,
-    title: string[],
 };
 
 export type ComplexSpan = SupportSemantic<
-    CompoundSpan | FootnoteSpan | AttributedSpan,
+    CompoundSpan | RefSpan | AttributedSpan,
     'correction'
 >;
 

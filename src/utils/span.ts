@@ -1,12 +1,12 @@
 import {
-    Span, SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan, AttributeName,
+    Span, SimpleSpan, RefSpan, AttributedSpan, CompoundSpan, AttributeName,
 } from '../model';
 
 export function isSimpleSpan(span: Span): span is SimpleSpan {
     return typeof span === 'string';
 }
 
-export function isFootnoteSpan(span: Span): span is FootnoteSpan {
+export function isRefSpan(span: Span): span is RefSpan {
     return span.span === 'note';
 }
 
