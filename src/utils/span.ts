@@ -7,7 +7,7 @@ export function isSimpleSpan(span: Span): span is SimpleSpan {
 }
 
 export function isRefSpan(span: Span): span is RefSpan {
-    return span.span === 'note';
+    return span.span === 'ref';
 }
 
 export function isAttributedSpan(span: Span): span is AttributedSpan {
@@ -48,7 +48,7 @@ function attrObject(attributes: AttributeName[]): AttributesObject {
 export function extractSpanText(span: Span): string {
     switch (span.span) {
         case 'attrs':
-        case 'note':
+        case 'ref':
             return extractSpanText(span.content);
         case 'compound':
             return span.spans
