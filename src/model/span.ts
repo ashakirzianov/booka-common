@@ -18,7 +18,7 @@ export type CompoundSpan = {
 };
 export type RefSpan = {
     span: 'note',
-    refId: string,
+    refToId: string,
     content: Span,
 };
 

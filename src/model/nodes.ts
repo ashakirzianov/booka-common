@@ -8,17 +8,16 @@ type DefNode<N extends string> = {
     refId?: string,
 };
 
-type ParagraphSemantics = 'footnote';
-export type ParagraphNode = SupportSemantic<DefNode<'paragraph'> & {
+export type ParagraphNode = DefNode<'paragraph'> & {
     span: Span,
-}, ParagraphSemantics>;
+};
 
 export type ChapterTitle = string[];
 export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     level: number,
     title: ChapterTitle,
     nodes: BookContentNode[],
-}, 'footnote-container'>;
+}, 'footnote'>;
 
 export type ImageUrlNode = DefNode<'image-url'> & {
     id: string,
@@ -49,10 +48,6 @@ export type QuoteNode = DefNode<'quote'> & {
     quote: Quote,
 };
 
-export type RefNode = DefNode<'ref'> & {
-    to: string,
-    content: RawBookNode,
-};
 export type ImageRefNode = DefNode<'image-ref'> & {
     imageId: string,
 };
@@ -72,7 +67,7 @@ export type RawCompoundNode = DefNode<'compound-raw'> & {
     title?: string[],
 };
 export type RawBookNode =
-    | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
+    | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
     | RawCompoundNode
     | ImageNode
     ;
