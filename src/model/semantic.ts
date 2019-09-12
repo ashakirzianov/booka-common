@@ -8,6 +8,13 @@ export type FootnoteSemantic = {
 export type FootnoteContainerSemantic = {
     semantic: 'footnote-container',
 };
+export type CorrectionSemantic = {
+    semantic: 'correction',
+    note?: string,
+};
 
 export type SemanticKey = Semantic['semantic'];
-export type Semantic = FootnoteSemantic | FootnoteContainerSemantic;
+export type Semantic =
+    | FootnoteSemantic | FootnoteContainerSemantic
+    | CorrectionSemantic
+    ;

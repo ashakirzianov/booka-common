@@ -1,5 +1,5 @@
 import {
-    Span, SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan, AttributeName, SemanticSpan,
+    Span, SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan, AttributeName,
 } from '../model';
 
 export function isSimpleSpan(span: Span): span is SimpleSpan {
@@ -12,10 +12,6 @@ export function isFootnoteSpan(span: Span): span is FootnoteSpan {
 
 export function isAttributedSpan(span: Span): span is AttributedSpan {
     return span.span === 'attrs';
-}
-
-export function isSemanticSpan(span: Span): span is SemanticSpan {
-    return span.span === 'semantic';
 }
 
 export function isCompoundSpan(span: Span): span is CompoundSpan {

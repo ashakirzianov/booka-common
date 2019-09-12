@@ -1,3 +1,5 @@
+import { SupportSemantic } from './semantic';
+
 export type AttributeName =
     | 'italic' | 'bold'
     | 'small' | 'big'
@@ -23,17 +25,9 @@ export type FootnoteSpan = {
     title: string[],
 };
 
-type DefSemanticSpan<K extends string> = {
-    span: 'semantic',
-    semantic: K,
-    content: Span,
-};
-export type SemanticSpan =
-    | DefSemanticSpan<'correction'> & { note?: string }
-    ;
+export type ComplexSpan = SupportSemantic<
+    CompoundSpan | FootnoteSpan | AttributedSpan,
+    'correction'
+>;
 
-export type Span =
-    | SimpleSpan | CompoundSpan
-    | FootnoteSpan | AttributedSpan
-    | SemanticSpan
-    ;
+export type Span = SimpleSpan | ComplexSpan;
