@@ -1,22 +1,24 @@
-import { Span, AttributeName } from './span';
+import { Span } from './span';
 import { BookRange } from './bookRange';
 import { KnownTag } from './tag';
+import { SupportSemantic } from './semantic';
 
 type DefNode<N extends string> = {
     node: N,
     refId?: string,
 };
 
-export type ParagraphNode = DefNode<'paragraph'> & {
+type ParagraphSemantics = 'footnote';
+export type ParagraphNode = SupportSemantic<DefNode<'paragraph'> & {
     span: Span,
-};
+}, ParagraphSemantics>;
 
 export type ChapterTitle = string[];
-export type ChapterNode = DefNode<'chapter'> & {
+export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     level: number,
     title: ChapterTitle,
     nodes: BookContentNode[],
-};
+}, 'footnote-container'>;
 
 export type ImageUrlNode = DefNode<'image-url'> & {
     id: string,
