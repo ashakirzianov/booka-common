@@ -4,7 +4,7 @@ import { KnownTag } from './tag';
 
 type DefNode<N extends string> = {
     node: N,
-    ref?: string,
+    refId?: string,
 };
 
 export type ParagraphNode = DefNode<'paragraph'> & {
