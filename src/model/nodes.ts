@@ -65,12 +65,13 @@ export type SpanNode = DefNode<'span'> & {
     span: Span,
 };
 export type IgnoreNode = DefNode<'ignore'>;
-export type RawContainerNode = DefNode<'compound-raw'> & {
+export type RawCompoundNode = DefNode<'compound-raw'> & {
     nodes: RawBookNode[],
+    title?: string[],
 };
 export type RawBookNode =
     | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
-    | RawContainerNode
+    | RawCompoundNode
     | ImageNode
     ;
 
