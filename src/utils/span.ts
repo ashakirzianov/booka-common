@@ -18,6 +18,15 @@ export function isCompoundSpan(span: Span): span is CompoundSpan {
     return span.span === 'compound';
 }
 
+export function compoundSpan(spans: Span[]): Span {
+    return spans.length === 1
+        ? spans[0]
+        : {
+            span: 'compound',
+            spans,
+        };
+}
+
 export function assignAttributes(...attributes: AttributeName[]) {
     return (span: Span): AttributedSpan => {
         return {

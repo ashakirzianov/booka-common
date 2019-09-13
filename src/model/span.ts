@@ -3,6 +3,7 @@ import { SupportSemantic } from './semantic';
 export type AttributeName =
     | 'italic' | 'bold'
     | 'small' | 'big'
+    | 'subscript' | 'superscript'
     | 'quote'
     | 'poem' | 'line' // TODO: remove ?
     ;
