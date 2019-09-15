@@ -45,6 +45,8 @@ export type ListNode = DefNode<'list'> & {
     items: ListItem[],
 };
 
+export type SeparatorNode = DefNode<'separator'>;
+
 export type VolumeMeta = {
     title?: string,
     author?: string,
@@ -67,7 +69,7 @@ export type QuoteNode = DefNode<'lib-quote'> & {
 export type BookContentNode =
     | ChapterNode | GroupNode
     | ParagraphNode | ImageNode
-    | TableNode | ListNode
+    | TableNode | ListNode | SeparatorNode
     ;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
