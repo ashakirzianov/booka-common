@@ -129,12 +129,12 @@ export function containedNodes(node: Node): BookContentNode[] {
     }
 }
 
-export async function processImagesAsync<N extends Node>(node: N, f: (image: ImageNode) => Promise<ImageNode>): Promise<N> {
-    const n = node as Node;
-    switch (n.node) {
+export async function processImagesAsync<N extends Node>(node: N, f: (image: ImageNode) => Promise<ImageNode>): Promise<N>;
+export async function processImagesAsync(node: Node, f: (image: ImageNode) => Promise<ImageNode>): Promise<Node> {
+    switch (node.node) {
         case 'volume':
-            if (n.meta.coverImageNode) {
-                const resolved = await f(n.meta.coverImageNode);
+            if (node.meta.coverImageNode) {
+                const resolved = await f(node.meta.coverImageNode);
                 node = {
                     ...node,
                     meta: {
@@ -145,12 +145,15 @@ export async function processImagesAsync<N extends Node>(node: N, f: (image: Ima
         case 'chapter':
         case 'group':
             const nodes = await Promise.all(
-                n.nodes.map(nn => processImagesAsync(nn, f))
+                node.nodes.map(nn => processImagesAsync(nn, f))
             );
             return {
                 ...node,
-                nodes,
+                nodes: nodes.filter((nn): nn is BookContentNode => nn !== undefined),
             };
+        case 'image-data':
+        case 'image-ref':
+            return f(node);
         default:
             return node;
     }
