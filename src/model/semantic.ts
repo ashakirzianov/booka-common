@@ -9,6 +9,10 @@ export type CorrectionSemantic = {
     semantic: 'correction',
     note?: string,
 };
+export type QuoteSemantic = {
+    semantic: 'quote',
+    source?: string,
+};
 
 export type SemanticKey = Semantic['semantic'];
 export type Semantic =
