@@ -15,3 +15,7 @@ export function filterUndefined<T>(arr: Array<T | undefined>): T[] {
 export function filterNullable<T>(arr: Array<T | undefined | null>): T[] {
     return arr.filter((x): x is T => x !== undefined && x !== null);
 }
+
+export function flatten<T>(arrArr: T[][]): T[] {
+    return arrArr.reduce((acc, arr) => acc.concat(arr), []);
+}
