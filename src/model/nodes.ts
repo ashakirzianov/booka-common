@@ -13,7 +13,6 @@ export type ParagraphNode = DefNode<'paragraph'> & {
 
 export type GroupNode = SupportSemantic<DefNode<'group'> & {
     nodes: BookContentNode[],
-    title?: string[],
 }, 'footnote'>;
 
 export type ChapterTitle = string[];
@@ -23,15 +22,15 @@ export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     nodes: BookContentNode[],
 }, 'footnote'>;
 
-export type ImageUrlNode = DefNode<'image-url'> & {
-    id: string,
-    url: string,
+export type ImageRefNode = DefNode<'image-ref'> & {
+    imageId: string,
+    imageRef: string,
 };
 export type ImageDataNode = DefNode<'image-data'> & {
-    id: string,
+    imageId: string,
     data: Buffer,
 };
-export type ImageNode = ImageUrlNode | ImageDataNode;
+export type ImageNode = ImageRefNode | ImageDataNode;
 
 export type VolumeMeta = {
     title?: string,

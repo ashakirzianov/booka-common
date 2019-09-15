@@ -21,7 +21,7 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
 }
 
 export function isImage(bn: Node): bn is ImageNode {
-    return bn.node === 'image-url' || bn.node === 'image-data';
+    return bn.node === 'image-ref' || bn.node === 'image-data';
 }
 
 export function isGroup(bn: Node): bn is GroupNode {
@@ -46,14 +46,14 @@ export function collectImageIds(bn: Node): string[] {
             return bn.nodes
                 .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), []);
-        case 'image-url':
+        case 'image-ref':
         case 'image-data':
-            return bn.id ? [bn.id] : [];
+            return bn.imageId ? [bn.imageId] : [];
         case 'paragraph':
             return [];
         case 'volume':
-            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.id
-                ? [bn.meta.coverImageNode.id]
+            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.imageId
+                ? [bn.meta.coverImageNode.imageId]
                 : [];
             return bn.nodes
                 .map(collectImageIds)
@@ -103,6 +103,7 @@ export function extractNodeText(node: Node): string {
     switch (node.node) {
         case 'chapter':
         case 'volume':
+        case 'group':
             return node.nodes
                 .map(extractNodeText)
                 .join('');
