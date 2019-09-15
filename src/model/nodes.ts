@@ -56,12 +56,12 @@ export type VolumeNode = DefNode<'volume'> & {
 };
 
 export type BookId = string;
-export type Quote = {
+export type LibraryQuote = {
     bookId: BookId,
     range: BookRange,
 };
-export type QuoteNode = DefNode<'quote'> & {
-    quote: Quote,
+export type QuoteNode = DefNode<'lib-quote'> & {
+    quote: LibraryQuote,
 };
 
 export type BookContentNode =
