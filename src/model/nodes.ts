@@ -32,6 +32,19 @@ export type ImageDataNode = DefNode<'image-data'> & {
 };
 export type ImageNode = ImageRefNode | ImageDataNode;
 
+export type TableCell = Span;
+export type TableRow = TableCell[];
+export type TableNode = DefNode<'table'> & {
+    rows: TableRow[],
+};
+
+export type ListKind = 'ordered' | 'basic';
+export type ListItem = Span;
+export type ListNode = DefNode<'list'> & {
+    kind: ListKind,
+    items: ListItem[],
+};
+
 export type VolumeMeta = {
     title?: string,
     author?: string,
@@ -52,7 +65,10 @@ export type QuoteNode = DefNode<'quote'> & {
 };
 
 export type BookContentNode =
-    | ChapterNode | GroupNode | ParagraphNode | ImageNode;
+    | ChapterNode | GroupNode
+    | ParagraphNode | ImageNode
+    | TableNode | ListNode
+    ;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
