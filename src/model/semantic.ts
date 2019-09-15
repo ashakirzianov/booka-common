@@ -18,4 +18,5 @@ export type SemanticKey = Semantic['semantic'];
 export type Semantic =
     | FootnoteSemantic
     | CorrectionSemantic
+    | QuoteSemantic
     ;

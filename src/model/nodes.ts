@@ -13,7 +13,7 @@ export type ParagraphNode = DefNode<'paragraph'> & {
 
 export type GroupNode = SupportSemantic<DefNode<'group'> & {
     nodes: BookContentNode[],
-}, 'footnote'>;
+}, 'footnote' | 'quote'>;
 
 export type ChapterTitle = string[];
 export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
