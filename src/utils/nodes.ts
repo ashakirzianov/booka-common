@@ -129,12 +129,38 @@ export function containedNodes(node: Node): BookContentNode[] {
     }
 }
 
-export async function processImagesAsync<N extends Node>(node: N, f: (image: ImageNode) => Promise<ImageNode>): Promise<N>;
-export async function processImagesAsync(node: Node, f: (image: ImageNode) => Promise<ImageNode>): Promise<Node> {
+export function processNode<T extends Node>(node: T, f: (n: Node) => Node): T;
+export function processNode(node: Node, f: (n: Node) => Node): Node {
     switch (node.node) {
         case 'volume':
             if (node.meta.coverImageNode) {
-                const resolved = await f(node.meta.coverImageNode);
+                const resolved = f(node.meta.coverImageNode) as ImageNode;
+                node = {
+                    ...node,
+                    meta: {
+                        coverImageNode: resolved,
+                    },
+                };
+            }
+        case 'chapter':
+        case 'group':
+            const nodes = node.nodes.map(nn => processNode(nn, f));
+            node = {
+                ...node,
+                nodes,
+            };
+            break;
+    }
+
+    return f(node);
+}
+
+export async function processNodeAsync<T extends Node>(node: T, f: (n: Node) => Promise<Node>): Promise<T>;
+export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>): Promise<Node> {
+    switch (node.node) {
+        case 'volume':
+            if (node.meta.coverImageNode) {
+                const resolved = await f(node.meta.coverImageNode) as ImageNode;
                 node = {
                     ...node,
                     meta: {
@@ -145,16 +171,14 @@ export async function processImagesAsync(node: Node, f: (image: ImageNode) => Pr
         case 'chapter':
         case 'group':
             const nodes = await Promise.all(
-                node.nodes.map(nn => processImagesAsync(nn, f))
+                node.nodes.map(nn => processNodeAsync<BookContentNode>(nn, f))
             );
-            return {
+            node = {
                 ...node,
-                nodes: nodes.filter((nn): nn is BookContentNode => nn !== undefined),
+                nodes,
             };
-        case 'image-data':
-        case 'image-ref':
-            return f(node);
-        default:
-            return node;
+            break;
     }
+
+    return f(node);
 }
