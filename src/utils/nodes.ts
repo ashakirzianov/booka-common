@@ -69,7 +69,7 @@ export function collectReferencedBookIds(nodes: Node[]): string[] {
     const result = [] as string[];
     for (const node of nodes) {
         switch (node.node) {
-            case 'quote':
+            case 'lib-quote':
                 result.push(node.quote.bookId);
                 break;
             case 'volume':
