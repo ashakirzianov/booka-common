@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, RawBookNode, BookContentNode,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode,
 } from '../model';
 import { extractSpanText } from './span';
 
@@ -21,7 +21,11 @@ export function isParagraph(bn: Node): bn is ParagraphNode {
 }
 
 export function isImage(bn: Node): bn is ImageNode {
-    return bn.node === 'image-url' || bn.node === 'image-data';
+    return bn.node === 'image-ref' || bn.node === 'image-data';
+}
+
+export function isGroup(bn: Node): bn is GroupNode {
+    return bn.node === 'group';
 }
 
 export function nodeChildren(node: Node) {
@@ -42,14 +46,14 @@ export function collectImageIds(bn: Node): string[] {
             return bn.nodes
                 .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), []);
-        case 'image-url':
+        case 'image-ref':
         case 'image-data':
-            return bn.id ? [bn.id] : [];
+            return bn.imageId ? [bn.imageId] : [];
         case 'paragraph':
             return [];
         case 'volume':
-            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.id
-                ? [bn.meta.coverImageNode.id]
+            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.imageId
+                ? [bn.meta.coverImageNode.imageId]
                 : [];
             return bn.nodes
                 .map(collectImageIds)
@@ -65,7 +69,7 @@ export function collectReferencedBookIds(nodes: Node[]): string[] {
     const result = [] as string[];
     for (const node of nodes) {
         switch (node.node) {
-            case 'quote':
+            case 'lib-quote':
                 result.push(node.quote.bookId);
                 break;
             case 'volume':
@@ -99,6 +103,7 @@ export function extractNodeText(node: Node): string {
     switch (node.node) {
         case 'chapter':
         case 'volume':
+        case 'group':
             return node.nodes
                 .map(extractNodeText)
                 .join('');
@@ -114,18 +119,66 @@ export function isEmptyNode(node: Node): boolean {
     return text ? true : false;
 }
 
-export function containedNodes(node: BookContentNode): BookContentNode[];
-export function containedNodes(node: RawBookNode): RawBookNode[];
-export function containedNodes(node: Node): Node[] {
+export function containedNodes(node: Node): BookContentNode[] {
     switch (node.node) {
         case 'chapter':
-        case 'compound-raw':
         case 'volume':
             return node.nodes;
-        case 'attr':
-        case 'ref':
-            return [node.content];
         default:
             return [];
     }
+}
+
+export function processNode<T extends Node>(node: T, f: (n: Node) => Node): T;
+export function processNode(node: Node, f: (n: Node) => Node): Node {
+    switch (node.node) {
+        case 'volume':
+            if (node.meta.coverImageNode) {
+                const resolved = f(node.meta.coverImageNode) as ImageNode;
+                node = {
+                    ...node,
+                    meta: {
+                        coverImageNode: resolved,
+                    },
+                };
+            }
+        case 'chapter':
+        case 'group':
+            const nodes = node.nodes.map(nn => processNode(nn, f));
+            node = {
+                ...node,
+                nodes,
+            };
+            break;
+    }
+
+    return f(node);
+}
+
+export async function processNodeAsync<T extends Node>(node: T, f: (n: Node) => Promise<Node>): Promise<T>;
+export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>): Promise<Node> {
+    switch (node.node) {
+        case 'volume':
+            if (node.meta.coverImageNode) {
+                const resolved = await f(node.meta.coverImageNode) as ImageNode;
+                node = {
+                    ...node,
+                    meta: {
+                        coverImageNode: resolved,
+                    },
+                };
+            }
+        case 'chapter':
+        case 'group':
+            const nodes = await Promise.all(
+                node.nodes.map(nn => processNodeAsync<BookContentNode>(nn, f))
+            );
+            node = {
+                ...node,
+                nodes,
+            };
+            break;
+    }
+
+    return f(node);
 }

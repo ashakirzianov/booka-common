@@ -1,25 +1,30 @@
 import {
-    Span, SimpleSpan, FootnoteSpan, AttributedSpan, CompoundSpan, AttributeName, SemanticSpan,
+    Span, SimpleSpan, RefSpan, AttributedSpan, CompoundSpan, AttributeName,
 } from '../model';
 
 export function isSimpleSpan(span: Span): span is SimpleSpan {
     return typeof span === 'string';
 }
 
-export function isFootnoteSpan(span: Span): span is FootnoteSpan {
-    return span.span === 'note';
+export function isRefSpan(span: Span): span is RefSpan {
+    return span.span === 'ref';
 }
 
 export function isAttributedSpan(span: Span): span is AttributedSpan {
     return span.span === 'attrs';
 }
 
-export function isSemanticSpan(span: Span): span is SemanticSpan {
-    return span.span === 'semantic';
-}
-
 export function isCompoundSpan(span: Span): span is CompoundSpan {
     return span.span === 'compound';
+}
+
+export function compoundSpan(spans: Span[]): Span {
+    return spans.length === 1
+        ? spans[0]
+        : {
+            span: 'compound',
+            spans,
+        };
 }
 
 export function assignAttributes(...attributes: AttributeName[]) {
@@ -52,7 +57,7 @@ function attrObject(attributes: AttributeName[]): AttributesObject {
 export function extractSpanText(span: Span): string {
     switch (span.span) {
         case 'attrs':
-        case 'note':
+        case 'ref':
             return extractSpanText(span.content);
         case 'compound':
             return span.spans

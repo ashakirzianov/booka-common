@@ -1,32 +1,51 @@
-import { Span, AttributeName } from './span';
+import { Span } from './span';
 import { BookRange } from './bookRange';
-import { KnownTag } from './tag';
+import { SupportSemantic } from './semantic';
 
 type DefNode<N extends string> = {
     node: N,
-    ref?: string,
+    refId?: string,
 };
 
 export type ParagraphNode = DefNode<'paragraph'> & {
     span: Span,
 };
 
+export type GroupNode = SupportSemantic<DefNode<'group'> & {
+    nodes: BookContentNode[],
+}, 'footnote' | 'quote'>;
+
 export type ChapterTitle = string[];
-export type ChapterNode = DefNode<'chapter'> & {
+export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     level: number,
     title: ChapterTitle,
     nodes: BookContentNode[],
-};
+}, 'footnote'>;
 
-export type ImageUrlNode = DefNode<'image-url'> & {
-    id: string,
-    url: string,
+export type ImageRefNode = DefNode<'image-ref'> & {
+    imageId: string,
+    imageRef: string,
 };
 export type ImageDataNode = DefNode<'image-data'> & {
-    id: string,
+    imageId: string,
     data: Buffer,
 };
-export type ImageNode = ImageUrlNode | ImageDataNode;
+export type ImageNode = ImageRefNode | ImageDataNode;
+
+export type TableCell = Span;
+export type TableRow = TableCell[];
+export type TableNode = DefNode<'table'> & {
+    rows: TableRow[],
+};
+
+export type ListKind = 'ordered' | 'basic';
+export type ListItem = Span;
+export type ListNode = DefNode<'list'> & {
+    kind: ListKind,
+    items: ListItem[],
+};
+
+export type SeparatorNode = DefNode<'separator'>;
 
 export type VolumeMeta = {
     title?: string,
@@ -39,52 +58,23 @@ export type VolumeNode = DefNode<'volume'> & {
 };
 
 export type BookId = string;
-export type Quote = {
+export type LibraryQuote = {
     bookId: BookId,
     range: BookRange,
 };
-export type QuoteNode = DefNode<'quote'> & {
-    quote: Quote,
+export type QuoteNode = DefNode<'lib-quote'> & {
+    quote: LibraryQuote,
 };
 
-export type RefNode = DefNode<'ref'> & {
-    to: string,
-    content: RawBookNode,
-};
-export type ImageRefNode = DefNode<'image-ref'> & {
-    imageId: string,
-};
-export type TitleNode = DefNode<'chapter-title'> & {
-    title: string[],
-    level: number,
-};
-export type TagNode = DefNode<'tag'> & {
-    tag: KnownTag,
-};
-export type SpanNode = DefNode<'span'> & {
-    span: Span,
-};
-export type IgnoreNode = DefNode<'ignore'>;
-export type RawContainerNode = DefNode<'compound-raw'> & {
-    nodes: RawBookNode[],
-};
-export type AttrNode = DefNode<'attr'> & {
-    attributes: AttributeName[],
-    content: RawBookNode,
-};
-export type RawBookNode =
-    | RefNode | ImageRefNode | TitleNode | TagNode | SpanNode | IgnoreNode
-    | AttrNode
-    | RawContainerNode
-    | ImageNode
+export type BookContentNode =
+    | ChapterNode | GroupNode
+    | ParagraphNode | ImageNode
+    | TableNode | ListNode | SeparatorNode
     ;
-
-export type BookContentNode = ChapterNode | ParagraphNode | ImageNode;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
     | BookContentNode
-    | RawBookNode
     | QuoteNode
     | VolumeNode
     ;
