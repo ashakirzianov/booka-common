@@ -5,3 +5,4 @@ export * from './nodes';
 export * from './semantic';
 export * from './span';
 export * from './tag';
+export * from './types';
