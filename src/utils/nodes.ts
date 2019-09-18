@@ -2,7 +2,7 @@ import {
     Node, HasSubnodes,
     VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode,
 } from '../model';
-import { extractSpanText } from './span';
+import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
@@ -220,4 +220,31 @@ export function resolveBookReference(node: Node, refId: string): BookContentNode
     }
 
     return undefined;
+}
+
+export function nodeTextLength(node: Node): number {
+    switch (node.node) {
+        case 'chapter':
+        case 'group':
+        case 'volume':
+            return node.nodes.reduce((len, n) => len + nodeTextLength(n), 0);
+        case 'paragraph':
+            return spanTextLength(node.span);
+        case 'list':
+            return node.items.reduce((len, s) => spanTextLength(s) + len, 0);
+        case 'table':
+            return node.rows.reduce(
+                (rowLen, row) =>
+                    row.reduce((len, c) => len + spanTextLength(c), 0),
+                0,
+            );
+        case 'lib-quote':
+        case 'image-data':
+        case 'image-ref':
+        case 'separator':
+            return 0;
+        default:
+            assertNever(node);
+            return 0;
+    }
 }
