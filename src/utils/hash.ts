@@ -3,20 +3,20 @@ import { createReadStream } from 'fs';
 import { Book } from '../model';
 import { extractNodeText } from './nodes';
 
-export function bookHash(book: Book) {
+export function buildBookHash(book: Book) {
     const input = extractNodeText(book.volume);
     return createHash('sha1')
         .update(input)
         .digest('base64');
 }
 
-export function bufferHash(buffer: Buffer) {
+export function buildBufferHash(buffer: Buffer) {
     return createHash('md5')
         .update(buffer)
         .digest('base64');
 }
 
-export function fileHash(filePath: string) {
+export function buildFileHash(filePath: string) {
     return new Promise<string>((resolve, reject) => {
         try {
             const hash = createHash('md5');
