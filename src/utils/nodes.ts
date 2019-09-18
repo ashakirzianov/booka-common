@@ -3,6 +3,7 @@ import {
     VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode,
 } from '../model';
 import { extractSpanText } from './span';
+import { assertNever } from './misc';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume';
@@ -183,4 +184,40 @@ export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>
     }
 
     return f(node);
+}
+
+export function* iterateBookNodes(node: Node): Generator<BookContentNode> {
+    switch (node.node) {
+        case 'chapter':
+        case 'group':
+            yield node;
+        case 'volume':
+            for (const sub of node.nodes) {
+                yield* iterateBookNodes(sub);
+            }
+            break;
+        case 'image-data':
+        case 'image-ref':
+        case 'list':
+        case 'paragraph':
+        case 'separator':
+        case 'table':
+            yield node;
+            break;
+        case 'lib-quote':
+            break;
+        default:
+            assertNever(node);
+            break;
+    }
+}
+
+export function resolveBookReference(node: Node, refId: string): BookContentNode | undefined {
+    for (const sub of iterateBookNodes(node)) {
+        if (sub.refId === refId) {
+            return sub;
+        }
+    }
+
+    return undefined;
 }
