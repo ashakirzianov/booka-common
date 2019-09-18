@@ -138,6 +138,7 @@ export function processNode(node: Node, f: (n: Node) => Node): Node {
                 node = {
                     ...node,
                     meta: {
+                        ...node.meta,
                         coverImageNode: resolved,
                     },
                 };
@@ -164,6 +165,7 @@ export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>
                 node = {
                     ...node,
                     meta: {
+                        ...node.meta,
                         coverImageNode: resolved,
                     },
                 };
