@@ -15,6 +15,7 @@ export type QuoteSemantic = {
 };
 
 export type SemanticKey = Semantic['semantic'];
+export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
 export type Semantic =
     | FootnoteSemantic
     | CorrectionSemantic

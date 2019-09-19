@@ -1,6 +1,7 @@
 import {
     Span, SimpleSpan, RefSpan, AttributedSpan, CompoundSpan, AttributeName,
 } from '../model';
+import { assertNever } from './misc';
 
 export function isSimpleSpan(span: Span): span is SimpleSpan {
     return typeof span === 'string';
@@ -66,7 +67,22 @@ export function extractSpanText(span: Span): string {
         case undefined:
             return span;
         default:
-            // TODO: assert never ?
+            assertNever(span);
             return '';
+    }
+}
+
+export function spanTextLength(span: Span): number {
+    switch (span.span) {
+        case undefined:
+            return span.length;
+        case 'attrs':
+        case 'ref':
+            return spanTextLength(span.content);
+        case 'compound':
+            return span.spans.reduce((len, s) => len + spanTextLength(s), 0);
+        default:
+            assertNever(span);
+            return 0;
     }
 }
