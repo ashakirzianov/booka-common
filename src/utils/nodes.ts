@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode, Span,
 } from '../model';
 import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
@@ -18,7 +18,7 @@ export function isChapter(bn: Node): bn is ChapterNode {
 }
 
 export function isParagraph(bn: Node): bn is ParagraphNode {
-    return bn.node === 'paragraph';
+    return bn.node === undefined;
 }
 
 export function isImage(bn: Node): bn is ImageNode {
@@ -27,6 +27,10 @@ export function isImage(bn: Node): bn is ImageNode {
 
 export function isGroup(bn: Node): bn is GroupNode {
     return bn.node === 'group';
+}
+
+export function makePph(span: Span): ParagraphNode {
+    return span;
 }
 
 export function nodeChildren(node: Node) {
@@ -50,7 +54,7 @@ export function collectImageIds(bn: Node): string[] {
         case 'image-ref':
         case 'image-data':
             return bn.imageId ? [bn.imageId] : [];
-        case 'paragraph':
+        case undefined:
             return [];
         case 'volume':
             const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.imageId
@@ -108,8 +112,8 @@ export function extractNodeText(node: Node): string {
             return node.nodes
                 .map(extractNodeText)
                 .join('');
-        case 'paragraph':
-            return extractSpanText(node.span);
+        case undefined:
+            return extractSpanText(node);
         default:
             return '';
     }
@@ -199,7 +203,7 @@ export function* iterateBookNodes(node: Node): Generator<BookContentNode> {
         case 'image-data':
         case 'image-ref':
         case 'list':
-        case 'paragraph':
+        case undefined:
         case 'separator':
         case 'table':
             yield node;
@@ -228,8 +232,8 @@ export function nodeTextLength(node: Node): number {
         case 'group':
         case 'volume':
             return node.nodes.reduce((len, n) => len + nodeTextLength(n), 0);
-        case 'paragraph':
-            return spanTextLength(node.span);
+        case undefined:
+            return spanTextLength(node);
         case 'list':
             return node.items.reduce((len, s) => spanTextLength(s) + len, 0);
         case 'table':
