@@ -111,7 +111,7 @@ export function extractNodeText(node: Node): string {
         case 'group':
             return node.nodes
                 .map(extractNodeText)
-                .join('');
+                .join('\n');
         case undefined:
             return extractSpanText(node);
         default:
