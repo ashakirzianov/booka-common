@@ -11,7 +11,7 @@ export type ParagraphNode = Span & { node?: undefined, refId?: undefined };
 
 export type GroupNode = SupportSemantic<DefNode<'group'> & {
     nodes: BookContentNode[],
-}, 'footnote' | 'quote'>;
+}, 'footnote' | 'quote' | 'epigraph'>;
 
 export type ChapterTitle = string[];
 export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
