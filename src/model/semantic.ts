@@ -18,6 +18,10 @@ export type EpigraphSemantic = {
     semantic: 'epigraph',
 };
 
+export type PoemSemantic = {
+    semantic: 'poem',
+};
+
 export type SemanticKey = Semantic['semantic'];
 export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
 export type Semantic =
@@ -25,4 +29,5 @@ export type Semantic =
     | CorrectionSemantic
     | QuoteSemantic
     | EpigraphSemantic
+    | PoemSemantic
     ;
