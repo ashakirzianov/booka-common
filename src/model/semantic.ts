@@ -16,6 +16,7 @@ export type QuoteSemantic = {
 
 export type EpigraphSemantic = {
     semantic: 'epigraph',
+    signature: string[],
 };
 
 export type PoemSemantic = {
