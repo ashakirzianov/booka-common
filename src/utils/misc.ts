@@ -43,9 +43,12 @@ export function last<T>(arr: T[]): T {
     return arr[arr.length - 1];
 }
 
-export function distinct<T>(arr: T[]): T[] {
+export function distinct<T>(arr: T[], eq?: (l: T, r: T) => boolean): T[] {
     return arr.reduce<T[]>((res, x) => {
-        if (!res.some(xx => xx === x)) {
+        const pred = eq
+            ? (xx: T) => eq(xx, x)
+            : (xx: T) => xx === x;
+        if (!res.some(pred)) {
             res.push(x);
         }
 
