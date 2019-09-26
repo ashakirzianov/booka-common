@@ -9,7 +9,6 @@ export type EpubBookSource = {
 export type BookSource = EpubBookSource;
 export type Book = {
     volume: VolumeNode,
-    source: BookSource,
     tags: KnownTag[],
 };
 

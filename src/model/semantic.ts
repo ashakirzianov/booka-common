@@ -11,7 +11,16 @@ export type CorrectionSemantic = {
 };
 export type QuoteSemantic = {
     semantic: 'quote',
-    source?: string,
+    signature: string[],
+};
+
+export type EpigraphSemantic = {
+    semantic: 'epigraph',
+    signature: string[],
+};
+
+export type PoemSemantic = {
+    semantic: 'poem',
 };
 
 export type SemanticKey = Semantic['semantic'];
@@ -20,4 +29,6 @@ export type Semantic =
     | FootnoteSemantic
     | CorrectionSemantic
     | QuoteSemantic
+    | EpigraphSemantic
+    | PoemSemantic
     ;
