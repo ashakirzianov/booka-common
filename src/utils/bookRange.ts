@@ -1,4 +1,4 @@
-import { BookPath, BookRange } from '../model';
+import { BookPath, BookRange, BookContentNode } from '../model';
 
 export function leadPath(): BookPath {
     return [0];
@@ -87,6 +87,28 @@ export function isFirstSubpath(left: BookPath, right: BookPath) {
     return right
         .slice(left.length)
         .every(p => p === 0);
+}
+
+export function nodesForPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] | undefined {
+    if (path.length === 0) {
+        return [];
+    } else if (path.length === 1) {
+        const start = path[0];
+        const end = count === undefined ? undefined : start + count;
+        return top.slice(start, end);
+    } else {
+        const head = top[path[0]];
+        if (head === undefined) {
+            return undefined;
+        }
+        switch (head.node) {
+            case 'chapter':
+            case 'group':
+                return nodesForPath(head.nodes, path.slice(1), count);
+            default:
+                return undefined;
+        }
+    }
 }
 
 export function bookRange(start?: BookPath, end?: BookPath): BookRange {
