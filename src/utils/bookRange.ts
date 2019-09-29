@@ -89,6 +89,22 @@ export function isFirstSubpath(left: BookPath, right: BookPath) {
         .every(p => p === 0);
 }
 
+export function relativePath(path: BookPath, relativeTo: BookPath): BookPath | undefined {
+    return isSubpath(relativeTo, path)
+        ? path.slice(relativeTo.length)
+        : undefined;
+}
+
+export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): BookRange | undefined {
+    const start = relativePath(range.start, relativeTo);
+    if (start) {
+        const end = range.end && relativePath(range.end, relativeTo);
+        return { start, end };
+    } else {
+        return undefined;
+    }
+}
+
 export function nodesForPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] | undefined {
     if (path.length === 0) {
         return [];
