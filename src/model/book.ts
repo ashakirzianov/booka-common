@@ -22,6 +22,8 @@ export type BookInfo = {
 };
 
 export type BookFragment = {
-    path: BookPath,
+    current: BookPath,
+    next?: BookPath,
+    previous?: BookPath,
     nodes: BookContentNode[],
 };
