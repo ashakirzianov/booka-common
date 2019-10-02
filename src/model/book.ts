@@ -27,3 +27,12 @@ export type BookFragment = {
     previous?: BookPath,
     nodes: BookContentNode[],
 };
+
+export type TableOfContentsItem = {
+    title: string[],
+    level: number,
+    path: BookPath,
+};
+export type TableOfContents = {
+    items: TableOfContentsItem[],
+};
