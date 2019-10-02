@@ -6,7 +6,7 @@ import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
-    return bn.node === 'chapter' || bn.node === 'volume';
+    return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
 }
 
 export function isVolume(bn: Node): bn is VolumeNode {

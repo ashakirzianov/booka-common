@@ -1,4 +1,6 @@
 import { BookPath, BookRange, BookContentNode } from '../model';
+import { hasSubnodes } from './nodes';
+import { lastElement } from './misc';
 
 export function leadPath(): BookPath {
     return [0];
@@ -27,8 +29,8 @@ export function incrementPath(path: BookPath, inc: number): BookPath {
     return result;
 }
 
-export function appendPath(path: BookPath, last: number): BookPath {
-    return path.concat([last]);
+export function appendPath(path: BookPath, lastIdx: number): BookPath {
+    return path.concat([lastIdx]);
 }
 
 export function samePath(p1: BookPath, p2: BookPath) {
@@ -71,6 +73,12 @@ export function pathLessThan(left: BookPath, right: BookPath): boolean {
     return comparePaths(left, right) === -1;
 }
 
+export function isSiblingPaths(left: BookPath, right: BookPath): boolean {
+    return left.length === right.length
+        && left
+            .every((lc, idx) => lc === right[idx] || idx === left.length - 1);
+}
+
 export function isSubpath(left: BookPath, right: BookPath) {
     if (left.length <= right.length) {
         return left.every((p, i) => p === right[i]);
@@ -105,26 +113,67 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
     }
 }
 
-export function nodesForPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] | undefined {
+export function nodesForPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
     if (path.length === 0) {
-        return [];
+        const start = 0;
+        const end = count === undefined
+            ? undefined
+            : start + count;
+        return top.slice(start, end);
     } else if (path.length === 1) {
         const start = path[0];
-        const end = count === undefined ? undefined : start + count;
+        const end = count === undefined
+            ? undefined
+            : start + count;
         return top.slice(start, end);
     } else {
         const head = top[path[0]];
         if (head === undefined) {
-            return undefined;
+            return [];
         }
         switch (head.node) {
             case 'chapter':
             case 'group':
                 return nodesForPath(head.nodes, path.slice(1), count);
             default:
-                return undefined;
+                return [];
         }
     }
+}
+
+export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookContentNode[] {
+    if (range.end && !pathLessThan(range.start, range.end)) {
+        return [];
+    }
+
+    const forPath = nodesForPath(nodes, range.start);
+    if (!range.end) {
+        return forPath;
+    }
+
+    if (isSiblingPaths(range.start, range.end)) {
+        const count = lastElement(range.end) - lastElement(range.start);
+        return forPath.slice(0, count);
+    }
+
+    if (isSubpath(range.start, range.end)) {
+        const headNode = forPath[0];
+        if (!hasSubnodes(headNode)) {
+            return [headNode];
+        } else {
+            const tailEnd = range.end.slice(range.start.length);
+            const children = nodesForRange(headNode.nodes, {
+                start: [0],
+                end: tailEnd,
+            });
+            return [{
+                ...headNode,
+                nodes: children,
+            }];
+        }
+    }
+
+    return forPath;
 }
 
 export function bookRange(start?: BookPath, end?: BookPath): BookRange {

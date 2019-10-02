@@ -1,3 +1,4 @@
+export * from './book';
 export * from './bookRange';
 export * from './hash';
 export * from './misc';
