@@ -142,26 +142,21 @@ export function nodesForPath(top: BookContentNode[], path: BookPath, count?: num
 }
 
 export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookContentNode[] {
-    if (range.end && !pathLessThan(range.start, range.end)) {
-        return [];
-    }
-
-    const forPath = nodesForPath(nodes, range.start);
     if (!range.end) {
-        return forPath;
+        return nodesForPath(nodes, range.start);
     }
 
     if (isSiblingPaths(range.start, range.end)) {
         const count = lastElement(range.end) - lastElement(range.start);
+        const forPath = nodesForPath(nodes, range.start);
         return forPath.slice(0, count);
-    }
-
-    if (isSubpath(range.start, range.end)) {
+    } else if (isSubpath(range.start, range.end)) {
+        const forPath = nodesForPath(nodes, range.start);
         const headNode = forPath[0];
         if (!hasSubnodes(headNode)) {
             return [headNode];
         } else {
-            const tailEnd = range.end.slice(range.start.length);
+            const tailEnd = range.end.slice(range.start.length || 1);
             const children = nodesForRange(headNode.nodes, {
                 start: [0],
                 end: tailEnd,
@@ -171,9 +166,11 @@ export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookC
                 nodes: children,
             }];
         }
+    } else if (range.end && !pathLessThan(range.start, range.end)) {
+        return [];
+    } else {
+        return nodesForPath(nodes, range.start);
     }
-
-    return forPath;
 }
 
 export function bookRange(start?: BookPath, end?: BookPath): BookRange {
