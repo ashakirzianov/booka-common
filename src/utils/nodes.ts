@@ -1,12 +1,12 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode, Span,
+    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath,
 } from '../model';
 import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
-    return bn.node === 'chapter' || bn.node === 'volume';
+    return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
 }
 
 export function isVolume(bn: Node): bn is VolumeNode {
@@ -250,5 +250,29 @@ export function nodeTextLength(node: Node): number {
         default:
             assertNever(node);
             return 0;
+    }
+}
+
+export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
+    if (node.refId === refId) {
+        return [node, []];
+    }
+
+    switch (node.node) {
+        case 'volume':
+        case 'chapter':
+        case 'group':
+            {
+                for (let idx = 0; idx < node.nodes.length; idx++) {
+                    const sub = node.nodes[idx];
+                    const result = findReference(refId, sub);
+                    if (result !== undefined) {
+                        return [result[0], [idx, ...result[1]]];
+                    }
+                }
+                return undefined;
+            }
+        default:
+            return undefined;
     }
 }

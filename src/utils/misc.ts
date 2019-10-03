@@ -39,7 +39,7 @@ export function forEach<V>(obj: ObjectMap<V>, f: (key: string, value: V) => void
     });
 }
 
-export function last<T>(arr: T[]): T {
+export function lastElement<T>(arr: T[]): T {
     return arr[arr.length - 1];
 }
 

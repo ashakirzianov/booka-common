@@ -1,4 +1,6 @@
 import { BookPath, BookRange, BookContentNode } from '../model';
+import { hasSubnodes } from './nodes';
+import { lastElement } from './misc';
 
 export function leadPath(): BookPath {
     return [0];
@@ -27,8 +29,34 @@ export function incrementPath(path: BookPath, inc: number): BookPath {
     return result;
 }
 
-export function appendPath(path: BookPath, last: number): BookPath {
-    return path.concat([last]);
+export function appendPath(path: BookPath, lastIdx: number): BookPath {
+    return path.concat([lastIdx]);
+}
+
+export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
+    if (toAdd.length === 0) {
+        return path;
+    }
+    const result = [...path];
+    result[result.length - 1] += toAdd[0];
+    return [...result, ...toAdd.slice(1)];
+}
+
+export function subtractPaths(path: BookPath, toSubtract: BookPath): BookPath | undefined {
+    if (path.length < toSubtract.length) {
+        return undefined;
+    }
+
+    const result = [...path];
+    for (let idx = toSubtract.length - 1; idx >= 0; idx--) {
+        const resultIdx = idx + result.length - toSubtract.length;
+        result[resultIdx] -= toSubtract[idx];
+        if (result[resultIdx] < 0) {
+            return undefined;
+        }
+    }
+
+    return result;
 }
 
 export function samePath(p1: BookPath, p2: BookPath) {
@@ -71,9 +99,15 @@ export function pathLessThan(left: BookPath, right: BookPath): boolean {
     return comparePaths(left, right) === -1;
 }
 
-export function isSubpath(left: BookPath, right: BookPath) {
-    if (left.length <= right.length) {
-        return left.every((p, i) => p === right[i]);
+export function isSiblingPaths(left: BookPath, right: BookPath): boolean {
+    return left.length === right.length
+        && left
+            .every((lc, idx) => lc === right[idx] || idx === left.length - 1);
+}
+
+export function isSubpath(path: BookPath, sub: BookPath) {
+    if (path.length <= sub.length) {
+        return path.every((p, i) => p === sub[i]);
     } else {
         return false;
     }
@@ -90,9 +124,17 @@ export function isFirstSubpath(left: BookPath, right: BookPath) {
 }
 
 export function relativePath(path: BookPath, relativeTo: BookPath): BookPath | undefined {
-    return isSubpath(relativeTo, path)
-        ? path.slice(relativeTo.length)
-        : undefined;
+    if (relativeTo.length === 0) {
+        return path;
+    }
+    if (!isSubpath(relativeTo.slice(0, relativeTo.length - 1), path)) {
+        return undefined;
+    }
+    const result = path.slice(relativeTo.length - 1);
+    result[0] -= relativeTo[relativeTo.length - 1];
+    return result[0] < 0
+        ? undefined
+        : result;
 }
 
 export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): BookRange | undefined {
@@ -105,25 +147,63 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
     }
 }
 
-export function nodesForPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] | undefined {
+export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
     if (path.length === 0) {
-        return [];
+        const start = 0;
+        const end = count === undefined
+            ? undefined
+            : start + count;
+        return top.slice(start, end);
     } else if (path.length === 1) {
         const start = path[0];
-        const end = count === undefined ? undefined : start + count;
+        const end = count === undefined
+            ? undefined
+            : start + count;
         return top.slice(start, end);
     } else {
         const head = top[path[0]];
         if (head === undefined) {
-            return undefined;
+            return [];
         }
         switch (head.node) {
             case 'chapter':
             case 'group':
-                return nodesForPath(head.nodes, path.slice(1), count);
+                return nodesAfterPath(head.nodes, path.slice(1), count);
             default:
-                return undefined;
+                return [];
         }
+    }
+}
+
+export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookContentNode[] {
+    if (!range.end) {
+        return nodesAfterPath(nodes, range.start);
+    }
+
+    if (isSiblingPaths(range.start, range.end)) {
+        const count = lastElement(range.end) - lastElement(range.start);
+        const forPath = nodesAfterPath(nodes, range.start);
+        return forPath.slice(0, count);
+    } else if (isSubpath(range.start, range.end)) {
+        const forPath = nodesAfterPath(nodes, range.start);
+        const headNode = forPath[0];
+        if (!hasSubnodes(headNode)) {
+            return [headNode];
+        } else {
+            const tailEnd = range.end.slice(range.start.length || 1);
+            const children = nodesForRange(headNode.nodes, {
+                start: [0],
+                end: tailEnd,
+            });
+            return [{
+                ...headNode,
+                nodes: children,
+            }];
+        }
+    } else if (range.end && !pathLessThan(range.start, range.end)) {
+        return [];
+    } else {
+        return nodesAfterPath(nodes, range.start);
     }
 }
 
