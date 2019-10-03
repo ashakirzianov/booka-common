@@ -149,7 +149,11 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
 
 export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
     if (path.length === 0) {
-        return [];
+        const start = 0;
+        const end = count === undefined
+            ? undefined
+            : start + count;
+        return top.slice(start, end);
     } else if (path.length === 1) {
         const start = path[0];
         const end = count === undefined
