@@ -9,7 +9,7 @@ type DefNode<N extends string> = {
 
 export type SimpleParagraphNode = Span & { node?: undefined, refId?: undefined };
 export type ComplexParagraphNode = SupportSemantic<DefNode<'pph'> & {
-    pph: Span,
+    span: Span,
 }, 'poem'>;
 export type ParagraphNode = SimpleParagraphNode | ComplexParagraphNode;
 

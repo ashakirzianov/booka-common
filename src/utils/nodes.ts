@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, SimpleParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath,
+    VolumeNode, ChapterNode, SimpleParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath, ParagraphNode,
 } from '../model';
 import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
@@ -48,6 +48,7 @@ export function nodeToString(bn: Node) {
 export function collectImageIds(bn: Node): string[] {
     switch (bn.node) {
         case 'chapter':
+        case 'group':
             return bn.nodes
                 .map(collectImageIds)
                 .reduce((all, one) => all.concat(one), []);
@@ -55,6 +56,11 @@ export function collectImageIds(bn: Node): string[] {
         case 'image-data':
             return bn.imageId ? [bn.imageId] : [];
         case undefined:
+        case 'pph':
+        case 'table':
+        case 'list':
+        case 'lib-quote':
+        case 'separator':
             return [];
         case 'volume':
             const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.imageId
@@ -65,6 +71,7 @@ export function collectImageIds(bn: Node): string[] {
                 .reduce((all, one) => all.concat(one), [])
                 .concat(coverIds);
         default:
+            assertNever(bn);
             // TODO: assert never?
             return [];
     }
@@ -234,9 +241,8 @@ export function nodeTextLength(node: Node): number {
         case 'volume':
             return node.nodes.reduce((len, n) => len + nodeTextLength(n), 0);
         case undefined:
-            return spanTextLength(node);
         case 'pph':
-            return spanTextLength(node.pph);
+            return spanTextLength(pphSpan(node));
         case 'list':
             return node.items.reduce((len, s) => spanTextLength(s) + len, 0);
         case 'table':
@@ -278,4 +284,10 @@ export function findReference(refId: string, node: Node): [Node, BookPath] | und
         default:
             return undefined;
     }
+}
+
+export function pphSpan(p: ParagraphNode): Span {
+    return p.node === undefined
+        ? p
+        : p.span;
 }
