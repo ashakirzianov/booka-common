@@ -1,34 +1,35 @@
-export type SupportSemantic<T, S extends SemanticKey = SemanticKey> = T &
-    ({ semantic?: undefined } | Extract<Semantic, { semantic: S }>);
+export type SupportSemantic<T, S extends SemanticKey = SemanticKey> = T & {
+    semantic?: Partial<SemanticForKey<S>>,
+};
 
-export type FootnoteSemantic = {
-    semantic: 'footnote',
+type DefSemantic<S extends string, T = {}> = {
+    [k in S]: T;
+};
+export type FootnoteSemantic = DefSemantic<'footnote', {
     title: string[],
-};
-export type CorrectionSemantic = {
-    semantic: 'correction',
+}>;
+export type CorrectionSemantic = DefSemantic<'correction', {
     note?: string,
-};
-export type QuoteSemantic = {
-    semantic: 'quote',
+}>;
+export type QuoteSemantic = DefSemantic<'quote', {
     signature: string[],
-};
+}>;
 
-export type EpigraphSemantic = {
-    semantic: 'epigraph',
+export type EpigraphSemantic = DefSemantic<'epigraph', {
     signature: string[],
-};
+}>;
 
-export type PoemSemantic = {
-    semantic: 'poem',
-};
+export type PoemSemantic = DefSemantic<'poem'>;
 
-export type SemanticKey = Semantic['semantic'];
-export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
+export type SemanticKey = keyof Semantic;
+export type SemanticForKey<K extends SemanticKey> = Pick<Semantic, K>;
+export type HasSemantic<K extends SemanticKey> = {
+    semantic: SemanticForKey<K>,
+};
 export type Semantic =
-    | FootnoteSemantic
-    | CorrectionSemantic
-    | QuoteSemantic
-    | EpigraphSemantic
-    | PoemSemantic
+    & FootnoteSemantic
+    & CorrectionSemantic
+    & QuoteSemantic
+    & EpigraphSemantic
+    & PoemSemantic
     ;

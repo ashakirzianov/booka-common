@@ -5,7 +5,7 @@ export type AttributeName =
     | 'small' | 'big'
     | 'subscript' | 'superscript'
     | 'quote'
-    | 'poem' | 'line' // TODO: remove ?
+    | 'poem'
     ;
 export type SimpleSpan = string & { span?: undefined };
 export type AttributedSpan = {
