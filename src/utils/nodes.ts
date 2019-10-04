@@ -1,6 +1,6 @@
 import {
     Node, HasSubnodes,
-    VolumeNode, ChapterNode, ParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath,
+    VolumeNode, ChapterNode, SimpleParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath,
 } from '../model';
 import { extractSpanText, spanTextLength } from './span';
 import { assertNever } from './misc';
@@ -17,7 +17,7 @@ export function isChapter(bn: Node): bn is ChapterNode {
     return bn.node === 'chapter';
 }
 
-export function isParagraph(bn: Node): bn is ParagraphNode {
+export function isParagraph(bn: Node): bn is SimpleParagraphNode {
     return bn.node === undefined;
 }
 
@@ -29,7 +29,7 @@ export function isGroup(bn: Node): bn is GroupNode {
     return bn.node === 'group';
 }
 
-export function makePph(span: Span): ParagraphNode {
+export function makePph(span: Span): SimpleParagraphNode {
     return span;
 }
 
@@ -204,6 +204,7 @@ export function* iterateBookNodes(node: Node): Generator<BookContentNode> {
         case 'image-ref':
         case 'list':
         case undefined:
+        case 'pph':
         case 'separator':
         case 'table':
             yield node;
@@ -234,6 +235,8 @@ export function nodeTextLength(node: Node): number {
             return node.nodes.reduce((len, n) => len + nodeTextLength(n), 0);
         case undefined:
             return spanTextLength(node);
+        case 'pph':
+            return spanTextLength(node.pph);
         case 'list':
             return node.items.reduce((len, s) => spanTextLength(s) + len, 0);
         case 'table':

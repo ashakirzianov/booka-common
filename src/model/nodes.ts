@@ -7,7 +7,11 @@ type DefNode<N extends string> = {
     refId?: string,
 };
 
-export type ParagraphNode = Span & { node?: undefined, refId?: undefined };
+export type SimpleParagraphNode = Span & { node?: undefined, refId?: undefined };
+export type ComplexParagraphNode = SupportSemantic<DefNode<'pph'> & {
+    pph: Span,
+}, 'poem'>;
+export type ParagraphNode = SimpleParagraphNode | ComplexParagraphNode;
 
 export type GroupNode = SupportSemantic<DefNode<'group'> & {
     nodes: BookContentNode[],
