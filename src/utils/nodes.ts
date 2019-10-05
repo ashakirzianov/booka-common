@@ -10,11 +10,14 @@ export function hasSubnodes(bn: Node): bn is HasSubnodes {
 export function* iterateNodePath(node: Node): Generator<[Node, BookPath]> {
     yield [node, []];
     if (hasSubnodes(node)) {
-        const nodes = node.nodes;
-        for (let idx = 0; idx < nodes.length; idx++) {
-            for (const [subnode, subpath] of iterateNodePath(nodes)) {
-                yield [subnode, [idx, ...subpath]];
-            }
+        yield* iterateNodesPath(node.nodes);
+    }
+}
+
+export function* iterateNodesPath(nodes: Node[]): Generator<[Node, BookPath]> {
+    for (let idx = 0; idx < nodes.length; idx++) {
+        for (const [subnode, subpath] of iterateNodePath(nodes)) {
+            yield [subnode, [idx, ...subpath]];
         }
     }
 }
@@ -62,12 +65,10 @@ export function* iterateImageIds(bn: Node): Generator<string> {
     }
 }
 
-export function* iterateReferencedBookIds(nodes: Node[]): Generator<string> {
-    for (const node of nodes) {
-        for (const subnode of iterateNode(node)) {
-            if (node.node === 'lib-quote') {
-                yield node.quote.bookId;
-            }
+export function* iterateReferencedBookIds(node: Node): Generator<string> {
+    for (const subnode of iterateNode(node)) {
+        if (subnode.node === 'lib-quote') {
+            yield subnode.quote.bookId;
         }
     }
 }
