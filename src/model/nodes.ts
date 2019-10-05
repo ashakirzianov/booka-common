@@ -43,7 +43,9 @@ export type TableNode = DefNode<'table'> & {
 };
 
 export type ListKind = 'ordered' | 'basic';
-export type ListItem = Span;
+export type ListItem = {
+    item: Span,
+};
 export type ListNode = DefNode<'list'> & {
     kind: ListKind,
     items: ListItem[],
