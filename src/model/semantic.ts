@@ -12,11 +12,11 @@ export type CorrectionSemantic = DefSemantic<'correction', {
     note?: string,
 }>;
 export type QuoteSemantic = DefSemantic<'quote', {
-    signature: string[],
+    signature?: string[],
 }>;
 
 export type EpigraphSemantic = DefSemantic<'epigraph', {
-    signature: string[],
+    signature?: string[],
 }>;
 
 export type PoemSemantic = DefSemantic<'poem'>;

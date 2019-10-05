@@ -1,38 +1,37 @@
 import { SupportSemantic } from './semantic';
 
-export type AttributeName =
-    | 'italic' | 'bold'
-    | 'small' | 'big'
-    | 'subscript' | 'superscript'
-    | 'quote'
-    | 'poem'
-    ;
-export type SimpleSpan = string & { span?: undefined };
-export type AttributedSpan = {
-    span: 'attrs',
-    content: Span,
-    attrs?: AttributeName[],
-};
+export type SimpleSpan = string;
 export type CompoundSpan = {
     [n: number]: Span,
-    span?: undefined,
-};
-export type RefSpan = {
-    span: 'ref',
-    refToId: string,
-    content: Span,
 };
 
-export type ComplexSpan = SupportSemantic<
-    // TODO: rename 'content' to 'span'
-    { content: Span, span: 'complex' },
-    'correction'
+export const attributeNames = [
+    'italic', 'bold', 'small', 'big', 'sub', 'sup',
+] as const;
+export type AttributeName = typeof attributeNames[number];
+export type AttributedSpan = {
+    [k in AttributeName]: {
+        [kk in k]: Span;
+    };
+}[AttributeName];
+
+export type RefSpan = {
+    ref: Span,
+    refToId: string,
+};
+
+type SpanSemanticKey = 'correction' | 'quote';
+export type SpanSemantic = SemanticSpan['semantic'];
+export type SemanticSpan = SupportSemantic<{
+    span2: Span,
+},
+    SpanSemanticKey
 >;
 
 export type Span =
     | SimpleSpan
     | CompoundSpan
-    | RefSpan
     | AttributedSpan
-    | ComplexSpan
+    | RefSpan
+    | SemanticSpan
     ;
