@@ -84,3 +84,10 @@ export type Node =
     | QuoteNode
     | VolumeNode
     ;
+
+export type NodeKind = Node['node'];
+export type NodeForKind<K extends NodeKind> = Extract<Node, { node: K }>;
+export type SubstitutableNode<K extends NodeKind> =
+    K extends ImageNode['node'] ? ImageNode
+    : K extends BookContentNode['node'] ? BookContentNode
+    : NodeForKind<K>;

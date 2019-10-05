@@ -1,7 +1,17 @@
 import {
-    Node, SimpleParagraphNode, ImageNode, BookContentNode, Span, BookPath, ParagraphNode, HasSubnodes,
+    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageNode, BookContentNode, NodeKind, NodeForKind, SubstitutableNode,
 } from '../model';
 import { extractSpanText } from './span';
+
+export function makePph(span: Span): SimpleParagraphNode {
+    return span;
+}
+
+export function pphSpan(p: ParagraphNode): Span {
+    return p.node === undefined
+        ? p
+        : p.span;
+}
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
@@ -31,16 +41,6 @@ export function* iterateNode(node: Node): Generator<Node> {
             }
         }
     }
-}
-
-export function makePph(span: Span): SimpleParagraphNode {
-    return span;
-}
-
-export function pphSpan(p: ParagraphNode): Span {
-    return p.node === undefined
-        ? p
-        : p.span;
 }
 
 export function* iterateImageIds(bn: Node): Generator<string> {
@@ -73,6 +73,15 @@ export function* iterateReferencedBookIds(node: Node): Generator<string> {
     }
 }
 
+export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
+    for (const [sub, path] of iterateNodePath(node)) {
+        if (sub.refId === refId) {
+            return [sub, path];
+        }
+    }
+    return undefined;
+}
+
 export function extractNodeText(node: Node): string {
     switch (node.node) {
         case 'chapter':
@@ -88,39 +97,19 @@ export function extractNodeText(node: Node): string {
     }
 }
 
-export function processNode<T extends Node>(node: T, f: (n: Node) => Node): T;
-export function processNode(node: Node, f: (n: Node) => Node): Node {
+// Process nodes:
+
+export async function processNodeAsync<K extends NodeKind, N extends Node>(
+    n: N,
+    kind: K,
+    f: (n: NodeForKind<K>,
+    ) => Promise<SubstitutableNode<K>>): Promise<N> {
+    let node = n as Node;
     switch (node.node) {
         case 'volume':
-            if (node.meta.coverImageNode) {
-                const resolved = f(node.meta.coverImageNode) as ImageNode;
-                node = {
-                    ...node,
-                    meta: {
-                        ...node.meta,
-                        coverImageNode: resolved,
-                    },
-                };
-            }
-        case 'chapter':
-        case 'group':
-            const nodes = node.nodes.map(nn => processNode(nn, f));
-            node = {
-                ...node,
-                nodes,
-            };
-            break;
-    }
-
-    return f(node);
-}
-
-export async function processNodeAsync<T extends Node>(node: T, f: (n: Node) => Promise<Node>): Promise<T>;
-export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>): Promise<Node> {
-    switch (node.node) {
-        case 'volume':
-            if (node.meta.coverImageNode) {
-                const resolved = await f(node.meta.coverImageNode) as ImageNode;
+            const imageNode = node.meta.coverImageNode;
+            if (imageNode && imageNode.node === kind) {
+                const resolved = await f(imageNode as NodeForKind<K>) as ImageNode;
                 node = {
                     ...node,
                     meta: {
@@ -132,23 +121,18 @@ export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>
         case 'chapter':
         case 'group':
             const nodes = await Promise.all(
-                node.nodes.map(nn => processNodeAsync<BookContentNode>(nn, f))
+                node.nodes.map(nn => processNodeAsync(nn, kind, f))
             );
             node = {
                 ...node,
-                nodes,
+                nodes: nodes as BookContentNode[],
             };
             break;
     }
 
-    return f(node);
-}
-
-export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
-    for (const [sub, path] of iterateNodePath(node)) {
-        if (sub.refId === refId) {
-            return [sub, path];
-        }
+    if (node.node === kind) {
+        node = await f(node as NodeForKind<K>);
     }
-    return undefined;
+
+    return node as N;
 }
