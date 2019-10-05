@@ -1,7 +1,8 @@
 import {
-    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData,
+    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode,
 } from '../model';
 import { extractSpanText } from './span';
+import { addPaths } from './bookRange';
 
 export function makePph(span: Span): SimpleParagraphNode {
     return span;
@@ -15,6 +16,15 @@ export function pphSpan(p: ParagraphNode): Span {
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
+}
+
+export function* iterateBookFragment(fragment: BookFragment): Generator<[BookContentNode, BookPath]> {
+    for (const [node, path] of iterateNodesPath(fragment.nodes)) {
+        yield [
+            node as BookContentNode,
+            addPaths(fragment.current, path),
+        ];
+    }
 }
 
 export function* iterateNodePath(node: Node): Generator<[Node, BookPath]> {
