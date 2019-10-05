@@ -17,6 +17,7 @@ export type ImageData = ImageRefData | ImageBufferData;
 export type SimpleSpan = string;
 export type CompoundSpan = {
     [n: number]: Span,
+    compound?: undefined,
 };
 
 export const attributeNames = [
@@ -28,16 +29,24 @@ export type AttributedSpan = {
         [kk in k]: Span;
     };
 }[AttributeName];
+export type SpanAttribute = {
+    attr: AttributeName,
+    span: Span,
+};
 
 export type RefSpan = {
     ref: Span,
     refToId: string,
 };
 
+export type ImageSpan = {
+    image: ImageData,
+};
+
 type SpanSemanticKey = 'correction' | 'quote';
 export type SpanSemantic = SemanticSpan['semantic'];
 export type SemanticSpan = SupportSemantic<{
-    span2: Span,
+    span: Span,
 },
     SpanSemanticKey
 >;
@@ -48,4 +57,5 @@ export type Span =
     | AttributedSpan
     | RefSpan
     | SemanticSpan
+    | ImageSpan
     ;
