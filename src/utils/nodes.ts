@@ -248,9 +248,10 @@ export function nodeTextLength(node: Node): number {
         case 'table':
             return node.rows.reduce(
                 (rowLen, row) =>
-                    row.reduce((len, c) => len + spanTextLength(c), 0),
-                0,
-            );
+                    rowLen + row.cells.reduce((len, c) =>
+                        len + spanTextLength(c),
+                        0),
+                0);
         case 'lib-quote':
         case 'image-data':
         case 'image-ref':

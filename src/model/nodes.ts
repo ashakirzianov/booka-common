@@ -35,7 +35,9 @@ export type ImageDataNode = DefNode<'image-data'> & {
 export type ImageNode = ImageRefNode | ImageDataNode;
 
 export type TableCell = Span;
-export type TableRow = TableCell[];
+export type TableRow = {
+    cells: TableCell[],
+};
 export type TableNode = DefNode<'table'> & {
     rows: TableRow[],
 };
