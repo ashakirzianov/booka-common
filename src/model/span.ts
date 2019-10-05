@@ -14,8 +14,8 @@ export type AttributedSpan = {
     attrs?: AttributeName[],
 };
 export type CompoundSpan = {
-    span: 'compound',
-    spans: Span[],
+    [n: number]: Span,
+    span?: undefined,
 };
 export type RefSpan = {
     span: 'ref',
@@ -24,8 +24,15 @@ export type RefSpan = {
 };
 
 export type ComplexSpan = SupportSemantic<
-    CompoundSpan | RefSpan | AttributedSpan,
+    // TODO: rename 'content' to 'span'
+    { content: Span, span: 'complex' },
     'correction'
 >;
 
-export type Span = SimpleSpan | ComplexSpan;
+export type Span =
+    | SimpleSpan
+    | CompoundSpan
+    | RefSpan
+    | AttributedSpan
+    | ComplexSpan
+    ;

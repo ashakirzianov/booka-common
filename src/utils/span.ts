@@ -1,5 +1,5 @@
 import {
-    Span, SimpleSpan, RefSpan, AttributedSpan, CompoundSpan, AttributeName,
+    Span, SimpleSpan, RefSpan, AttributedSpan, CompoundSpan, AttributeName, ComplexSpan,
 } from '../model';
 import { assertNever } from './misc';
 
@@ -15,17 +15,22 @@ export function isAttributedSpan(span: Span): span is AttributedSpan {
     return span.span === 'attrs';
 }
 
-export function isCompoundSpan(span: Span): span is CompoundSpan {
-    return span.span === 'compound';
+export function isCompoundSpan(span: Span): span is (CompoundSpan) {
+    return Array.isArray(span);
+}
+
+export function isComplexSpan(span: Span): span is ComplexSpan {
+    return span.span === 'complex';
 }
 
 export function compoundSpan(spans: Span[]): Span {
     return spans.length === 1
         ? spans[0]
-        : {
-            span: 'compound',
-            spans,
-        };
+        : spans;
+}
+
+export function subSpans(span: CompoundSpan): Span[] {
+    return span as Span[];
 }
 
 export function assignAttributes(...attributes: AttributeName[]) {
@@ -56,33 +61,22 @@ function attrObject(attributes: AttributeName[]): AttributesObject {
 }
 
 export function extractSpanText(span: Span): string {
-    switch (span.span) {
-        case 'attrs':
-        case 'ref':
-            return extractSpanText(span.content);
-        case 'compound':
-            return span.spans
-                .map(extractSpanText)
-                .join('');
-        case undefined:
-            return span;
-        default:
-            assertNever(span);
-            return '';
+    if (isSimpleSpan(span)) {
+        return span;
+    } else if (isAttributedSpan(span) || isRefSpan(span)) {
+        return extractSpanText(span.content);
+    } else if (isCompoundSpan(span)) {
+        return subSpans(span)
+            .map(extractSpanText)
+            .join('');
+    } else if (isComplexSpan(span)) {
+        return extractSpanText(span.content);
+    } else {
+        assertNever(span);
+        return '';
     }
 }
 
 export function spanTextLength(span: Span): number {
-    switch (span.span) {
-        case undefined:
-            return span.length;
-        case 'attrs':
-        case 'ref':
-            return spanTextLength(span.content);
-        case 'compound':
-            return span.spans.reduce((len, s) => len + spanTextLength(s), 0);
-        default:
-            assertNever(span);
-            return 0;
-    }
+    return extractSpanText(span).length;
 }
