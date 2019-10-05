@@ -1,113 +1,74 @@
 import {
-    Node, HasSubnodes,
-    VolumeNode, ChapterNode, SimpleParagraphNode, ImageNode, BookContentNode, GroupNode, Span, BookPath, ParagraphNode,
+    Node, SimpleParagraphNode, ImageNode, BookContentNode, Span, BookPath, ParagraphNode, HasSubnodes,
 } from '../model';
-import { extractSpanText, spanTextLength } from './span';
-import { assertNever } from './misc';
+import { extractSpanText } from './span';
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
     return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
 }
 
-export function isVolume(bn: Node): bn is VolumeNode {
-    return bn.node === 'volume';
+export function* iterateNodePath(node: Node): Generator<[Node, BookPath]> {
+    yield [node, []];
+    if (hasSubnodes(node)) {
+        const nodes = node.nodes;
+        for (let idx = 0; idx < nodes.length; idx++) {
+            for (const [subnode, subpath] of iterateNodePath(nodes)) {
+                yield [subnode, [idx, ...subpath]];
+            }
+        }
+    }
 }
 
-export function isChapter(bn: Node): bn is ChapterNode {
-    return bn.node === 'chapter';
-}
-
-export function isParagraph(bn: Node): bn is SimpleParagraphNode {
-    return bn.node === undefined;
-}
-
-export function isImage(bn: Node): bn is ImageNode {
-    return bn.node === 'image-ref' || bn.node === 'image-data';
-}
-
-export function isGroup(bn: Node): bn is GroupNode {
-    return bn.node === 'group';
+export function* iterateNode(node: Node): Generator<Node> {
+    yield node;
+    if (hasSubnodes(node)) {
+        for (const subnode of node.nodes) {
+            for (const n of iterateNode(subnode)) {
+                yield n;
+            }
+        }
+    }
 }
 
 export function makePph(span: Span): SimpleParagraphNode {
     return span;
 }
 
-export function nodeChildren(node: Node) {
-    return hasSubnodes(node) ? node.nodes : [];
+export function pphSpan(p: ParagraphNode): Span {
+    return p.node === undefined
+        ? p
+        : p.span;
 }
 
-export function volumeToString(volume: VolumeNode) {
-    return JSON.stringify(volume);
-}
-
-export function nodeToString(bn: Node) {
-    return JSON.stringify(bn);
-}
-
-export function collectImageIds(bn: Node): string[] {
-    switch (bn.node) {
-        case 'chapter':
-        case 'group':
-            return bn.nodes
-                .map(collectImageIds)
-                .reduce((all, one) => all.concat(one), []);
-        case 'image-ref':
-        case 'image-data':
-            return bn.imageId ? [bn.imageId] : [];
-        case undefined:
-        case 'pph':
-        case 'table':
-        case 'list':
-        case 'lib-quote':
-        case 'separator':
-            return [];
-        case 'volume':
-            const coverIds = bn.meta.coverImageNode && bn.meta.coverImageNode.imageId
-                ? [bn.meta.coverImageNode.imageId]
-                : [];
-            return bn.nodes
-                .map(collectImageIds)
-                .reduce((all, one) => all.concat(one), [])
-                .concat(coverIds);
-        default:
-            assertNever(bn);
-            // TODO: assert never?
-            return [];
-    }
-}
-
-export function collectReferencedBookIds(nodes: Node[]): string[] {
-    const result = [] as string[];
-    for (const node of nodes) {
+export function* iterateImageIds(bn: Node): Generator<string> {
+    for (const node of iterateNode(bn)) {
         switch (node.node) {
-            case 'lib-quote':
-                result.push(node.quote.bookId);
-                break;
+            case 'image-ref':
+            case 'image-data':
+                if (node.imageId) {
+                    yield node.imageId;
+                }
+                continue;
             case 'volume':
-            case 'chapter':
-                result.push(...collectReferencedBookIds(node.nodes));
-                break;
+                if (node.meta.coverImageNode) {
+                    if (node.meta.coverImageNode.imageId) {
+                        yield node.meta.coverImageNode.imageId;
+                    }
+                }
+                continue;
             default:
-                break;
+                continue;
         }
     }
-    return result;
 }
 
-export function* iterateNodes(nodes: Node[]) {
+export function* iterateReferencedBookIds(nodes: Node[]): Generator<string> {
     for (const node of nodes) {
-        yield* iterateNode(node);
-    }
-}
-
-export function* iterateNode(node: Node): IterableIterator<Node> {
-    yield node;
-    switch (node.node) {
-        case 'chapter':
-        case 'volume':
-            yield* iterateNodes(node.nodes);
-            break;
+        for (const subnode of iterateNode(node)) {
+            if (node.node === 'lib-quote') {
+                yield node.quote.bookId;
+            }
+        }
     }
 }
 
@@ -123,21 +84,6 @@ export function extractNodeText(node: Node): string {
             return extractSpanText(node);
         default:
             return '';
-    }
-}
-
-export function isEmptyNode(node: Node): boolean {
-    const text = extractNodeText(node);
-    return text ? true : false;
-}
-
-export function containedNodes(node: Node): BookContentNode[] {
-    switch (node.node) {
-        case 'chapter':
-        case 'volume':
-            return node.nodes;
-        default:
-            return [];
     }
 }
 
@@ -197,98 +143,11 @@ export async function processNodeAsync(node: Node, f: (n: Node) => Promise<Node>
     return f(node);
 }
 
-export function* iterateBookNodes(node: Node): Generator<BookContentNode> {
-    switch (node.node) {
-        case 'chapter':
-        case 'group':
-            yield node;
-        case 'volume':
-            for (const sub of node.nodes) {
-                yield* iterateBookNodes(sub);
-            }
-            break;
-        case 'image-data':
-        case 'image-ref':
-        case 'list':
-        case undefined:
-        case 'pph':
-        case 'separator':
-        case 'table':
-            yield node;
-            break;
-        case 'lib-quote':
-            break;
-        default:
-            assertNever(node);
-            break;
-    }
-}
-
-export function resolveBookReference(node: Node, refId: string): BookContentNode | undefined {
-    for (const sub of iterateBookNodes(node)) {
+export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
+    for (const [sub, path] of iterateNodePath(node)) {
         if (sub.refId === refId) {
-            return sub;
+            return [sub, path];
         }
     }
-
     return undefined;
-}
-
-export function nodeTextLength(node: Node): number {
-    switch (node.node) {
-        case 'chapter':
-        case 'group':
-        case 'volume':
-            return node.nodes.reduce((len, n) => len + nodeTextLength(n), 0);
-        case undefined:
-        case 'pph':
-            return spanTextLength(pphSpan(node));
-        case 'list':
-            return node.items.reduce((len, s) => spanTextLength(s) + len, 0);
-        case 'table':
-            return node.rows.reduce(
-                (rowLen, row) =>
-                    rowLen + row.cells.reduce((len, c) =>
-                        len + spanTextLength(c),
-                        0),
-                0);
-        case 'lib-quote':
-        case 'image-data':
-        case 'image-ref':
-        case 'separator':
-            return 0;
-        default:
-            assertNever(node);
-            return 0;
-    }
-}
-
-export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
-    if (node.refId === refId) {
-        return [node, []];
-    }
-
-    switch (node.node) {
-        case 'volume':
-        case 'chapter':
-        case 'group':
-            {
-                for (let idx = 0; idx < node.nodes.length; idx++) {
-                    const sub = node.nodes[idx];
-                    const result = findReference(refId, sub);
-                    if (result !== undefined) {
-                        return [result[0], [idx, ...result[1]]];
-                    }
-                }
-                return undefined;
-            }
-        default:
-            return undefined;
-    }
-}
-
-export function pphSpan(p: ParagraphNode): Span {
-    return p.node === undefined
-        ? p
-        : p.span;
 }

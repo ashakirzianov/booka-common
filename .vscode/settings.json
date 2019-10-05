@@ -46,6 +46,7 @@
         "rgrove",
         "slugify",
         "subcomments",
+        "subnode",
         "titlepage",
         "traum",
         "upsert",

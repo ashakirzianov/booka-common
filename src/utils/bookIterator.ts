@@ -1,6 +1,6 @@
 import { BookContentNode, VolumeNode, BookPath } from '../model';
 import { pathHead, appendPath, pathTail, emptyPath } from './bookRange';
-import { nodeChildren } from './nodes';
+import { hasSubnodes } from './nodes';
 
 export type RootIterator = {
     node: undefined,
@@ -73,7 +73,9 @@ function siblingIterator(parent: ParentIterator, siblings: BookContentNode[], id
                 firstChildren: () => undefined,
             };
 
-            const ch = nodeChildren(node);
+            const ch = hasSubnodes(node)
+                ? node.nodes
+                : [];
             if (ch.length > 0) {
                 iterator.firstChildren = siblingIterator(iterator, ch, 0);
             }

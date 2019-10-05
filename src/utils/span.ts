@@ -1,27 +1,6 @@
 import {
     Span, CompoundSpan, AttributeName, attributeNames, SpanSemantic, SimpleSpan,
 } from '../model';
-import { assertNever } from './misc';
-
-// export function isSimpleSpan(span: Span): span is SimpleSpan {
-//     return typeof span === 'string';
-// }
-
-// export function isRefSpan(span: Span): span is RefSpan {
-//     return (span as any).refToId !== undefined;
-// }
-
-// export function isAttributedSpan(span: Span): span is AttributedSpan {
-//     return attributeNames.some(an => (span as any)[an] !== undefined);
-// }
-
-// export function isCompoundSpan(span: Span): span is CompoundSpan {
-//     return Array.isArray(span);
-// }
-
-// export function isComplexSpan(span: Span): span is ComplexSpan {
-//     return (span as any).span !== undefined;
-// }
 
 type SpanMapFn<T> = {
     simple: (span: SimpleSpan) => T,
