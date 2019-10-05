@@ -1,5 +1,5 @@
 import {
-    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageNode, BookContentNode, NodeKind, NodeForKind, SubstitutableNode,
+    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData,
 } from '../model';
 import { extractSpanText } from './span';
 
@@ -46,17 +46,12 @@ export function* iterateNode(node: Node): Generator<Node> {
 export function* iterateImageIds(bn: Node): Generator<string> {
     for (const node of iterateNode(bn)) {
         switch (node.node) {
-            case 'image-ref':
-            case 'image-data':
-                if (node.imageId) {
-                    yield node.imageId;
-                }
+            case 'image':
+                yield node.image.imageId;
                 continue;
             case 'volume':
-                if (node.meta.coverImageNode) {
-                    if (node.meta.coverImageNode.imageId) {
-                        yield node.meta.coverImageNode.imageId;
-                    }
+                if (node.meta.coverImage) {
+                    yield node.meta.coverImage.imageId;
                 }
                 continue;
             default:
@@ -99,39 +94,37 @@ export function extractNodeText(node: Node): string {
 
 // Process nodes:
 
-export async function processNodeAsync<K extends NodeKind, N extends Node>(
-    n: N,
-    kind: K,
-    f: (n: NodeForKind<K>,
-    ) => Promise<SubstitutableNode<K>>): Promise<N> {
+export async function processNodeImagesAsync<N extends Node>(n: N, f: (image: ImageData) => Promise<ImageData>): Promise<N> {
     let node = n as Node;
     switch (node.node) {
         case 'volume':
-            const imageNode = node.meta.coverImageNode;
-            if (imageNode && imageNode.node === kind) {
-                const resolved = await f(imageNode as NodeForKind<K>) as ImageNode;
+            if (node.meta.coverImage) {
+                const processed = await f(node.meta.coverImage);
                 node = {
                     ...node,
                     meta: {
                         ...node.meta,
-                        coverImageNode: resolved,
+                        coverImage: processed,
                     },
                 };
             }
         case 'chapter':
         case 'group':
             const nodes = await Promise.all(
-                node.nodes.map(nn => processNodeAsync(nn, kind, f))
+                node.nodes.map(nn => processNodeImagesAsync(nn, f))
             );
             node = {
                 ...node,
-                nodes: nodes as BookContentNode[],
+                nodes: nodes,
             };
             break;
-    }
-
-    if (node.node === kind) {
-        node = await f(node as NodeForKind<K>);
+        case 'image':
+            const image = await f(node.image);
+            node = {
+                ...node,
+                image,
+            };
+            break;
     }
 
     return node as N;

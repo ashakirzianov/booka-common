@@ -1,4 +1,4 @@
-import { Span } from './span';
+import { Span, ImageData } from './span';
 import { BookRange } from './bookRange';
 import { SupportSemantic } from './semantic';
 
@@ -24,15 +24,9 @@ export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
     nodes: BookContentNode[],
 }, 'footnote'>;
 
-export type ImageRefNode = DefNode<'image-ref'> & {
-    imageId: string,
-    imageRef: string,
+export type ImageNode = DefNode<'image'> & {
+    image: ImageData,
 };
-export type ImageDataNode = DefNode<'image-data'> & {
-    imageId: string,
-    data: Buffer,
-};
-export type ImageNode = ImageRefNode | ImageDataNode;
 
 export type TableCell = Span;
 export type TableRow = {
@@ -56,7 +50,7 @@ export type SeparatorNode = DefNode<'separator'>;
 export type VolumeMeta = {
     title?: string,
     author?: string,
-    coverImageNode?: ImageNode,
+    coverImage?: ImageData,
 };
 export type VolumeNode = DefNode<'volume'> & {
     meta: VolumeMeta,
@@ -88,6 +82,5 @@ export type Node =
 export type NodeKind = Node['node'];
 export type NodeForKind<K extends NodeKind> = Extract<Node, { node: K }>;
 export type SubstitutableNode<K extends NodeKind> =
-    K extends ImageNode['node'] ? ImageNode
-    : K extends BookContentNode['node'] ? BookContentNode
+    K extends BookContentNode['node'] ? BookContentNode
     : NodeForKind<K>;

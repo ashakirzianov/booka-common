@@ -1,5 +1,19 @@
 import { SupportSemantic } from './semantic';
 
+type ImageDataBase = {
+    imageId: string,
+    title?: string,
+};
+export type ImageRefData = ImageDataBase & {
+    kind: 'ref',
+    ref: string,
+};
+export type ImageBufferData = ImageDataBase & {
+    kind: 'buffer',
+    buffer: Buffer,
+};
+export type ImageData = ImageRefData | ImageBufferData;
+
 export type SimpleSpan = string;
 export type CompoundSpan = {
     [n: number]: Span,
