@@ -13,6 +13,11 @@ export type ComplexParagraphNode = SupportSemantic<DefNode<'pph'> & {
 }, 'poem'>;
 export type ParagraphNode = SimpleParagraphNode | ComplexParagraphNode;
 
+export type TitleNode = DefNode<'title'> & {
+    level: number,
+    lines: string[],
+};
+
 export type GroupNode = SupportSemantic<DefNode<'group'> & {
     nodes: BookContentNode[],
 }, 'footnote' | 'quote' | 'epigraph' | 'poem'>;
@@ -68,7 +73,7 @@ export type QuoteNode = DefNode<'lib-quote'> & {
 
 export type BookContentNode =
     | ChapterNode | GroupNode
-    | ParagraphNode | ImageNode
+    | ParagraphNode | ImageNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
 export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;

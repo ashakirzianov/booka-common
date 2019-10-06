@@ -45,6 +45,7 @@ type Anchor = {
     title: string[],
     level: number,
 };
+// TODO: re-implement
 function* iterateAnchorPaths(nodes: BookContentNode[], prefix: BookPath = [], skipFirstChapters: boolean = true): IterableIterator<Anchor> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
@@ -59,6 +60,16 @@ function* iterateAnchorPaths(nodes: BookContentNode[], prefix: BookPath = [], sk
                 };
             }
             yield* iterateAnchorPaths(node.nodes, chapterPrefix, skipFirstChapters);
+        } else if (node.node === 'title') {
+            const chapterPrefix = [...prefix, idx];
+            // Skip first subchapters -- merge with parents
+            if (!skipFirstChapters || idx !== 0) {
+                yield {
+                    path: chapterPrefix,
+                    title: node.lines,
+                    level: node.level,
+                };
+            }
         }
     }
 }

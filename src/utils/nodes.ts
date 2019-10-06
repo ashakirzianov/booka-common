@@ -87,7 +87,7 @@ export function findReference(refId: string, node: Node): [Node, BookPath] | und
     }
     return undefined;
 }
-
+// TODO: re-implement
 export function extractNodeText(node: Node): string {
     switch (node.node) {
         case 'chapter':
