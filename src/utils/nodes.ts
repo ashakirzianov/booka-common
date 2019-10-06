@@ -19,7 +19,7 @@ export function hasSubnodes(bn: Node): bn is HasSubnodes {
 }
 
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookContentNode, BookPath]> {
-    for (const [node, path] of iterateNodesPath(fragment.nodes)) {
+    for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
             node as BookContentNode,
             addPaths(fragment.current, path),
@@ -27,26 +27,27 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookCon
     }
 }
 
-export function* iterateNodePath(node: Node): Generator<[Node, BookPath]> {
+export function* iterateNode(node: Node): Generator<[Node, BookPath]> {
     yield [node, []];
     if (hasSubnodes(node)) {
-        yield* iterateNodesPath(node.nodes);
+        yield* iterateNodes(node.nodes);
     }
 }
 
-export function* iterateNodesPath(nodes: Node[]): Generator<[Node, BookPath]> {
+export function* iterateNodes(nodes: Node[]): Generator<[Node, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
-        for (const [subnode, subpath] of iterateNodePath(nodes)) {
+        const node = nodes[idx];
+        for (const [subnode, subpath] of iterateNode(node)) {
             yield [subnode, [idx, ...subpath]];
         }
     }
 }
 
-export function* iterateNode(node: Node): Generator<Node> {
+function* justNodeGenerator(node: Node): Generator<Node> {
     yield node;
     if (hasSubnodes(node)) {
         for (const subnode of node.nodes) {
-            for (const n of iterateNode(subnode)) {
+            for (const n of justNodeGenerator(subnode)) {
                 yield n;
             }
         }
@@ -54,7 +55,7 @@ export function* iterateNode(node: Node): Generator<Node> {
 }
 
 export function* iterateImageIds(bn: Node): Generator<string> {
-    for (const node of iterateNode(bn)) {
+    for (const node of justNodeGenerator(bn)) {
         switch (node.node) {
             case 'image':
                 yield node.image.imageId;
@@ -71,7 +72,7 @@ export function* iterateImageIds(bn: Node): Generator<string> {
 }
 
 export function* iterateReferencedBookIds(node: Node): Generator<string> {
-    for (const subnode of iterateNode(node)) {
+    for (const subnode of justNodeGenerator(node)) {
         if (subnode.node === 'lib-quote') {
             yield subnode.quote.bookId;
         }
@@ -79,7 +80,7 @@ export function* iterateReferencedBookIds(node: Node): Generator<string> {
 }
 
 export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
-    for (const [sub, path] of iterateNodePath(node)) {
+    for (const [sub, path] of iterateNode(node)) {
         if (sub.refId === refId) {
             return [sub, path];
         }
