@@ -15,8 +15,8 @@ export type QuoteSemantic = DefSemantic<'quote', {
 export type EpigraphSemantic = DefSemantic<'epigraph', {
     signature?: string[],
 }>;
-
 export type PoemSemantic = DefSemantic<'poem'>;
+export type FormatedSemantic = DefSemantic<'formated'>;
 
 export type SemanticKey = Semantic['semantic'];
 export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
@@ -27,4 +27,5 @@ export type Semantic =
     | QuoteSemantic
     | EpigraphSemantic
     | PoemSemantic
+    | FormatedSemantic
     ;
