@@ -1,16 +1,17 @@
 import { Span, ImageData } from './span';
 import { BookRange } from './bookRange';
-import { SupportSemantic } from './semantic';
+import { Semantic } from './semantic';
 
 type DefNode<N extends string> = {
     node: N,
     refId?: string,
+    semantics?: Semantic[],
 };
 
 export type SimpleParagraphNode = Span & { node?: undefined, refId?: undefined };
-export type ComplexParagraphNode = SupportSemantic<DefNode<'pph'> & {
+export type ComplexParagraphNode = DefNode<'pph'> & {
     span: Span,
-}, 'poem'>;
+};
 export type ParagraphNode = SimpleParagraphNode | ComplexParagraphNode;
 
 export type TitleNode = DefNode<'title'> & {
@@ -18,16 +19,16 @@ export type TitleNode = DefNode<'title'> & {
     lines: string[],
 };
 
-export type GroupNode = SupportSemantic<DefNode<'group'> & {
+export type GroupNode = DefNode<'group'> & {
     nodes: BookContentNode[],
-}, 'footnote' | 'quote' | 'epigraph' | 'poem'>;
+};
 
 export type ChapterTitle = string[];
-export type ChapterNode = SupportSemantic<DefNode<'chapter'> & {
+export type ChapterNode = DefNode<'chapter'> & {
     level: number,
     title: ChapterTitle,
     nodes: BookContentNode[],
-}, 'footnote'>;
+};
 
 export type ImageNode = DefNode<'image'> & {
     image: ImageData,

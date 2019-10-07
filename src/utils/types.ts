@@ -8,3 +8,6 @@ export type Func<Argument, Return> =
     : (payload: Argument) => Return
     ;
 export type Callback<Argument = void> = Func<Argument, void>;
+
+export type OptionalKey<K extends string, T> =
+    undefined extends T ? {} : { [k in K]: T };

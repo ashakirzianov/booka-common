@@ -1,7 +1,7 @@
 import {
-    Span, CompoundSpan, AttributeName, attributeNames, SpanSemantic,
+    Span, CompoundSpan, AttributeName, attributeNames,
     SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
-    ImageData, SpanAttribute,
+    ImageData, SpanAttribute, Semantic,
 } from '../model';
 import { guard } from './misc';
 
@@ -28,7 +28,7 @@ type SpanMapFn<T> = {
     compound: (spans: Span[]) => T,
     attr: (span: Span, attr: AttributeName) => T,
     ref: (span: Span, refToId: string) => T,
-    semantic: (span: Span, semantic: SpanSemantic) => T,
+    semantic: (span: Span, semantics: Semantic[]) => T,
     image: (image: ImageData) => T,
 };
 type DefaultSpanHandler<T> = {
@@ -49,7 +49,7 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
             : fn.default(span);
     } else if (isSemantic(span)) {
         return fn.semantic
-            ? fn.semantic(span.span, span.semantic)
+            ? fn.semantic(span.span, span.semantics)
             : fn.default(span);
     } else if (isImage(span)) {
         return fn.image

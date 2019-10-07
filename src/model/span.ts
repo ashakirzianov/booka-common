@@ -1,4 +1,4 @@
-import { SupportSemantic } from './semantic';
+import { Semantic } from './semantic';
 
 type ImageDataBase = {
     imageId: string,
@@ -43,13 +43,10 @@ export type ImageSpan = {
     image: ImageData,
 };
 
-type SpanSemanticKey = 'correction' | 'quote';
-export type SpanSemantic = SemanticSpan['semantic'];
-export type SemanticSpan = SupportSemantic<{
+export type SemanticSpan = {
     span: Span,
-},
-    SpanSemanticKey
->;
+    semantics: Semantic[],
+};
 
 export type Span =
     | SimpleSpan
