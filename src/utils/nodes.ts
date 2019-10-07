@@ -1,8 +1,32 @@
 import {
-    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode,
+    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
 } from '../model';
 import { extractSpanText } from './span';
 import { addPaths } from './bookRange';
+
+export function assignId<N extends Node>(node: N, refId: string): N {
+    if (node.node !== undefined) {
+        return { ...node, refId };
+    } else {
+        const pph: ParagraphNode = { node: 'pph', span: node, refId };
+        return pph as any;
+    }
+}
+
+export function appendSemantics<N extends Node>(node: N, semantics: Semantic[]): N {
+    if (node.node !== undefined) {
+        return node.semantics
+            ? { ...node, semantics: [...node.semantics, ...semantics] }
+            : { ...node, semantics: semantics };
+    } else {
+        const pph: ParagraphNode = {
+            node: 'pph',
+            span: node,
+            semantics: semantics,
+        };
+        return pph as any;
+    }
+}
 
 export function makePph(span: Span): SimpleParagraphNode {
     return span;
