@@ -2,30 +2,29 @@ type DefSemantic<S extends string, T = {}> = T & {
     semantic: S,
 };
 
-export type FootnoteSemantic = DefSemantic<'footnote', {
+type Footnote = DefSemantic<'footnote', {
     title: string[],
 }>;
-export type CorrectionSemantic = DefSemantic<'correction', {
+type Correction = DefSemantic<'correction', {
     note?: string,
 }>;
-export type QuoteSemantic = DefSemantic<'quote', {
+type Quote = DefSemantic<'quote', {
     signature?: string[],
 }>;
 
-export type EpigraphSemantic = DefSemantic<'epigraph', {
+type Epigraph = DefSemantic<'epigraph', {
     signature?: string[],
 }>;
-export type PoemSemantic = DefSemantic<'poem'>;
-export type FormatedSemantic = DefSemantic<'formated'>;
+type FlagSemantic =
+    | DefSemantic<'poem'> | DefSemantic<'formated'>
+    | DefSemantic<'editor-note'> | DefSemantic<'extracts'>
+    ;
 
 export type SemanticKey = Semantic['semantic'];
 export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
 
 export type Semantic =
-    | FootnoteSemantic
-    | CorrectionSemantic
-    | QuoteSemantic
-    | EpigraphSemantic
-    | PoemSemantic
-    | FormatedSemantic
+    | Footnote | Correction
+    | Quote | Epigraph
+    | FlagSemantic
     ;
