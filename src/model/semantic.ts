@@ -31,6 +31,7 @@ export type FlagSemantic =
     | DefSemantic<'illustrations'>
     | DefSemantic<'junk'>
     ;
+export type FlagSemanticKey = FlagSemantic['semantic'];
 
 export type SemanticKey = Semantic['semantic'];
 export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
