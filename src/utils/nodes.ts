@@ -1,9 +1,9 @@
 import {
-    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
+    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic, VolumeNode,
 } from '../model';
-import { extractSpanText, normalizeSpan } from './span';
+import { extractSpanText, normalizeSpan, ImageProcessor, processSpanImages } from './span';
 import { addPaths } from './bookRange';
-import { assertNever, flatten } from './misc';
+import { assertNever, flatten, assertType } from './misc';
 
 export function assignId<N extends Node>(node: N, refId: string): N {
     return { ...node, refId };
@@ -66,23 +66,6 @@ export function* iterateNodeIds(nodes: Node[]): Generator<string> {
     }
 }
 
-export function* iterateImageIds(nodes: Node[]): Generator<string> {
-    for (const node of justNodeGenerator(nodes)) {
-        switch (node.node) {
-            case 'image':
-                yield node.image.imageId;
-                continue;
-            case 'volume':
-                if (node.meta.coverImage) {
-                    yield node.meta.coverImage.imageId;
-                }
-                continue;
-            default:
-                continue;
-        }
-    }
-}
-
 export function* iterateReferencedBookIds(nodes: Node[]): Generator<string> {
     for (const subnode of justNodeGenerator(nodes)) {
         if (subnode.node === 'lib-quote') {
@@ -130,7 +113,6 @@ export function extractNodeText(node: Node): string {
         case 'title':
             return node.lines.join('\n');
         case 'separator':
-        case 'image':
         case 'lib-quote':
             return '';
         default:
@@ -159,7 +141,6 @@ export function extractSpans(node: Node): Span[] {
             );
         case 'title':
             return node.lines;
-        case 'image':
         case 'lib-quote':
         case 'separator':
             return [];
@@ -171,40 +152,32 @@ export function extractSpans(node: Node): Span[] {
 
 // Process nodes:
 
-export async function processNodeImagesAsync<N extends Node>(n: N, f: (image: ImageData) => Promise<ImageData>): Promise<N> {
-    let node = n as Node;
-    switch (node.node) {
-        case 'volume':
-            if (node.meta.coverImage) {
-                const processed = await f(node.meta.coverImage);
-                node = {
-                    ...node,
-                    meta: {
-                        ...node.meta,
-                        coverImage: processed,
-                    },
-                };
-            }
-        case 'chapter':
-        case 'group':
-            const nodes = await Promise.all(
-                node.nodes.map(nn => processNodeImagesAsync(nn, f))
-            );
-            node = {
-                ...node,
-                nodes: nodes,
-            };
-            break;
-        case 'image':
-            const image = await f(node.image);
-            node = {
-                ...node,
-                image,
-            };
-            break;
+export async function processVolumeImages(volume: VolumeNode, fn: ImageProcessor): Promise<VolumeNode> {
+    if (volume.meta.coverImage) {
+        const processed = await fn(volume.meta.coverImage);
+        volume = {
+            ...volume,
+            meta: {
+                ...volume.meta,
+                coverImage: processed,
+            },
+        };
     }
+    volume = {
+        ...volume,
+        nodes: await processNodesImages(volume.nodes, fn),
+    };
+    return volume;
+}
 
-    return node as N;
+export async function processNodesImages(nodes: BookContentNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookContentNode[]> {
+    return Promise.all(
+        nodes.map(n => processNodeImages(n, fn))
+    );
+}
+
+async function processNodeImages(node: BookContentNode, fn: (image: ImageData) => Promise<ImageData>): Promise<BookContentNode> {
+    return processNodeSpansAsync(node, async s => processSpanImages(s, fn));
 }
 
 export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
@@ -243,4 +216,61 @@ export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
 
 function couldBeNormalized(node: BookContentNode): boolean {
     return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
+}
+
+export async function processNodesSpansAsync(nodes: BookContentNode[], fn: (span: Span) => Promise<Span>): Promise<BookContentNode[]> {
+    return Promise.all(
+        nodes.map(n => processNodeSpansAsync(n, fn))
+    );
+}
+
+export async function processNodeSpansAsync(node: BookContentNode, fn: (span: Span) => Promise<Span>): Promise<BookContentNode> {
+    switch (node.node) {
+        case 'pph':
+            return {
+                ...node,
+                span: await fn(node.span),
+            };
+        case 'group':
+        case 'chapter':
+            return {
+                ...node,
+                nodes: await processNodesSpansAsync(node.nodes, fn),
+            };
+        case 'table':
+            return {
+                ...node,
+                rows: await Promise.all(
+                    node.rows.map(async row => ({
+                        ...row,
+                        cells: await Promise.all(
+                            row.cells.map(async cell => ({
+                                ...cell,
+                                spans: await Promise.all(
+                                    cell.spans.map(fn)
+                                ),
+                            }))
+                        ),
+                    }))
+                ),
+            };
+        case 'list':
+            return {
+                ...node,
+                items: await Promise.all(
+                    node.items.map(async item => ({
+                        ...item,
+                        spans: await Promise.all(
+                            item.spans.map(fn)
+                        ),
+                    }))
+                ),
+            };
+        case 'separator':
+        case 'title':
+            return node;
+        default:
+            assertNever(node);
+            return node;
+    }
 }

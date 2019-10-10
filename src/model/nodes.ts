@@ -28,10 +28,6 @@ export type ChapterNode = DefNode<'chapter'> & {
     nodes: BookContentNode[],
 };
 
-export type ImageNode = DefNode<'image'> & {
-    image: ImageData,
-};
-
 export type TableCell = {
     spans: Span[],
 };
@@ -74,10 +70,10 @@ export type QuoteNode = DefNode<'lib-quote'> & {
 
 export type BookContentNode =
     | ChapterNode | GroupNode
-    | ParagraphNode | ImageNode | TitleNode
+    | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
-export type GeneratedContentNode = ParagraphNode | QuoteNode | ImageNode;
+export type GeneratedContentNode = ParagraphNode | QuoteNode;
 export type HasSubnodes = VolumeNode | ChapterNode;
 export type Node =
     | BookContentNode

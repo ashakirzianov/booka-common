@@ -167,3 +167,16 @@ function normalizeCompoundSpan(spans: Span[]): Span {
         : result.length === 1 ? result[0]
             : result;
 }
+
+export type ImageProcessor = (image: ImageData) => Promise<ImageData>;
+export async function processSpanImages(span: Span, fn: ImageProcessor): Promise<Span> {
+    return mapSpan(span, {
+        compound: async spans => compoundSpan(
+            await Promise.all(spans.map(s => processSpanImages(s, fn)))
+        ),
+        image: async data => ({
+            image: await fn(data),
+        }),
+        default: async s => s,
+    });
+}
