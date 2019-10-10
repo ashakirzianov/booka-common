@@ -3,7 +3,7 @@ import {
 } from '../model';
 import { extractSpanText } from './span';
 import { addPaths } from './bookRange';
-import { assertNever } from './misc';
+import { assertNever, flatten } from './misc';
 
 export function assignId<N extends Node>(node: N, refId: string): N {
     if (node.node !== undefined) {
@@ -149,6 +149,36 @@ export function extractNodeText(node: Node): string {
         default:
             assertNever(node);
             return '';
+    }
+}
+
+export function extractSpans(node: Node): Span[] {
+    switch (node.node) {
+        case 'volume':
+        case 'chapter':
+        case 'group':
+            return flatten(node.nodes.map(extractSpans));
+        case undefined:
+            return [node];
+        case 'pph':
+            return [node.span];
+        case 'table':
+            return flatten(flatten(
+                node.rows.map(r => r.cells.map(c => c.spans))
+            ));
+        case 'list':
+            return flatten(
+                node.items.map(i => i.spans)
+            );
+        case 'title':
+            return node.lines;
+        case 'image':
+        case 'lib-quote':
+        case 'separator':
+            return [];
+        default:
+            assertNever(node);
+            return [];
     }
 }
 
