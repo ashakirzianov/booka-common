@@ -3,6 +3,7 @@ import {
 } from '../model';
 import { extractSpanText } from './span';
 import { addPaths } from './bookRange';
+import { assertNever } from './misc';
 
 export function assignId<N extends Node>(node: N, refId: string): N {
     if (node.node !== undefined) {
@@ -122,7 +123,24 @@ export function extractNodeText(node: Node): string {
                 .join('\n');
         case undefined:
             return extractSpanText(node);
+        case 'pph':
+            return extractSpanText(node.span);
+        case 'table':
+            return node.rows
+                .map(row => row.cells.map(extractSpanText).join('\n'))
+                .join('\n');
+        case 'list':
+            return node.items
+                .map(i => extractSpanText(i.item))
+                .join('\n');
+        case 'title':
+            return node.lines.join('\n');
+        case 'separator':
+        case 'image':
+        case 'lib-quote':
+            return '';
         default:
+            assertNever(node);
             return '';
     }
 }
