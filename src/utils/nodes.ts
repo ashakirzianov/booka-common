@@ -1,7 +1,7 @@
 import {
     Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
 } from '../model';
-import { extractSpanText } from './span';
+import { extractSpanText, normalizeSpan } from './span';
 import { addPaths } from './bookRange';
 import { assertNever, flatten } from './misc';
 
@@ -218,4 +218,49 @@ export async function processNodeImagesAsync<N extends Node>(n: N, f: (image: Im
     }
 
     return node as N;
+}
+
+export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
+    const results: BookContentNode[] = [];
+    for (const node of nodes) {
+        switch (node.node) {
+            case undefined:
+                results.push(normalizeSpan(node));
+                break;
+            case 'pph':
+                {
+                    const span = normalizeSpan(node.span);
+                    if (couldBeNormalized(node)) {
+                        results.push(span);
+                    } else {
+                        results.push({
+                            ...node,
+                            span,
+                        });
+                    }
+                }
+                break;
+            case 'group':
+                {
+                    const normalized = normalizeNodes(node.nodes);
+                    if (couldBeNormalized(node)) {
+                        results.push(...normalized);
+                    } else {
+                        results.push({
+                            ...node,
+                            nodes: normalized,
+                        });
+                    }
+                }
+                break;
+            default:
+                results.push(node);
+                break;
+        }
+    }
+    return results;
+}
+
+function couldBeNormalized(node: BookContentNode): boolean {
+    return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
 }

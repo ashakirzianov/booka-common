@@ -5,6 +5,7 @@ import {
 } from '../model';
 import { guard } from './misc';
 
+const isSimple = guard<SimpleSpan>(s => typeof s === 'string');
 const isCompound = guard<CompoundSpan>(s => Array.isArray(s));
 const isRef = guard<RefSpan>(s => s.ref !== undefined);
 const isSemantic = guard<SemanticSpan>(s => s.span !== undefined);
@@ -35,7 +36,7 @@ type DefaultSpanHandler<T> = {
     default: (span: Span) => T,
 };
 export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHandler<T>): T {
-    if (typeof span === 'string') {
+    if (isSimple(span)) {
         return fn.simple
             ? fn.simple(span)
             : fn.default(span);
@@ -107,4 +108,62 @@ export function extractSpanText(span: Span): string {
 
 export function spanTextLength(span: Span): number {
     return extractSpanText(span).length;
+}
+
+export function normalizeSpan(span: Span): Span {
+    if (isSimple(span)) {
+        return span;
+    } else if (isCompound(span)) {
+        return normalizeCompoundSpan(span as Span[]);
+    } else if (isRef(span)) {
+        return {
+            ...span,
+            ref: normalizeSpan(span.ref),
+        };
+    } else if (isSemantic(span)) {
+        return {
+            ...span,
+            span: normalizeSpan(span.span),
+        };
+    } else if (isImage(span)) {
+        return span;
+    } else {
+        const attr = getSpanAttr(span);
+        if (attr !== undefined) {
+            const an = attr.attr;
+            return { [an]: normalizeSpan(attr.span) } as Span;
+        } else {
+            return span;
+        }
+    }
+}
+
+function normalizeCompoundSpan(spans: Span[]): Span {
+    const result: Span[] = [];
+    let idx = 0;
+    let current: SimpleSpan | undefined = undefined;
+    while (idx < spans.length) {
+        const span = normalizeSpan(spans[idx]);
+        if (isSimple(span)) {
+            if (current === undefined) {
+                current = span;
+            } else {
+                current += span;
+            }
+        } else {
+            if (current !== undefined) {
+                result.push(current);
+                current = undefined;
+            }
+            result.push(span);
+        }
+        idx++;
+    }
+    if (current !== undefined) {
+        result.push(current);
+    }
+
+    return result.length === 0 ? ''
+        : result.length === 1 ? result[0]
+            : result;
 }
