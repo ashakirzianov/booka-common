@@ -38,7 +38,9 @@ export type ImageNode = DefNode<'image'> & {
     image: ImageData,
 };
 
-export type TableCell = Span;
+export type TableCell = {
+    spans: Span[],
+};
 export type TableRow = {
     cells: TableCell[],
 };
@@ -48,7 +50,7 @@ export type TableNode = DefNode<'table'> & {
 
 export type ListKind = 'ordered' | 'basic';
 export type ListItem = {
-    item: Span,
+    spans: Span[],
 };
 export type ListNode = DefNode<'list'> & {
     kind: ListKind,
