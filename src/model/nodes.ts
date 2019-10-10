@@ -8,15 +8,9 @@ type DefNode<N extends string> = {
     semantics?: Semantic[],
 };
 
-export type SimpleParagraphNode = Span & {
-    node?: undefined,
-    refId?: undefined,
-    semantics?: any,
-};
-export type ComplexParagraphNode = DefNode<'pph'> & {
+export type ParagraphNode = DefNode<'pph'> & {
     span: Span,
 };
-export type ParagraphNode = SimpleParagraphNode | ComplexParagraphNode;
 
 export type TitleNode = DefNode<'title'> & {
     level: number,

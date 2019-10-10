@@ -1,42 +1,29 @@
 import {
-    Node, SimpleParagraphNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
+    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
 } from '../model';
 import { extractSpanText, normalizeSpan } from './span';
 import { addPaths } from './bookRange';
 import { assertNever, flatten } from './misc';
 
 export function assignId<N extends Node>(node: N, refId: string): N {
-    if (node.node !== undefined) {
-        return { ...node, refId };
-    } else {
-        const pph: ParagraphNode = { node: 'pph', span: node, refId };
-        return pph as any;
-    }
+    return { ...node, refId };
 }
 
 export function appendSemantics<N extends Node>(node: N, semantics: Semantic[]): N {
-    if (node.node !== undefined) {
-        return node.semantics
-            ? { ...node, semantics: [...node.semantics, ...semantics] }
-            : { ...node, semantics: semantics };
-    } else {
-        const pph: ParagraphNode = {
-            node: 'pph',
-            span: node,
-            semantics: semantics,
-        };
-        return pph as any;
-    }
+    return node.semantics
+        ? { ...node, semantics: [...node.semantics, ...semantics] }
+        : { ...node, semantics: semantics };
 }
 
-export function makePph(span: Span): SimpleParagraphNode {
-    return span;
+export function makePph(span: Span): ParagraphNode {
+    return {
+        node: 'pph',
+        span,
+    };
 }
 
 export function pphSpan(p: ParagraphNode): Span {
-    return p.node === undefined
-        ? p
-        : p.span;
+    return p.span;
 }
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
@@ -52,35 +39,35 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookCon
     }
 }
 
-export function* iterateNode(node: Node): Generator<[Node, BookPath]> {
-    yield [node, []];
-    if (hasSubnodes(node)) {
-        yield* iterateNodes(node.nodes);
-    }
-}
-
 export function* iterateNodes(nodes: Node[]): Generator<[Node, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        for (const [subnode, subpath] of iterateNode(node)) {
-            yield [subnode, [idx, ...subpath]];
+        yield [node, [idx]];
+        if (hasSubnodes(node)) {
+            yield* iterateNodes(node.nodes);
         }
     }
 }
 
-function* justNodeGenerator(node: Node): Generator<Node> {
-    yield node;
-    if (hasSubnodes(node)) {
-        for (const subnode of node.nodes) {
-            for (const n of justNodeGenerator(subnode)) {
-                yield n;
-            }
+export function* justNodeGenerator(nodes: Node[]): Generator<Node> {
+    for (const node of nodes) {
+        yield node;
+        if (hasSubnodes(node)) {
+            yield* justNodeGenerator(node.nodes);
         }
     }
 }
 
-export function* iterateImageIds(bn: Node): Generator<string> {
-    for (const node of justNodeGenerator(bn)) {
+export function* iterateNodeIds(nodes: Node[]): Generator<string> {
+    for (const node of justNodeGenerator(nodes)) {
+        if (node.refId !== undefined) {
+            yield node.refId;
+        }
+    }
+}
+
+export function* iterateImageIds(nodes: Node[]): Generator<string> {
+    for (const node of justNodeGenerator(nodes)) {
         switch (node.node) {
             case 'image':
                 yield node.image.imageId;
@@ -96,16 +83,16 @@ export function* iterateImageIds(bn: Node): Generator<string> {
     }
 }
 
-export function* iterateReferencedBookIds(node: Node): Generator<string> {
-    for (const subnode of justNodeGenerator(node)) {
+export function* iterateReferencedBookIds(nodes: Node[]): Generator<string> {
+    for (const subnode of justNodeGenerator(nodes)) {
         if (subnode.node === 'lib-quote') {
             yield subnode.quote.bookId;
         }
     }
 }
 
-export function findReference(refId: string, node: Node): [Node, BookPath] | undefined {
-    for (const [sub, path] of iterateNode(node)) {
+export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | undefined {
+    for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
             return [sub, path];
         }
@@ -224,20 +211,13 @@ export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
     const results: BookContentNode[] = [];
     for (const node of nodes) {
         switch (node.node) {
-            case undefined:
-                results.push(normalizeSpan(node));
-                break;
             case 'pph':
                 {
                     const span = normalizeSpan(node.span);
-                    if (couldBeNormalized(node)) {
-                        results.push(span);
-                    } else {
-                        results.push({
-                            ...node,
-                            span,
-                        });
-                    }
+                    results.push({
+                        ...node,
+                        span,
+                    });
                 }
                 break;
             case 'group':
