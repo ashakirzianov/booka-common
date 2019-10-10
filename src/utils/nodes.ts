@@ -127,11 +127,18 @@ export function extractNodeText(node: Node): string {
             return extractSpanText(node.span);
         case 'table':
             return node.rows
-                .map(row => row.cells.map(extractSpanText).join('\n'))
+                .map(row =>
+                    row.cells.map(cell =>
+                        cell.spans.map(extractSpanText).join('')
+                    )
+                        .join('\n')
+                )
                 .join('\n');
         case 'list':
             return node.items
-                .map(i => extractSpanText(i.item))
+                .map(i =>
+                    i.spans.map(extractSpanText).join('')
+                )
                 .join('\n');
         case 'title':
             return node.lines.join('\n');
