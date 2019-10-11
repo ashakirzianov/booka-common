@@ -21,13 +21,6 @@ export type GroupNode = DefNode<'group'> & {
     nodes: BookContentNode[],
 };
 
-export type ChapterTitle = string[];
-export type ChapterNode = DefNode<'chapter'> & {
-    level: number,
-    title: ChapterTitle,
-    nodes: BookContentNode[],
-};
-
 export type TableCell = {
     spans: Span[],
 };
@@ -59,14 +52,14 @@ export type QuoteNode = DefNode<'lib-quote'> & {
 };
 
 export type BookContentNode =
-    | ChapterNode | GroupNode
+    | GroupNode
     | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
 // TODO: remove
 export type GeneratedContentNode = ParagraphNode | QuoteNode;
-// TODO: remove
-export type HasSubnodes = ChapterNode;
+
+export type HasSubnodes = GroupNode;
 // TODO: merge with 'BookNode' ?
 export type Node =
     | BookContentNode

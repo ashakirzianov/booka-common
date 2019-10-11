@@ -27,7 +27,13 @@ export function pphSpan(p: ParagraphNode): Span {
 }
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
-    return bn.node === 'chapter' || bn.node === 'group';
+    return bn.node === 'group';
+}
+
+export function getSubnodes(bn: Node): BookContentNode[] {
+    return hasSubnodes(bn)
+        ? bn.nodes
+        : [];
 }
 
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookContentNode, BookPath]> {
@@ -85,7 +91,6 @@ export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | 
 // TODO: re-implement
 export function extractNodeText(node: Node): string {
     switch (node.node) {
-        case 'chapter':
         case 'group':
             return node.nodes
                 .map(extractNodeText)
@@ -122,7 +127,6 @@ export function extractNodeText(node: Node): string {
 
 export function extractSpans(node: Node): Span[] {
     switch (node.node) {
-        case 'chapter':
         case 'group':
             return flatten(node.nodes.map(extractSpans));
         case undefined:
@@ -212,7 +216,6 @@ export async function processNodeSpansAsync(node: BookContentNode, fn: (span: Sp
                 span: await fn(node.span),
             };
         case 'group':
-        case 'chapter':
             return {
                 ...node,
                 nodes: await processNodesSpansAsync(node.nodes, fn),

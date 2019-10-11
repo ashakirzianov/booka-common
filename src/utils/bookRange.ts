@@ -182,7 +182,6 @@ export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: n
             return [];
         }
         switch (head.node) {
-            case 'chapter':
             case 'group':
                 return nodesAfterPath(head.nodes, path.slice(1), count);
             default:
