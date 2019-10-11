@@ -1,18 +1,27 @@
-import { VolumeNode, BookContentNode } from './nodes';
+import { ImageData } from './span';
+import { BookContentNode } from './nodes';
 import { KnownTag } from './tag';
 import { BookPath } from './bookRange';
 
 export type BookLicense = 'unknown' | 'public-domain-us';
+// TODO: remove
 export type EpubBookSource = {
     source: 'epub',
     kind: string,
 };
+export type BookMeta = {
+    title?: string,
+    author?: string,
+    coverImage?: ImageData,
+};
 export type BookSource = EpubBookSource;
 export type Book = {
-    volume: VolumeNode,
+    nodes: BookContentNode[],
+    meta: BookMeta,
     tags: KnownTag[],
 };
 
+// TODO: remove
 export type BookInfo = {
     id: string,
     title: string,

@@ -3,10 +3,29 @@ import {
     TableOfContents, TableOfContentsItem,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
-import { extractNodeText, normalizeNodes } from './nodes';
+import { extractNodeText, normalizeNodes, processNodesImages } from './nodes';
+import { ImageProcessor } from './span';
+
+export async function processBookImages(book: Book, fn: ImageProcessor): Promise<Book> {
+    if (book.meta.coverImage) {
+        const processed = await fn(book.meta.coverImage);
+        book = {
+            ...book,
+            meta: {
+                ...book.meta,
+                coverImage: processed,
+            },
+        };
+    }
+    book = {
+        ...book,
+        nodes: await processNodesImages(book.nodes, fn),
+    };
+    return book;
+}
 
 export function tocForBook(book: Book): TableOfContents {
-    const anchors = Array.from(iterateAnchorPaths(book.volume.nodes, [], false));
+    const anchors = Array.from(iterateAnchorPaths(book.nodes, [], false));
     const items: TableOfContentsItem[] = anchors;
     return { items };
 }
@@ -17,7 +36,7 @@ export function fragmentForPath(book: Book, path: BookPath): BookFragment {
         start: current,
         end: next,
     };
-    const nodes = nodesForRange(book.volume.nodes, range);
+    const nodes = nodesForRange(book.nodes, range);
 
     return {
         previous, current, next, nodes,
@@ -28,7 +47,7 @@ function buildAnchorsForPath(book: Book, path: BookPath) {
     let previous: BookPath | undefined = undefined;
     let current: BookPath = [];
     let next: BookPath | undefined = undefined;
-    const nodes = book.volume.nodes;
+    const nodes = book.nodes;
     for (const { path: anchor } of iterateAnchorPaths(nodes)) {
         if (pathLessThan(path, anchor)) {
             next = anchor;
@@ -76,7 +95,7 @@ function* iterateAnchorPaths(nodes: BookContentNode[], prefix: BookPath = [], sk
 }
 
 export function extractBookText(book: Book): string {
-    return book.volume.nodes
+    return book.nodes
         .map(extractNodeText)
         .join('');
 }
@@ -84,9 +103,6 @@ export function extractBookText(book: Book): string {
 export function normalizeBook(book: Book): Book {
     return {
         ...book,
-        volume: {
-            ...book.volume,
-            nodes: normalizeNodes(book.volume.nodes),
-        },
+        nodes: normalizeNodes(book.nodes),
     };
 }

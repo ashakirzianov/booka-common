@@ -1,4 +1,4 @@
-import { Span, ImageData } from './span';
+import { Span } from './span';
 import { BookRange } from './bookRange';
 import { Semantic } from './semantic';
 
@@ -49,16 +49,6 @@ export type ListNode = DefNode<'list'> & {
 
 export type SeparatorNode = DefNode<'separator'>;
 
-export type VolumeMeta = {
-    title?: string,
-    author?: string,
-    coverImage?: ImageData,
-};
-export type VolumeNode = DefNode<'volume'> & {
-    meta: VolumeMeta,
-    nodes: BookContentNode[],
-};
-
 export type BookId = string;
 export type LibraryQuote = {
     bookId: BookId,
@@ -73,16 +63,19 @@ export type BookContentNode =
     | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
+// TODO: remove
 export type GeneratedContentNode = ParagraphNode | QuoteNode;
-export type HasSubnodes = VolumeNode | ChapterNode;
+// TODO: remove
+export type HasSubnodes = ChapterNode;
+// TODO: merge with 'BookNode' ?
 export type Node =
     | BookContentNode
     | QuoteNode
-    | VolumeNode
     ;
 
 export type NodeKind = Node['node'];
 export type NodeForKind<K extends NodeKind> = Extract<Node, { node: K }>;
+// TODO: remove
 export type SubstitutableNode<K extends NodeKind> =
     K extends BookContentNode['node'] ? BookContentNode
     : NodeForKind<K>;

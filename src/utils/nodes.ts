@@ -1,5 +1,5 @@
 import {
-    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic, VolumeNode,
+    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
 } from '../model';
 import { extractSpanText, normalizeSpan, ImageProcessor, processSpanImages } from './span';
 import { addPaths } from './bookRange';
@@ -27,7 +27,7 @@ export function pphSpan(p: ParagraphNode): Span {
 }
 
 export function hasSubnodes(bn: Node): bn is HasSubnodes {
-    return bn.node === 'chapter' || bn.node === 'volume' || bn.node === 'group';
+    return bn.node === 'chapter' || bn.node === 'group';
 }
 
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookContentNode, BookPath]> {
@@ -86,7 +86,6 @@ export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | 
 export function extractNodeText(node: Node): string {
     switch (node.node) {
         case 'chapter':
-        case 'volume':
         case 'group':
             return node.nodes
                 .map(extractNodeText)
@@ -123,7 +122,6 @@ export function extractNodeText(node: Node): string {
 
 export function extractSpans(node: Node): Span[] {
     switch (node.node) {
-        case 'volume':
         case 'chapter':
         case 'group':
             return flatten(node.nodes.map(extractSpans));
@@ -151,24 +149,6 @@ export function extractSpans(node: Node): Span[] {
 }
 
 // Process nodes:
-
-export async function processVolumeImages(volume: VolumeNode, fn: ImageProcessor): Promise<VolumeNode> {
-    if (volume.meta.coverImage) {
-        const processed = await fn(volume.meta.coverImage);
-        volume = {
-            ...volume,
-            meta: {
-                ...volume.meta,
-                coverImage: processed,
-            },
-        };
-    }
-    volume = {
-        ...volume,
-        nodes: await processNodesImages(volume.nodes, fn),
-    };
-    return volume;
-}
 
 export async function processNodesImages(nodes: BookContentNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookContentNode[]> {
     return Promise.all(

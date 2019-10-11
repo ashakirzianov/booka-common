@@ -1,10 +1,10 @@
 import { createHash } from 'crypto';
 import { createReadStream } from 'fs';
 import { Book } from '../model';
-import { extractNodeText } from './nodes';
+import { extractBookText } from './book';
 
 export function buildBookHash(book: Book) {
-    const input = extractNodeText(book.volume);
+    const input = extractBookText(book);
     return createHash('sha1')
         .update(input)
         .digest('base64');
