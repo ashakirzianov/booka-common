@@ -224,7 +224,7 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
             case 'group':
                 {
                     const processed = await processNodesAsync(curr.nodes, args);
-                    curr = { ...curr, nodes };
+                    curr = { ...curr, nodes: processed };
                 }
                 break;
             case 'pph':
