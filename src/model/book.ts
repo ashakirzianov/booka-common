@@ -1,5 +1,5 @@
 import { ImageData } from './span';
-import { BookContentNode } from './nodes';
+import { BookContentNode } from './bookNode';
 import { KnownTag } from './tag';
 import { BookPath } from './bookRange';
 

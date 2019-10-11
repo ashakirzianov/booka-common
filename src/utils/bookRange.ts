@@ -1,5 +1,5 @@
 import { BookPath, BookRange, BookContentNode } from '../model';
-import { hasSubnodes } from './nodes';
+import { hasSubnodes } from './bookNode';
 import { lastElement } from './misc';
 
 export function leadPath(): BookPath {

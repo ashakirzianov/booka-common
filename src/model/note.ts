@@ -1,8 +1,8 @@
-import { GeneratedContentNode } from './nodes';
+import { EditableNode } from './editable';
 
-export type NoteContentNode = GeneratedContentNode;
+export type NoteContentNode = EditableNode;
 export type NoteData = {
-    content: GeneratedContentNode[],
+    content: NoteContentNode[],
     title?: string,
 };
 

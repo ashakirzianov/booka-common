@@ -3,7 +3,7 @@ import {
     TableOfContents, TableOfContentsItem, ImageData,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
-import { extractNodeText, normalizeNodes, processNodesImages } from './nodes';
+import { extractNodeText, normalizeNodes, processNodesImages } from './bookNode';
 import { ImageProcessor } from './span';
 
 export async function processBookImages(book: Book, fn: ImageProcessor): Promise<Book> {

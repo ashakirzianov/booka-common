@@ -72,14 +72,6 @@ export function* iterateNodeIds(nodes: Node[]): Generator<string> {
     }
 }
 
-export function* iterateReferencedBookIds(nodes: Node[]): Generator<string> {
-    for (const subnode of justNodeGenerator(nodes)) {
-        if (subnode.node === 'lib-quote') {
-            yield subnode.quote.bookId;
-        }
-    }
-}
-
 export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | undefined {
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
@@ -117,7 +109,6 @@ export function extractNodeText(node: Node): string {
         case 'title':
             return node.lines.join('\n');
         case 'separator':
-        case 'lib-quote':
             return '';
         default:
             assertNever(node);
@@ -143,7 +134,6 @@ export function extractSpans(node: Node): Span[] {
             );
         case 'title':
             return node.lines;
-        case 'lib-quote':
         case 'separator':
             return [];
         default:

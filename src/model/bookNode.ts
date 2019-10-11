@@ -1,5 +1,4 @@
 import { Span } from './span';
-import { BookRange } from './bookRange';
 import { Semantic } from './semantic';
 
 type DefNode<N extends string> = {
@@ -42,33 +41,15 @@ export type ListNode = DefNode<'list'> & {
 
 export type SeparatorNode = DefNode<'separator'>;
 
-export type BookId = string;
-export type LibraryQuote = {
-    bookId: BookId,
-    range: BookRange,
-};
-export type QuoteNode = DefNode<'lib-quote'> & {
-    quote: LibraryQuote,
-};
-
 export type BookContentNode =
     | GroupNode
     | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
-// TODO: remove
-export type GeneratedContentNode = ParagraphNode | QuoteNode;
 
 export type HasSubnodes = GroupNode;
 // TODO: merge with 'BookNode' ?
-export type Node =
-    | BookContentNode
-    | QuoteNode
-    ;
+export type Node = BookContentNode;
 
 export type NodeKind = Node['node'];
 export type NodeForKind<K extends NodeKind> = Extract<Node, { node: K }>;
-// TODO: remove
-export type SubstitutableNode<K extends NodeKind> =
-    K extends BookContentNode['node'] ? BookContentNode
-    : NodeForKind<K>;
