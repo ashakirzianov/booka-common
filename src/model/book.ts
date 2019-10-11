@@ -13,6 +13,7 @@ export type BookMeta = {
     title?: string,
     author?: string,
     coverImage?: ImageData,
+    // TODO: add license ?
 };
 export type BookSource = EpubBookSource;
 export type Book = {

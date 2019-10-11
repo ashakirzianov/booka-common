@@ -1,6 +1,6 @@
 import {
     BookPath, BookFragment, Book, BookContentNode,
-    TableOfContents, TableOfContentsItem,
+    TableOfContents, TableOfContentsItem, ImageData,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
 import { extractNodeText, normalizeNodes, processNodesImages } from './nodes';
@@ -22,6 +22,35 @@ export async function processBookImages(book: Book, fn: ImageProcessor): Promise
         nodes: await processNodesImages(book.nodes, fn),
     };
     return book;
+}
+
+export async function storeImages(book: Book, fn: (buffer: Buffer, imageId: string) => Promise<string | undefined>): Promise<Book> {
+    const store: {
+        [key: string]: ImageData | undefined,
+    } = {};
+
+    return processBookImages(book, async imageData => {
+        if (imageData.kind === 'ref') {
+            return imageData;
+        }
+        const stored = store[imageData.imageId];
+        if (stored !== undefined) {
+            return stored;
+        } else {
+            const url = await fn(imageData.buffer, imageData.imageId);
+            if (url !== undefined) {
+                const result: ImageData = {
+                    ...imageData,
+                    kind: 'ref',
+                    ref: url,
+                };
+                store[imageData.imageId] = result;
+                return result;
+            } else {
+                return imageData;
+            }
+        }
+    });
 }
 
 export function tocForBook(book: Book): TableOfContents {
