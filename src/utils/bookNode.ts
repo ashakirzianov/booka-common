@@ -1,7 +1,7 @@
 import {
     BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
 } from '../model';
-import { extractSpanText, normalizeSpan, processSpanImages } from './span';
+import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan } from './span';
 import { addPaths } from './bookRange';
 import { assertNever, flatten } from './misc';
 
@@ -144,14 +144,160 @@ export function extractSpans(node: BookNode): Span[] {
 
 // Process nodes:
 
-export async function processNodesImages(nodes: BookNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode[]> {
-    return Promise.all(
-        nodes.map(n => processNodeImages(n, fn))
-    );
+export type ProcessNodesArgs = {
+    node?: (n: BookNode) => (BookNode | undefined),
+    span?: (s: Span) => Span,
+};
+export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNode[] {
+    const results: BookNode[] = [];
+    for (const node of nodes) {
+        let curr: BookNode | undefined = node;
+        switch (curr.node) {
+            case 'group':
+                {
+                    const processed = processNodes(curr.nodes, args);
+                    curr = { ...curr, nodes };
+                }
+                break;
+            case 'pph':
+                if (args.span) {
+                    const span = processSpan(curr.span, args.span);
+                    curr = { ...curr, span };
+                }
+                break;
+            case 'table':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const rows = curr.rows.map(
+                        row => ({
+                            ...row,
+                            cells: row.cells.map(
+                                cell => ({
+                                    ...cell,
+                                    spans: cell.spans.map(s => processSpan(s, spanProc)),
+                                })
+                            ),
+                        })
+                    );
+                    curr = { ...curr, rows };
+                }
+                break;
+            case 'list':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const items = curr.items.map(
+                        item => ({
+                            ...item,
+                            spans: item.spans.map(s => processSpan(s, spanProc)),
+                        })
+                    );
+                    curr = { ...curr, items };
+                }
+                break;
+            case 'separator':
+            case 'title':
+                break;
+            default:
+                assertNever(curr);
+                break;
+        }
+        if (args.node) {
+            curr = args.node(curr);
+        }
+        if (curr !== undefined) {
+            results.push(curr);
+        }
+    }
+
+    return results;
 }
 
-async function processNodeImages(node: BookNode, fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode> {
-    return processNodeSpansAsync(node, async s => processSpanImages(s, fn));
+export type ProcessNodesAsyncArgs = {
+    node?: (n: BookNode) => Promise<BookNode | undefined>,
+    span?: (s: Span) => Promise<Span>,
+};
+export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsyncArgs): Promise<BookNode[]> {
+    const results: BookNode[] = [];
+    for (const node of nodes) {
+        let curr: BookNode | undefined = node;
+        switch (curr.node) {
+            case 'group':
+                {
+                    const processed = await processNodesAsync(curr.nodes, args);
+                    curr = { ...curr, nodes };
+                }
+                break;
+            case 'pph':
+                if (args.span) {
+                    const span = await processSpanAsync(curr.span, args.span);
+                    curr = { ...curr, span };
+                }
+                break;
+            case 'table':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const rows = await Promise.all(
+                        curr.rows.map(
+                            async row => ({
+                                ...row,
+                                cells: await Promise.all(
+                                    row.cells.map(
+                                        async cell => ({
+                                            ...cell,
+                                            spans: await Promise.all(
+                                                cell.spans.map(s => processSpanAsync(s, spanProc))
+                                            ),
+                                        }),
+                                    ),
+                                ),
+                            })
+                        ),
+                    );
+                    curr = { ...curr, rows };
+                }
+                break;
+            case 'list':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const items = await Promise.all(
+                        curr.items.map(
+                            async item => ({
+                                ...item,
+                                spans: await Promise.all(
+                                    item.spans.map(s => processSpanAsync(s, spanProc)),
+                                ),
+                            }),
+                        ),
+                    );
+                    curr = { ...curr, items };
+                }
+                break;
+            case 'separator':
+            case 'title':
+                break;
+            default:
+                assertNever(curr);
+                break;
+        }
+        if (args.node) {
+            curr = await args.node(curr);
+        }
+        if (curr !== undefined) {
+            results.push(curr);
+        }
+    }
+
+    return results;
+}
+
+export type ImageProcessor = (image: ImageData) => Promise<ImageData>;
+export async function processNodesImages(nodes: BookNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode[]> {
+    return processNodesAsync(nodes, {
+        span: s => mapSpan(s, {
+            image: async data => imageSpan(await fn(data)),
+            default: async ss => ss,
+        }),
+    });
 }
 
 export function normalizeNodes(nodes: BookNode[]): BookNode[] {

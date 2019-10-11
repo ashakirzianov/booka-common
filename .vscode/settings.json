@@ -44,6 +44,7 @@
         "reparser",
         "reresult",
         "rgrove",
+        "sems",
         "slugify",
         "subcomments",
         "subnode",

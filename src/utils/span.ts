@@ -5,6 +5,36 @@ import {
 } from '../model';
 import { guard } from './misc';
 
+export function compoundSpan(spans: Span[]): Span {
+    return spans.length === 1
+        ? spans[0]
+        : spans;
+}
+
+export function attrSpan(span: Span, attr: AttributeName): Span {
+    return {
+        [attr]: span,
+    };
+}
+
+export function refSpan(span: Span, refToId: string): Span {
+    return {
+        ref: span,
+        refToId,
+    };
+}
+
+export function semanticSpan(span: Span, semantics: Semantic[]): Span {
+    return {
+        span: span,
+        semantics,
+    };
+}
+
+export function imageSpan(imageData: ImageData): Span {
+    return { image: imageData };
+}
+
 const isSimple = guard<SimpleSpan>(s => typeof s === 'string');
 const isCompound = guard<CompoundSpan>(s => Array.isArray(s));
 const isRef = guard<RefSpan>(s => s.ref !== undefined);
@@ -71,25 +101,32 @@ export function mapSpanFull<T>(span: Span, fn: SpanMapFn<T> & DefaultSpanHandler
     return mapSpan(span, fn);
 }
 
-export function compoundSpan(spans: Span[]): Span {
-    return spans.length === 1
-        ? spans[0]
-        : spans;
+export function processSpan(span: Span, fn: (s: Span) => Span): Span {
+    const inside = mapSpanFull(span, {
+        simple: s => s,
+        compound: spans => compoundSpan(spans.map(s => processSpan(s, fn))),
+        attr: (s, attr) => attrSpan(processSpan(s, fn), attr),
+        ref: (s, ref) => refSpan(processSpan(s, fn), ref),
+        image: data => imageSpan(data),
+        semantic: (s, sems) => semanticSpan(processSpan(s, fn), sems),
+        default: s => s,
+    });
+    return fn(inside);
 }
 
-export function subSpans(span: CompoundSpan): Span[] {
-    return span as Span[];
-}
-
-export function spanAttr(span: Span): AttributeName | undefined {
-    for (const an of attributeNames) {
-        const attr = (span as any)[an];
-        if (attr !== undefined) {
-            return attr;
-        }
-    }
-
-    return undefined;
+export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
+    const inside = await mapSpanFull(span, {
+        simple: async s => s,
+        compound: async spans => compoundSpan(await Promise.all(
+            spans.map(s => processSpanAsync(s, fn))
+        )),
+        attr: async (s, attr) => attrSpan(await processSpanAsync(s, fn), attr),
+        ref: async (s, ref) => refSpan(await processSpanAsync(s, fn), ref),
+        image: async data => imageSpan(data),
+        semantic: async (s, sems) => semanticSpan(await processSpanAsync(s, fn), sems),
+        default: async s => s,
+    });
+    return fn(inside);
 }
 
 export function extractSpanText(span: Span): string {
@@ -104,10 +141,6 @@ export function extractSpanText(span: Span): string {
         image: () => '',
         default: () => '',
     });
-}
-
-export function spanTextLength(span: Span): number {
-    return extractSpanText(span).length;
 }
 
 export function normalizeSpan(span: Span): Span {
@@ -167,15 +200,23 @@ function normalizeCompoundSpan(spans: Span[]): Span {
             : result;
 }
 
-export type ImageProcessor = (image: ImageData) => Promise<ImageData>;
-export async function processSpanImages(span: Span, fn: ImageProcessor): Promise<Span> {
-    return mapSpan(span, {
-        compound: async spans => compoundSpan(
-            await Promise.all(spans.map(s => processSpanImages(s, fn)))
-        ),
-        image: async data => ({
-            image: await fn(data),
-        }),
-        default: async s => s,
-    });
-}
+// TODO: remove ?
+
+// export function spanTextLength(span: Span): number {
+//     return extractSpanText(span).length;
+// }
+
+// export function subSpans(span: CompoundSpan): Span[] {
+//     return span as Span[];
+// }
+
+// export function spanAttr(span: Span): AttributeName | undefined {
+//     for (const an of attributeNames) {
+//         const attr = (span as any)[an];
+//         if (attr !== undefined) {
+//             return attr;
+//         }
+//     }
+
+//     return undefined;
+// }
