@@ -3,6 +3,7 @@ import {
     TableOfContents, TableOfContentsItem,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
+import { extractNodeText, normalizeNodes } from './nodes';
 
 export function tocForBook(book: Book): TableOfContents {
     const anchors = Array.from(iterateAnchorPaths(book.volume.nodes, [], false));
@@ -72,4 +73,20 @@ function* iterateAnchorPaths(nodes: BookContentNode[], prefix: BookPath = [], sk
             }
         }
     }
+}
+
+export function extractBookText(book: Book): string {
+    return book.volume.nodes
+        .map(extractNodeText)
+        .join('');
+}
+
+export function normalizeBook(book: Book): Book {
+    return {
+        ...book,
+        volume: {
+            ...book.volume,
+            nodes: normalizeNodes(book.volume.nodes),
+        },
+    };
 }

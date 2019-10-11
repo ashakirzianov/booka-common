@@ -140,9 +140,9 @@ export function normalizeSpan(span: Span): Span {
 
 function normalizeCompoundSpan(spans: Span[]): Span {
     const result: Span[] = [];
-    let idx = 0;
+
     let current: SimpleSpan | undefined = undefined;
-    while (idx < spans.length) {
+    for (let idx = 0; idx < spans.length; idx++) {
         const span = normalizeSpan(spans[idx]);
         if (isSimple(span)) {
             if (current === undefined) {
@@ -157,7 +157,6 @@ function normalizeCompoundSpan(spans: Span[]): Span {
             }
             result.push(span);
         }
-        idx++;
     }
     if (current !== undefined) {
         result.push(current);
