@@ -1,4 +1,4 @@
-import { BookPath, BookRange, BookContentNode } from '../model';
+import { BookPath, BookRange, BookNode } from '../model';
 import { hasSubnodes } from './bookNode';
 import { lastElement } from './misc';
 
@@ -147,7 +147,7 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
     }
 }
 
-export function nodeForPath(nodes: BookContentNode[], path: BookPath): BookContentNode | undefined {
+export function nodeForPath(nodes: BookNode[], path: BookPath): BookNode | undefined {
     if (path.length === 0) {
         return undefined;
     }
@@ -163,7 +163,7 @@ export function nodeForPath(nodes: BookContentNode[], path: BookPath): BookConte
     }
 }
 
-export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
+export function nodesAfterPath(top: BookNode[], path: BookPath, count?: number): BookNode[] {
     if (path.length === 0) {
         const start = 0;
         const end = count === undefined
@@ -190,7 +190,7 @@ export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: n
     }
 }
 
-export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookContentNode[] {
+export function nodesForRange(nodes: BookNode[], range: BookRange): BookNode[] {
     if (!range.end) {
         return nodesAfterPath(nodes, range.start);
     }

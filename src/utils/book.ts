@@ -1,5 +1,5 @@
 import {
-    BookPath, BookFragment, Book, BookContentNode,
+    BookPath, BookFragment, Book, BookNode,
     TableOfContents, TableOfContentsItem, ImageData,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
@@ -95,7 +95,7 @@ type Anchor = {
     level: number,
 };
 // TODO: re-implement
-function* iterateAnchorPaths(nodes: BookContentNode[], prefix: BookPath = [], skipFirstChapters: boolean = true): IterableIterator<Anchor> {
+function* iterateAnchorPaths(nodes: BookNode[], prefix: BookPath = [], skipFirstChapters: boolean = true): IterableIterator<Anchor> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
         if (node.node === 'title') {

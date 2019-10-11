@@ -17,7 +17,7 @@ export type TitleNode = DefNode<'title'> & {
 };
 
 export type GroupNode = DefNode<'group'> & {
-    nodes: BookContentNode[],
+    nodes: BookNode[],
 };
 
 export type TableCell = {
@@ -41,15 +41,13 @@ export type ListNode = DefNode<'list'> & {
 
 export type SeparatorNode = DefNode<'separator'>;
 
-export type BookContentNode =
+export type BookNode =
     | GroupNode
     | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
 
 export type HasSubnodes = GroupNode;
-// TODO: merge with 'BookNode' ?
-export type Node = BookContentNode;
 
-export type NodeKind = Node['node'];
-export type NodeForKind<K extends NodeKind> = Extract<Node, { node: K }>;
+export type NodeKind = BookNode['node'];
+export type NodeForKind<K extends NodeKind> = Extract<BookNode, { node: K }>;

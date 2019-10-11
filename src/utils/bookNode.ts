@@ -1,15 +1,15 @@
 import {
-    Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
+    BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
 } from '../model';
 import { extractSpanText, normalizeSpan, processSpanImages } from './span';
 import { addPaths } from './bookRange';
 import { assertNever, flatten } from './misc';
 
-export function assignId<N extends Node>(node: N, refId: string): N {
+export function assignId<N extends BookNode>(node: N, refId: string): N {
     return { ...node, refId };
 }
 
-export function appendSemantics<N extends Node>(node: N, semantics: Semantic[]): N {
+export function appendSemantics<N extends BookNode>(node: N, semantics: Semantic[]): N {
     return node.semantics
         ? { ...node, semantics: [...node.semantics, ...semantics] }
         : { ...node, semantics: semantics };
@@ -26,26 +26,26 @@ export function pphSpan(p: ParagraphNode): Span {
     return p.span;
 }
 
-export function hasSubnodes(bn: Node): bn is HasSubnodes {
+export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
     return bn.node === 'group';
 }
 
-export function getSubnodes(bn: Node): BookContentNode[] {
+export function getSubnodes(bn: BookNode): BookNode[] {
     return hasSubnodes(bn)
         ? bn.nodes
         : [];
 }
 
-export function* iterateBookFragment(fragment: BookFragment): Generator<[BookContentNode, BookPath]> {
+export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
-            node as BookContentNode,
+            node as BookNode,
             addPaths(fragment.current, path),
         ];
     }
 }
 
-export function* iterateNodes(nodes: Node[]): Generator<[Node, BookPath]> {
+export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
         yield [node, [idx]];
@@ -55,7 +55,7 @@ export function* iterateNodes(nodes: Node[]): Generator<[Node, BookPath]> {
     }
 }
 
-export function* justNodeGenerator(nodes: Node[]): Generator<Node> {
+export function* justNodeGenerator(nodes: BookNode[]): Generator<BookNode> {
     for (const node of nodes) {
         yield node;
         if (hasSubnodes(node)) {
@@ -64,7 +64,7 @@ export function* justNodeGenerator(nodes: Node[]): Generator<Node> {
     }
 }
 
-export function* iterateNodeIds(nodes: Node[]): Generator<string> {
+export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
     for (const node of justNodeGenerator(nodes)) {
         if (node.refId !== undefined) {
             yield node.refId;
@@ -72,7 +72,7 @@ export function* iterateNodeIds(nodes: Node[]): Generator<string> {
     }
 }
 
-export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | undefined {
+export function findReference(refId: string, nodes: BookNode[]): [BookNode, BookPath] | undefined {
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
             return [sub, path];
@@ -81,7 +81,7 @@ export function findReference(refId: string, nodes: Node[]): [Node, BookPath] | 
     return undefined;
 }
 // TODO: re-implement
-export function extractNodeText(node: Node): string {
+export function extractNodeText(node: BookNode): string {
     switch (node.node) {
         case 'group':
             return node.nodes
@@ -116,7 +116,7 @@ export function extractNodeText(node: Node): string {
     }
 }
 
-export function extractSpans(node: Node): Span[] {
+export function extractSpans(node: BookNode): Span[] {
     switch (node.node) {
         case 'group':
             return flatten(node.nodes.map(extractSpans));
@@ -144,18 +144,18 @@ export function extractSpans(node: Node): Span[] {
 
 // Process nodes:
 
-export async function processNodesImages(nodes: BookContentNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookContentNode[]> {
+export async function processNodesImages(nodes: BookNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode[]> {
     return Promise.all(
         nodes.map(n => processNodeImages(n, fn))
     );
 }
 
-async function processNodeImages(node: BookContentNode, fn: (image: ImageData) => Promise<ImageData>): Promise<BookContentNode> {
+async function processNodeImages(node: BookNode, fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode> {
     return processNodeSpansAsync(node, async s => processSpanImages(s, fn));
 }
 
-export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
-    const results: BookContentNode[] = [];
+export function normalizeNodes(nodes: BookNode[]): BookNode[] {
+    const results: BookNode[] = [];
     for (const node of nodes) {
         switch (node.node) {
             case 'pph':
@@ -188,17 +188,17 @@ export function normalizeNodes(nodes: BookContentNode[]): BookContentNode[] {
     return results;
 }
 
-function couldBeNormalized(node: BookContentNode): boolean {
+function couldBeNormalized(node: BookNode): boolean {
     return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
 }
 
-export async function processNodesSpansAsync(nodes: BookContentNode[], fn: (span: Span) => Promise<Span>): Promise<BookContentNode[]> {
+export async function processNodesSpansAsync(nodes: BookNode[], fn: (span: Span) => Promise<Span>): Promise<BookNode[]> {
     return Promise.all(
         nodes.map(n => processNodeSpansAsync(n, fn))
     );
 }
 
-export async function processNodeSpansAsync(node: BookContentNode, fn: (span: Span) => Promise<Span>): Promise<BookContentNode> {
+export async function processNodeSpansAsync(node: BookNode, fn: (span: Span) => Promise<Span>): Promise<BookNode> {
     switch (node.node) {
         case 'pph':
             return {

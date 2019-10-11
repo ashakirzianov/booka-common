@@ -1,5 +1,5 @@
 import { ImageData } from './span';
-import { BookContentNode } from './bookNode';
+import { BookNode } from './bookNode';
 import { KnownTag } from './tag';
 import { BookPath } from './bookRange';
 
@@ -17,7 +17,7 @@ export type BookMeta = {
 };
 export type BookSource = EpubBookSource;
 export type Book = {
-    nodes: BookContentNode[],
+    nodes: BookNode[],
     meta: BookMeta,
     tags: KnownTag[],
 };
@@ -35,7 +35,7 @@ export type BookFragment = {
     current: BookPath,
     next?: BookPath,
     previous?: BookPath,
-    nodes: BookContentNode[],
+    nodes: BookNode[],
 };
 
 export type TableOfContentsItem = {
