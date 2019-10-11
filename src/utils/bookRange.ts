@@ -147,6 +147,22 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
     }
 }
 
+export function nodeForPath(nodes: BookContentNode[], path: BookPath): BookContentNode | undefined {
+    if (path.length === 0) {
+        return undefined;
+    }
+    const head = nodes[path[0]];
+    if (path.length === 0) {
+        return head;
+    } else {
+        if (hasSubnodes(head)) {
+            return nodeForPath(head.nodes, pathTail(path));
+        } else {
+            return undefined;
+        }
+    }
+}
+
 export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
     if (path.length === 0) {
         const start = 0;

@@ -1,9 +1,9 @@
 import {
     Node, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, BookContentNode, Semantic,
 } from '../model';
-import { extractSpanText, normalizeSpan, ImageProcessor, processSpanImages } from './span';
+import { extractSpanText, normalizeSpan, processSpanImages } from './span';
 import { addPaths } from './bookRange';
-import { assertNever, flatten, assertType } from './misc';
+import { assertNever, flatten } from './misc';
 
 export function assignId<N extends Node>(node: N, refId: string): N {
     return { ...node, refId };
