@@ -1,7 +1,7 @@
 import {
     BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
 } from '../model';
-import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan } from './span';
+import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan, extractRefsFromSpan } from './span';
 import { addPaths } from './bookRange';
 import { assertNever, flatten } from './misc';
 
@@ -81,6 +81,20 @@ export function findReference(refId: string, nodes: BookNode[]): [BookNode, Book
     }
     return undefined;
 }
+
+export function extractRefsFromNodes(nodes: BookNode[]): string[] {
+    const refs: string[] = [];
+    for (const node of justNodeGenerator(nodes)) {
+        switch (node.node) {
+            case 'pph':
+                refs.push(...extractRefsFromSpan(node.span));
+                break;
+        }
+    }
+
+    return refs;
+}
+
 // TODO: re-implement
 export function extractNodeText(node: BookNode): string {
     switch (node.node) {

@@ -3,7 +3,7 @@ import {
     SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
     ImageData, SpanAttribute, Semantic, AnchorSpan,
 } from '../model';
-import { guard } from './misc';
+import { guard, flatten } from './misc';
 
 export function compoundSpan(spans: Span[]): Span {
     return spans;
@@ -220,23 +220,15 @@ function normalizeCompoundSpan(spans: Span[]): Span {
             : result;
 }
 
-// TODO: remove ?
-
-// export function spanTextLength(span: Span): number {
-//     return extractSpanText(span).length;
-// }
-
-// export function subSpans(span: CompoundSpan): Span[] {
-//     return span as Span[];
-// }
-
-// export function spanAttr(span: Span): AttributeName | undefined {
-//     for (const an of attributeNames) {
-//         const attr = (span as any)[an];
-//         if (attr !== undefined) {
-//             return attr;
-//         }
-//     }
-
-//     return undefined;
-// }
+export function extractRefsFromSpan(span: Span): string[] {
+    return mapSpanFull<string[]>(span, {
+        compound: spans => flatten(spans.map(extractRefsFromSpan)),
+        ref: (_, ref) => [ref],
+        anchor: extractRefsFromSpan,
+        attr: extractRefsFromSpan,
+        semantic: extractRefsFromSpan,
+        simple: () => [],
+        image: () => [],
+        default: () => [],
+    });
+}
