@@ -87,7 +87,34 @@ export function extractRefsFromNodes(nodes: BookNode[]): string[] {
     for (const node of justNodeGenerator(nodes)) {
         switch (node.node) {
             case 'pph':
-                refs.push(...extractRefsFromSpan(node.span));
+                {
+                    const fromSpan = extractRefsFromSpan(node.span);
+                    refs.push(...fromSpan);
+                }
+                break;
+            case 'table':
+                {
+                    const fromRows = flatten(
+                        node.rows.map(row =>
+                            flatten(row.cells.map(extractRefsFromSpan)))
+                    );
+                    refs.push(...fromRows);
+                }
+                break;
+            case 'list':
+                {
+                    const fromItems = flatten(
+                        node.items.map(extractRefsFromSpan)
+                    );
+                    refs.push(...fromItems);
+                }
+                break;
+            case 'group':
+            case 'separator':
+            case 'title':
+                break;
+            default:
+                assertNever(node);
                 break;
         }
     }
