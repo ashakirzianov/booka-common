@@ -6,9 +6,7 @@ import {
 import { guard } from './misc';
 
 export function compoundSpan(spans: Span[]): Span {
-    return spans.length === 1
-        ? spans[0]
-        : spans;
+    return spans;
 }
 
 export function attrSpan(span: Span, attr: AttributeName): Span {
