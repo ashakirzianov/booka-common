@@ -254,6 +254,7 @@ export function spanLength(span: Span): number {
     });
 }
 
+// TODO: accept Span[]
 export function* iterateSpans(span: Span): Generator<[Span, number]> {
     yield [span, 0];
     if (isCompoundSpan(span)) {

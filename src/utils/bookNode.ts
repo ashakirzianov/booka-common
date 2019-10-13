@@ -5,7 +5,7 @@ import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     mapSpan, imageSpan, visitSpan, findAnchor,
 } from './span';
-import { addPaths, appendPath } from './bookRange';
+import { addPaths, appendPath, leadPath, concatPath } from './bookRange';
 import { assertNever, flatten, filterUndefined } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -51,9 +51,12 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNod
 export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        yield [node, [idx]];
+        const headPath = leadPath(idx);
+        yield [node, headPath];
         if (hasSubnodes(node)) {
-            yield* iterateNodes(node.nodes);
+            for (const [sub, path] of iterateNodes(node.nodes)) {
+                yield [sub, concatPath(headPath, path)];
+            }
         }
     }
 }
@@ -90,6 +93,9 @@ export function findReference(refId: string, nodes: BookNode[]): [BookNode, Book
                             return [sub, appendPath(path, sym)];
                         }
                     }
+                    break;
+                case 'table':
+
                     break;
                 // TODO: implement table, list
             }

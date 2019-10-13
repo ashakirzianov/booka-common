@@ -2,8 +2,8 @@ import { BookPath, BookRange, BookNode } from '../model';
 import { hasSubnodes } from './bookNode';
 import { lastElement } from './misc';
 
-export function leadPath(): BookPath {
-    return [0];
+export function leadPath(head: number): BookPath {
+    return [head];
 }
 
 export function emptyPath(): BookPath {
@@ -31,6 +31,10 @@ export function incrementPath(path: BookPath, inc: number): BookPath {
 
 export function appendPath(path: BookPath, lastIdx: number): BookPath {
     return path.concat([lastIdx]);
+}
+
+export function concatPath(path: BookPath, tail: BookPath): BookPath {
+    return path.concat(tail);
 }
 
 export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
