@@ -156,7 +156,7 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
             case 'group':
                 {
                     const processed = processNodes(curr.nodes, args);
-                    curr = { ...curr, nodes };
+                    curr = { ...curr, nodes: processed };
                 }
                 break;
             case 'pph':

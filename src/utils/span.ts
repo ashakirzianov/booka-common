@@ -35,11 +35,11 @@ export function imageSpan(imageData: ImageData): Span {
     return { image: imageData };
 }
 
-const isSimple = guard<SimpleSpan>(s => typeof s === 'string');
-const isCompound = guard<CompoundSpan>(s => Array.isArray(s));
-const isRef = guard<RefSpan>(s => s.ref !== undefined);
-const isSemantic = guard<SemanticSpan>(s => s.span !== undefined);
-const isImage = guard<ImageSpan>(s => s.image !== undefined);
+export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
+export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
+export const isRefSpan = guard<RefSpan>(s => s.ref !== undefined);
+export const isSemanticSpan = guard<SemanticSpan>(s => s.span !== undefined);
+export const isImageSpan = guard<ImageSpan>(s => s.image !== undefined);
 
 function getSpanAttr(span: AttributedSpan): SpanAttribute | undefined {
     for (const an of attributeNames) {
@@ -66,23 +66,23 @@ type DefaultSpanHandler<T> = {
     default: (span: Span) => T,
 };
 export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHandler<T>): T {
-    if (isSimple(span)) {
+    if (isSimpleSpan(span)) {
         return fn.simple
             ? fn.simple(span)
             : fn.default(span);
-    } else if (isCompound(span)) {
+    } else if (isCompoundSpan(span)) {
         return fn.compound
             ? fn.compound(span as Span[])
             : fn.default(span);
-    } else if (isRef(span)) {
+    } else if (isRefSpan(span)) {
         return fn.ref
             ? fn.ref(span.ref, span.refToId)
             : fn.default(span);
-    } else if (isSemantic(span)) {
+    } else if (isSemanticSpan(span)) {
         return fn.semantic
             ? fn.semantic(span.span, span.semantics)
             : fn.default(span);
-    } else if (isImage(span)) {
+    } else if (isImageSpan(span)) {
         return fn.image
             ? fn.image(span.image)
             : fn.default(span);
@@ -144,21 +144,21 @@ export function extractSpanText(span: Span): string {
 }
 
 export function normalizeSpan(span: Span): Span {
-    if (isSimple(span)) {
+    if (isSimpleSpan(span)) {
         return span;
-    } else if (isCompound(span)) {
+    } else if (isCompoundSpan(span)) {
         return normalizeCompoundSpan(span as Span[]);
-    } else if (isRef(span)) {
+    } else if (isRefSpan(span)) {
         return {
             ...span,
             ref: normalizeSpan(span.ref),
         };
-    } else if (isSemantic(span)) {
+    } else if (isSemanticSpan(span)) {
         return {
             ...span,
             span: normalizeSpan(span.span),
         };
-    } else if (isImage(span)) {
+    } else if (isImageSpan(span)) {
         return span;
     } else {
         const attr = getSpanAttr(span);
@@ -177,7 +177,7 @@ function normalizeCompoundSpan(spans: Span[]): Span {
     let current: SimpleSpan | undefined = undefined;
     for (let idx = 0; idx < spans.length; idx++) {
         const span = normalizeSpan(spans[idx]);
-        if (isSimple(span)) {
+        if (isSimpleSpan(span)) {
             if (current === undefined) {
                 current = span;
             } else {
