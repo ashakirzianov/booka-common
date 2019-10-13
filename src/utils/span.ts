@@ -12,7 +12,7 @@ export function compoundSpan(spans: Span[]): Span {
 export function attrSpan(span: Span, attr: AttributeName): Span {
     return {
         [attr]: span,
-    };
+    } as Span;
 }
 
 export function refSpan(span: Span, refToId: string): Span {
@@ -79,7 +79,7 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
             : fn.default(span);
     } else if (isCompoundSpan(span)) {
         return fn.compound
-            ? fn.compound(span as Span[])
+            ? fn.compound(span)
             : fn.default(span);
     } else if (isRefSpan(span)) {
         return fn.ref
@@ -175,7 +175,7 @@ export function normalizeSpan(span: Span): Span {
     if (isSimpleSpan(span)) {
         return span;
     } else if (isCompoundSpan(span)) {
-        return normalizeCompoundSpan(span as Span[]);
+        return normalizeCompoundSpan(span);
     } else if (isRefSpan(span)) {
         return {
             ...span,
@@ -260,7 +260,7 @@ export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
     for (const span of spans) {
         yield [span, 0];
         if (isCompoundSpan(span)) {
-            const subs = span as Span[];
+            const subs = span;
             for (const [sub, sym] of iterateSpans(subs)) {
                 yield [sub, sym + offset];
             }

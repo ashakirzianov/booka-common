@@ -15,10 +15,7 @@ export type ImageBufferData = ImageDataBase & {
 export type ImageData = ImageRefData | ImageBufferData;
 
 export type SimpleSpan = string;
-export type CompoundSpan = {
-    [n: number]: Span,
-    compound?: undefined,
-};
+export type CompoundSpan = Span[];
 
 export const attributeNames = [
     'italic', 'bold', 'small', 'big', 'sub', 'sup',
