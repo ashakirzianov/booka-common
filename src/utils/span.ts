@@ -240,3 +240,39 @@ export function extractRefsFromSpan(span: Span): string[] {
     }));
     return filterUndefined(results);
 }
+
+export function spanLength(span: Span): number {
+    return mapSpanFull(span, {
+        simple: s => s.length,
+        compound: ss => ss.reduce((len, s) => len + spanLength(s), 0),
+        ref: spanLength,
+        semantic: spanLength,
+        attr: spanLength,
+        anchor: spanLength,
+        image: () => 0,
+        default: () => 0,
+    });
+}
+
+export function* iterateSpans(span: Span): Generator<[Span, number]> {
+    yield [span, 0];
+    if (isCompoundSpan(span)) {
+        const spans = span as Span[];
+        let offset = 0;
+        for (const sub of spans) {
+            for (const [s, sym] of iterateSpans(sub)) {
+                yield [s, sym + offset];
+            }
+            offset += spanLength(sub);
+        }
+    }
+}
+
+export function findAnchor(span: Span, refId: string): number | undefined {
+    for (const [s, sym] of iterateSpans(span)) {
+        if (isAnchorSpan(s) && s.refId === refId) {
+            return sym;
+        }
+    }
+    return undefined;
+}

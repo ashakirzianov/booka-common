@@ -1,8 +1,11 @@
 import {
     BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
 } from '../model';
-import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan, extractRefsFromSpan, visitSpan } from './span';
-import { addPaths } from './bookRange';
+import {
+    extractSpanText, normalizeSpan, processSpan, processSpanAsync,
+    mapSpan, imageSpan, visitSpan, findAnchor,
+} from './span';
+import { addPaths, appendPath } from './bookRange';
 import { assertNever, flatten, filterUndefined } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -77,6 +80,19 @@ export function findReference(refId: string, nodes: BookNode[]): [BookNode, Book
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
             return [sub, path];
+        } else {
+            switch (sub.node) {
+                case 'title':
+                case 'pph':
+                    {
+                        const sym = findAnchor(sub.span, refId);
+                        if (sym !== undefined) {
+                            return [sub, appendPath(path, sym)];
+                        }
+                    }
+                    break;
+                // TODO: implement table, list
+            }
         }
     }
     return undefined;
