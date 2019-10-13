@@ -40,7 +40,7 @@ export type RefSpan = {
 };
 
 export type AnchorSpan = {
-    anchor: Span,
+    a: Span,
     refId: string,
 };
 

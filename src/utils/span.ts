@@ -26,7 +26,7 @@ export function refSpan(span: Span, refToId: string): Span {
 
 export function anchorSpan(span: Span, refId: string): Span {
     return {
-        anchor: span,
+        a: span,
         refId,
     };
 }
@@ -45,7 +45,7 @@ export function imageSpan(imageData: ImageData): Span {
 export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
 export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
 export const isRefSpan = guard<RefSpan>(s => s.ref !== undefined);
-export const isAnchorSpan = guard<AnchorSpan>(s => s.anchor !== undefined);
+export const isAnchorSpan = guard<AnchorSpan>(s => s.a !== undefined);
 export const isSemanticSpan = guard<SemanticSpan>(s => s.span !== undefined);
 export const isImageSpan = guard<ImageSpan>(s => s.image !== undefined);
 
@@ -89,7 +89,7 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
             : fn.default(span);
     } else if (isAnchorSpan(span)) {
         return fn.anchor
-            ? fn.anchor(span.anchor, span.refId)
+            ? fn.anchor(span.a, span.refId)
             : fn.default(span);
     } else if (isSemanticSpan(span)) {
         return fn.semantic
@@ -173,7 +173,7 @@ export function normalizeSpan(span: Span): Span {
     } else if (isAnchorSpan(span)) {
         return {
             ...span,
-            anchor: normalizeSpan(span.anchor),
+            a: normalizeSpan(span.a),
         };
     } else if (isSemanticSpan(span)) {
         return {
