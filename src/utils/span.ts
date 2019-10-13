@@ -116,14 +116,14 @@ export function mapSpanFull<T>(span: Span, fn: SpanMapFn<T> & DefaultSpanHandler
 
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     const inside = mapSpanFull(span, {
-        simple: s => fn(s),
-        compound: spans => fn(compoundSpan(spans.map(s => processSpan(s, fn)))),
-        attr: (s, attr) => fn(attrSpan(processSpan(s, fn), attr)),
-        ref: (s, ref) => fn(refSpan(processSpan(s, fn), ref)),
-        anchor: (s, id) => fn(anchorSpan(processSpan(s, fn), id)),
-        image: data => fn(imageSpan(data)),
-        semantic: (s, sems) => fn(semanticSpan(processSpan(s, fn), sems)),
-        default: s => fn(s),
+        simple: s => s,
+        compound: spans => compoundSpan(spans.map(s => processSpan(s, fn))),
+        attr: (s, attr) => attrSpan(processSpan(s, fn), attr),
+        ref: (s, ref) => refSpan(processSpan(s, fn), ref),
+        anchor: (s, id) => anchorSpan(processSpan(s, fn), id),
+        image: data => imageSpan(data),
+        semantic: (s, sems) => semanticSpan(processSpan(s, fn), sems),
+        default: s => s,
     });
     return fn(inside);
 }
@@ -131,16 +131,16 @@ export function processSpan(span: Span, fn: (s: Span) => Span): Span {
 // TODO: fix
 export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
     const inside = await mapSpanFull(span, {
-        simple: async s => fn(s),
-        compound: async spans => fn(compoundSpan(await Promise.all(
+        simple: async s => s,
+        compound: async spans => compoundSpan(await Promise.all(
             spans.map(s => processSpanAsync(s, fn))
-        ))),
-        attr: async (s, attr) => fn(attrSpan(await processSpanAsync(s, fn), attr)),
-        ref: async (s, ref) => fn(refSpan(await processSpanAsync(s, fn), ref)),
-        anchor: async (s, id) => fn(anchorSpan(await processSpanAsync(s, fn), id)),
-        image: async data => fn(imageSpan(data)),
-        semantic: async (s, sems) => fn(semanticSpan(await processSpanAsync(s, fn), sems)),
-        default: async s => fn(s),
+        )),
+        attr: async (s, attr) => attrSpan(await processSpanAsync(s, fn), attr),
+        ref: async (s, ref) => refSpan(await processSpanAsync(s, fn), ref),
+        anchor: async (s, id) => anchorSpan(await processSpanAsync(s, fn), id),
+        image: async data => imageSpan(data),
+        semantic: async (s, sems) => semanticSpan(await processSpanAsync(s, fn), sems),
+        default: async s => s,
     });
     return fn(inside);
 }
