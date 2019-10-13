@@ -102,6 +102,7 @@ export function extractNodeText(node: BookNode): string {
         case undefined:
             return extractSpanText(node);
         case 'pph':
+        case 'title':
             return extractSpanText(node.span);
         case 'table':
             return node.rows
@@ -118,8 +119,6 @@ export function extractNodeText(node: BookNode): string {
                     i.spans.map(extractSpanText).join('')
                 )
                 .join('\n');
-        case 'title':
-            return node.lines.join('\n');
         case 'separator':
             return '';
         default:
@@ -135,6 +134,7 @@ export function extractSpans(node: BookNode): Span[] {
         case undefined:
             return [node];
         case 'pph':
+        case 'title':
             return [node.span];
         case 'table':
             return flatten(flatten(
@@ -144,8 +144,6 @@ export function extractSpans(node: BookNode): Span[] {
             return flatten(
                 node.items.map(i => i.spans)
             );
-        case 'title':
-            return node.lines;
         case 'separator':
             return [];
         default:
@@ -168,6 +166,7 @@ export function visitNodes<T>(nodes: BookNode[], args: VisitNodesArgs<T>): T[] {
                 results.push(...visitNodes(node.nodes, args));
                 break;
             case 'pph':
+            case 'title':
                 if (args.span) {
                     results.push(...visitSpan(node.span, args.span));
                 }
@@ -203,7 +202,6 @@ export function visitNodes<T>(nodes: BookNode[], args: VisitNodesArgs<T>): T[] {
                 }
                 break;
             case 'separator':
-            case 'title':
                 break;
             default:
                 assertNever(node);
@@ -233,6 +231,7 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
                 }
                 break;
             case 'pph':
+            case 'title':
                 if (args.span) {
                     const span = processSpan(curr.span, args.span);
                     curr = { ...curr, span };
@@ -268,7 +267,6 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
                 }
                 break;
             case 'separator':
-            case 'title':
                 break;
             default:
                 assertNever(curr);
@@ -301,6 +299,7 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
                 }
                 break;
             case 'pph':
+            case 'title':
                 if (args.span) {
                     const span = await processSpanAsync(curr.span, args.span);
                     curr = { ...curr, span };
@@ -346,7 +345,6 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
                 }
                 break;
             case 'separator':
-            case 'title':
                 break;
             default:
                 assertNever(curr);
@@ -377,6 +375,7 @@ export function normalizeNodes(nodes: BookNode[]): BookNode[] {
     const results: BookNode[] = [];
     for (const node of nodes) {
         switch (node.node) {
+            case 'title':
             case 'pph':
                 {
                     const span = normalizeSpan(node.span);
@@ -409,60 +408,4 @@ export function normalizeNodes(nodes: BookNode[]): BookNode[] {
 
 function couldBeNormalized(node: BookNode): boolean {
     return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
-}
-
-export async function processNodesSpansAsync(nodes: BookNode[], fn: (span: Span) => Promise<Span>): Promise<BookNode[]> {
-    return Promise.all(
-        nodes.map(n => processNodeSpansAsync(n, fn))
-    );
-}
-
-export async function processNodeSpansAsync(node: BookNode, fn: (span: Span) => Promise<Span>): Promise<BookNode> {
-    switch (node.node) {
-        case 'pph':
-            return {
-                ...node,
-                span: await fn(node.span),
-            };
-        case 'group':
-            return {
-                ...node,
-                nodes: await processNodesSpansAsync(node.nodes, fn),
-            };
-        case 'table':
-            return {
-                ...node,
-                rows: await Promise.all(
-                    node.rows.map(async row => ({
-                        ...row,
-                        cells: await Promise.all(
-                            row.cells.map(async cell => ({
-                                ...cell,
-                                spans: await Promise.all(
-                                    cell.spans.map(fn)
-                                ),
-                            }))
-                        ),
-                    }))
-                ),
-            };
-        case 'list':
-            return {
-                ...node,
-                items: await Promise.all(
-                    node.items.map(async item => ({
-                        ...item,
-                        spans: await Promise.all(
-                            item.spans.map(fn)
-                        ),
-                    }))
-                ),
-            };
-        case 'separator':
-        case 'title':
-            return node;
-        default:
-            assertNever(node);
-            return node;
-    }
 }

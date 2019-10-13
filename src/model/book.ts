@@ -39,7 +39,7 @@ export type BookFragment = {
 };
 
 export type TableOfContentsItem = {
-    title: string[],
+    title: string,
     level: number,
     path: BookPath,
 };

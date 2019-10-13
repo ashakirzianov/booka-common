@@ -7,6 +7,7 @@ import {
     ImageProcessor,
     extractNodeText, normalizeNodes, processNodesImages,
 } from './bookNode';
+import { extractSpanText } from './span';
 
 export async function processBookImages(book: Book, fn: ImageProcessor): Promise<Book> {
     if (book.meta.coverImage) {
@@ -93,7 +94,7 @@ function buildAnchorsForPath(book: Book, path: BookPath) {
 
 type Anchor = {
     path: BookPath,
-    title: string[],
+    title: string,
     level: number,
 };
 // TODO: re-implement
@@ -106,7 +107,7 @@ function* iterateAnchorPaths(nodes: BookNode[], prefix: BookPath = [], skipFirst
             if (!skipFirstChapters || idx !== 0) {
                 yield {
                     path: chapterPrefix,
-                    title: node.lines,
+                    title: extractSpanText(node.span),
                     level: node.level,
                 };
             }

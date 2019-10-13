@@ -13,7 +13,7 @@ export type ParagraphNode = DefNode<'pph'> & {
 
 export type TitleNode = DefNode<'title'> & {
     level: number,
-    lines: string[],
+    span: Span,
 };
 
 export type GroupNode = DefNode<'group'> & {

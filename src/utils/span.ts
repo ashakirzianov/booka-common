@@ -140,7 +140,6 @@ export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     return fn(inside);
 }
 
-// TODO: fix
 export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
     const inside = await mapSpanFull(span, {
         simple: async s => s,
@@ -240,14 +239,4 @@ export function extractRefsFromSpan(span: Span): string[] {
         default: () => undefined,
     }));
     return filterUndefined(results);
-    // return mapSpanFull<string[]>(span, {
-    //     compound: spans => flatten(spans.map(extractRefsFromSpan)),
-    //     ref: (_, ref) => [ref],
-    //     anchor: extractRefsFromSpan,
-    //     attr: extractRefsFromSpan,
-    //     semantic: extractRefsFromSpan,
-    //     simple: () => [],
-    //     image: () => [],
-    //     default: () => [],
-    // });
 }
