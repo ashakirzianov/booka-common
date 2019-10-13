@@ -79,7 +79,7 @@ export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
 }
 
 // TODO: fix (support anchor spans)
-export function findReference(refId: string, nodes: BookNode[]): [BookNode, BookPath] | undefined {
+export function findReference(nodes: BookNode[], refId: string): [BookNode, BookPath] | undefined {
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
             return [sub, path];
@@ -88,16 +88,41 @@ export function findReference(refId: string, nodes: BookNode[]): [BookNode, Book
                 case 'title':
                 case 'pph':
                     {
-                        const sym = findAnchor(sub.span, refId);
+                        const sym = findAnchor([sub.span], refId);
                         if (sym !== undefined) {
                             return [sub, appendPath(path, sym)];
                         }
                     }
                     break;
-                case 'table':
-
-                    break;
                 // TODO: implement table, list
+                case 'table':
+                    {
+                        for (const row of sub.rows) {
+                            for (const cell of row.cells) {
+                                const sym = findAnchor(cell.spans, refId);
+                                if (sym !== undefined) {
+                                    return [sub, appendPath(path, sym)];
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'list':
+                    {
+                        for (const item of sub.items) {
+                            const sym = findAnchor(item.spans, refId);
+                            if (sym !== undefined) {
+                                return [sub, appendPath(path, sym)];
+                            }
+                        }
+                    }
+                    break;
+                case 'separator':
+                case 'group':
+                    break;
+                default:
+                    assertNever(sub);
+                    break;
             }
         }
     }

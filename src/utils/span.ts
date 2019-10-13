@@ -255,22 +255,22 @@ export function spanLength(span: Span): number {
 }
 
 // TODO: accept Span[]
-export function* iterateSpans(span: Span): Generator<[Span, number]> {
-    yield [span, 0];
-    if (isCompoundSpan(span)) {
-        const spans = span as Span[];
-        let offset = 0;
-        for (const sub of spans) {
-            for (const [s, sym] of iterateSpans(sub)) {
-                yield [s, sym + offset];
+export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
+    let offset = 0;
+    for (const span of spans) {
+        yield [span, 0];
+        if (isCompoundSpan(span)) {
+            const subs = span as Span[];
+            for (const [sub, sym] of iterateSpans(subs)) {
+                yield [sub, sym + offset];
             }
-            offset += spanLength(sub);
         }
+        offset += spanLength(span);
     }
 }
 
-export function findAnchor(span: Span, refId: string): number | undefined {
-    for (const [s, sym] of iterateSpans(span)) {
+export function findAnchor(spans: Span[], refId: string): number | undefined {
+    for (const [s, sym] of iterateSpans(spans)) {
         if (isAnchorSpan(s) && s.refId === refId) {
             return sym;
         }
