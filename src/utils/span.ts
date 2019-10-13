@@ -3,7 +3,7 @@ import {
     SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
     ImageData, SpanAttribute, Semantic, AnchorSpan,
 } from '../model';
-import { guard, flatten } from './misc';
+import { guard, flatten, filterUndefined } from './misc';
 
 export function compoundSpan(spans: Span[]): Span {
     return spans;
@@ -110,6 +110,20 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
 }
 export function mapSpanFull<T>(span: Span, fn: SpanMapFn<T> & DefaultSpanHandler<T>): T {
     return mapSpan(span, fn);
+}
+
+export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
+    const inside = mapSpanFull<T[]>(span, {
+        compound: spans => flatten(spans.map(s => visitSpan(s, visitor))),
+        attr: (s, attr) => visitSpan(s, visitor),
+        ref: (s, ref) => visitSpan(s, visitor),
+        anchor: (s, id) => visitSpan(s, visitor),
+        semantic: (s, sems) => visitSpan(s, visitor),
+        simple: () => [],
+        image: () => [],
+        default: () => [],
+    });
+    return [...inside, visitor(span)];
 }
 
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
@@ -221,14 +235,19 @@ function normalizeCompoundSpan(spans: Span[]): Span {
 }
 
 export function extractRefsFromSpan(span: Span): string[] {
-    return mapSpanFull<string[]>(span, {
-        compound: spans => flatten(spans.map(extractRefsFromSpan)),
-        ref: (_, ref) => [ref],
-        anchor: extractRefsFromSpan,
-        attr: extractRefsFromSpan,
-        semantic: extractRefsFromSpan,
-        simple: () => [],
-        image: () => [],
-        default: () => [],
-    });
+    const results = visitSpan(span, s => mapSpan(s, {
+        ref: (_, ref) => ref,
+        default: () => undefined,
+    }));
+    return filterUndefined(results);
+    // return mapSpanFull<string[]>(span, {
+    //     compound: spans => flatten(spans.map(extractRefsFromSpan)),
+    //     ref: (_, ref) => [ref],
+    //     anchor: extractRefsFromSpan,
+    //     attr: extractRefsFromSpan,
+    //     semantic: extractRefsFromSpan,
+    //     simple: () => [],
+    //     image: () => [],
+    //     default: () => [],
+    // });
 }

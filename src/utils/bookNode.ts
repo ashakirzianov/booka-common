@@ -1,9 +1,9 @@
 import {
     BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
 } from '../model';
-import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan, extractRefsFromSpan } from './span';
+import { extractSpanText, normalizeSpan, processSpan, processSpanAsync, mapSpan, imageSpan, extractRefsFromSpan, visitSpan } from './span';
 import { addPaths } from './bookRange';
-import { assertNever, flatten } from './misc';
+import { assertNever, flatten, filterUndefined } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
     return { ...node, refId };
@@ -83,43 +83,13 @@ export function findReference(refId: string, nodes: BookNode[]): [BookNode, Book
 }
 
 export function extractRefsFromNodes(nodes: BookNode[]): string[] {
-    const refs: string[] = [];
-    for (const node of justNodeGenerator(nodes)) {
-        switch (node.node) {
-            case 'pph':
-                {
-                    const fromSpan = extractRefsFromSpan(node.span);
-                    refs.push(...fromSpan);
-                }
-                break;
-            case 'table':
-                {
-                    const fromRows = flatten(
-                        node.rows.map(row =>
-                            flatten(row.cells.map(extractRefsFromSpan)))
-                    );
-                    refs.push(...fromRows);
-                }
-                break;
-            case 'list':
-                {
-                    const fromItems = flatten(
-                        node.items.map(extractRefsFromSpan)
-                    );
-                    refs.push(...fromItems);
-                }
-                break;
-            case 'group':
-            case 'separator':
-            case 'title':
-                break;
-            default:
-                assertNever(node);
-                break;
-        }
-    }
-
-    return refs;
+    const results = visitNodes(nodes, {
+        span: s => mapSpan(s, {
+            ref: (_, ref) => ref,
+            default: () => undefined,
+        }),
+    });
+    return filterUndefined(results);
 }
 
 // TODO: re-implement
@@ -185,6 +155,67 @@ export function extractSpans(node: BookNode): Span[] {
 }
 
 // Process nodes:
+
+export type VisitNodesArgs<T> = {
+    node?: (n: BookNode) => T,
+    span?: (s: Span) => T,
+};
+export function visitNodes<T>(nodes: BookNode[], args: VisitNodesArgs<T>): T[] {
+    const results: T[] = [];
+    for (const node of nodes) {
+        switch (node.node) {
+            case 'group':
+                results.push(...visitNodes(node.nodes, args));
+                break;
+            case 'pph':
+                if (args.span) {
+                    results.push(...visitSpan(node.span, args.span));
+                }
+                break;
+            case 'table':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const fromRows = flatten(
+                        node.rows.map(row =>
+                            flatten(
+                                row.cells.map(cell =>
+                                    flatten(
+                                        cell.spans.map(s =>
+                                            visitSpan(s, spanProc)),
+                                    ))
+                            ),
+                        ),
+                    );
+                    results.push(...fromRows);
+                }
+                break;
+            case 'list':
+                if (args.span) {
+                    const spanProc = args.span;
+                    const fromItems = flatten(
+                        node.items.map(item =>
+                            flatten(
+                                item.spans.map(s => visitSpan(s, spanProc))
+                            ),
+                        ),
+                    );
+                    results.push(...fromItems);
+                }
+                break;
+            case 'separator':
+            case 'title':
+                break;
+            default:
+                assertNever(node);
+                break;
+        }
+        if (args.node) {
+            results.push(args.node(node));
+        }
+    }
+
+    return results;
+}
 
 export type ProcessNodesArgs = {
     node?: (n: BookNode) => (BookNode | undefined),
