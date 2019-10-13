@@ -39,6 +39,11 @@ export type RefSpan = {
     refToId: string,
 };
 
+export type AnchorSpan = {
+    anchor: Span,
+    refId: string,
+};
+
 export type ImageSpan = {
     image: ImageData,
 };
@@ -53,6 +58,7 @@ export type Span =
     | CompoundSpan
     | AttributedSpan
     | RefSpan
+    | AnchorSpan
     | SemanticSpan
     | ImageSpan
     ;

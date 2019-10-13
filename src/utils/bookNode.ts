@@ -72,6 +72,7 @@ export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
     }
 }
 
+// TODO: fix (support anchor spans)
 export function findReference(refId: string, nodes: BookNode[]): [BookNode, BookPath] | undefined {
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {

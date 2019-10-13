@@ -1,7 +1,7 @@
 import {
     Span, CompoundSpan, AttributeName, attributeNames,
     SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
-    ImageData, SpanAttribute, Semantic,
+    ImageData, SpanAttribute, Semantic, AnchorSpan,
 } from '../model';
 import { guard } from './misc';
 
@@ -24,6 +24,13 @@ export function refSpan(span: Span, refToId: string): Span {
     };
 }
 
+export function anchorSpan(span: Span, refId: string): Span {
+    return {
+        anchor: span,
+        refId,
+    };
+}
+
 export function semanticSpan(span: Span, semantics: Semantic[]): Span {
     return {
         span: span,
@@ -38,6 +45,7 @@ export function imageSpan(imageData: ImageData): Span {
 export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
 export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
 export const isRefSpan = guard<RefSpan>(s => s.ref !== undefined);
+export const isAnchorSpan = guard<AnchorSpan>(s => s.anchor !== undefined);
 export const isSemanticSpan = guard<SemanticSpan>(s => s.span !== undefined);
 export const isImageSpan = guard<ImageSpan>(s => s.image !== undefined);
 
@@ -59,6 +67,7 @@ type SpanMapFn<T> = {
     compound: (spans: Span[]) => T,
     attr: (span: Span, attr: AttributeName) => T,
     ref: (span: Span, refToId: string) => T,
+    anchor: (span: Span, refId: string) => T,
     semantic: (span: Span, semantics: Semantic[]) => T,
     image: (image: ImageData) => T,
 };
@@ -77,6 +86,10 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
     } else if (isRefSpan(span)) {
         return fn.ref
             ? fn.ref(span.ref, span.refToId)
+            : fn.default(span);
+    } else if (isAnchorSpan(span)) {
+        return fn.anchor
+            ? fn.anchor(span.anchor, span.refId)
             : fn.default(span);
     } else if (isSemanticSpan(span)) {
         return fn.semantic
@@ -101,12 +114,14 @@ export function mapSpanFull<T>(span: Span, fn: SpanMapFn<T> & DefaultSpanHandler
     return mapSpan(span, fn);
 }
 
+// TODO: fix
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     const inside = mapSpanFull(span, {
         simple: s => s,
         compound: spans => compoundSpan(spans.map(s => processSpan(s, fn))),
         attr: (s, attr) => attrSpan(processSpan(s, fn), attr),
         ref: (s, ref) => refSpan(processSpan(s, fn), ref),
+        anchor: (s, id) => anchorSpan(processSpan(s, fn), id),
         image: data => imageSpan(data),
         semantic: (s, sems) => semanticSpan(processSpan(s, fn), sems),
         default: s => s,
@@ -114,6 +129,7 @@ export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     return fn(inside);
 }
 
+// TODO: fix
 export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
     const inside = await mapSpanFull(span, {
         simple: async s => s,
@@ -122,6 +138,7 @@ export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span
         )),
         attr: async (s, attr) => attrSpan(await processSpanAsync(s, fn), attr),
         ref: async (s, ref) => refSpan(await processSpanAsync(s, fn), ref),
+        anchor: async (s, id) => anchorSpan(await processSpanAsync(s, fn), id),
         image: async data => imageSpan(data),
         semantic: async (s, sems) => semanticSpan(await processSpanAsync(s, fn), sems),
         default: async s => s,
@@ -134,6 +151,7 @@ export function extractSpanText(span: Span): string {
         simple: s => s,
         attr: extractSpanText,
         ref: extractSpanText,
+        anchor: extractSpanText,
         compound: ss => ss
             .map(extractSpanText)
             .join(''),
@@ -152,6 +170,11 @@ export function normalizeSpan(span: Span): Span {
         return {
             ...span,
             ref: normalizeSpan(span.ref),
+        };
+    } else if (isAnchorSpan(span)) {
+        return {
+            ...span,
+            anchor: normalizeSpan(span.anchor),
         };
     } else if (isSemanticSpan(span)) {
         return {
