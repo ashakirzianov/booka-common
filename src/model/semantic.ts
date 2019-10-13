@@ -2,9 +2,8 @@ type DefSemantic<S extends string, T = {}> = T & {
     semantic: S,
 };
 
-type Footnote = DefSemantic<'footnote', {
-    title: string[],
-}>;
+type Footnote = DefSemantic<'footnote'>;
+type Footnotes = DefSemantic<'footnote-group'>;
 type Correction = DefSemantic<'correction', {
     note?: string,
 }>;
@@ -38,7 +37,8 @@ export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic
 
 export type Semantic =
     | TechNote
-    | Footnote | Correction
+    | Footnote | Footnotes
+    | Correction
     | Quote | Epigraph
     | FlagSemantic
     ;
