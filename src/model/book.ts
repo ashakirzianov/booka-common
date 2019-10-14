@@ -1,7 +1,7 @@
-import { ImageData } from './span';
 import { BookNode } from './bookNode';
 import { KnownTag } from './tag';
 import { BookPath } from './bookRange';
+import { Image, ImageDic } from './image';
 
 export type BookLicense = 'unknown' | 'public-domain-us';
 // TODO: remove
@@ -12,7 +12,7 @@ export type EpubBookSource = {
 export type BookMeta = {
     title?: string,
     author?: string,
-    coverImage?: ImageData,
+    coverImage?: Image,
     // TODO: add license ?
 };
 export type BookSource = EpubBookSource;
@@ -20,6 +20,7 @@ export type Book = {
     nodes: BookNode[],
     meta: BookMeta,
     tags: KnownTag[],
+    images: ImageDic,
 };
 
 // TODO: remove
@@ -35,6 +36,7 @@ export type BookFragment = {
     current: BookPath,
     next?: BookPath,
     previous?: BookPath,
+    images?: ImageDic,
     nodes: BookNode[],
 };
 

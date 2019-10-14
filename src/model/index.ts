@@ -7,6 +7,7 @@ export * from './comment';
 export * from './editable';
 export * from './highlights';
 export * from './history';
+export * from './image';
 export * from './note';
 export * from './report';
 export * from './semantic';

@@ -1,18 +1,5 @@
 import { Semantic } from './semantic';
-
-type ImageDataBase = {
-    imageId: string,
-    title?: string,
-};
-export type ImageRefData = ImageDataBase & {
-    kind: 'ref',
-    ref: string,
-};
-export type ImageBufferData = ImageDataBase & {
-    kind: 'buffer',
-    buffer: Buffer,
-};
-export type ImageData = ImageRefData | ImageBufferData;
+import { Image } from './image';
 
 export type SimpleSpan = string;
 export type CompoundSpan = Span[];
@@ -42,7 +29,7 @@ export type AnchorSpan = {
 };
 
 export type ImageSpan = {
-    image: ImageData,
+    image: Image,
 };
 
 export type SemanticSpan = {

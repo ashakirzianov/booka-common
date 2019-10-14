@@ -6,6 +6,7 @@ export * from './bookNode';
 export * from './book';
 export * from './bookRange';
 export * from './hash';
+export * from './image';
 export * from './misc';
 export * from './bookNode';
 export * from './editable';

@@ -1,60 +1,12 @@
 import {
     BookPath, BookFragment, Book, BookNode,
-    TableOfContents, TableOfContentsItem, ImageData,
+    TableOfContents, TableOfContentsItem, Image,
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
 import {
-    ImageProcessor,
-    extractNodeText, normalizeNodes, processNodesImages,
+    extractNodeText, normalizeNodes,
 } from './bookNode';
 import { extractSpanText } from './span';
-
-export async function processBookImages(book: Book, fn: ImageProcessor): Promise<Book> {
-    if (book.meta.coverImage) {
-        const processed = await fn(book.meta.coverImage);
-        book = {
-            ...book,
-            meta: {
-                ...book.meta,
-                coverImage: processed,
-            },
-        };
-    }
-    book = {
-        ...book,
-        nodes: await processNodesImages(book.nodes, fn),
-    };
-    return book;
-}
-
-export async function storeImages(book: Book, fn: (buffer: Buffer, imageId: string) => Promise<string | undefined>): Promise<Book> {
-    const store: {
-        [key: string]: ImageData | undefined,
-    } = {};
-
-    return processBookImages(book, async imageData => {
-        if (imageData.kind === 'ref') {
-            return imageData;
-        }
-        const stored = store[imageData.imageId];
-        if (stored !== undefined) {
-            return stored;
-        } else {
-            const url = await fn(imageData.buffer, imageData.imageId);
-            if (url !== undefined) {
-                const result: ImageData = {
-                    ...imageData,
-                    kind: 'ref',
-                    ref: url,
-                };
-                store[imageData.imageId] = result;
-                return result;
-            } else {
-                return imageData;
-            }
-        }
-    });
-}
 
 export function tocForBook(book: Book): TableOfContents {
     const anchors = Array.from(iterateAnchorPaths(book.nodes, [], false));

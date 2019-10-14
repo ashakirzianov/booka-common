@@ -1,9 +1,9 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, HasSubnodes, ImageData, BookFragment, Semantic,
+    BookNode, Span, BookPath, ParagraphNode, HasSubnodes, Image, BookFragment, Semantic,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    mapSpan, imageSpan, visitSpan, findAnchor,
+    mapSpan, visitSpan, findAnchor,
 } from './span';
 import { addPaths, appendPath, leadPath, concatPath } from './bookRange';
 import { assertNever, flatten, filterUndefined } from './misc';
@@ -406,16 +406,6 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
     }
 
     return results;
-}
-
-export type ImageProcessor = (image: ImageData) => Promise<ImageData>;
-export async function processNodesImages(nodes: BookNode[], fn: (image: ImageData) => Promise<ImageData>): Promise<BookNode[]> {
-    return processNodesAsync(nodes, {
-        span: s => mapSpan(s, {
-            image: async data => imageSpan(await fn(data)),
-            default: async ss => ss,
-        }),
-    });
 }
 
 export function normalizeNodes(nodes: BookNode[]): BookNode[] {

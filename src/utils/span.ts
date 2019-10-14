@@ -1,7 +1,7 @@
 import {
     Span, CompoundSpan, AttributeName, attributeNames,
     SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
-    ImageData, SpanAttribute, Semantic, AnchorSpan,
+    Image, SpanAttribute, Semantic, AnchorSpan,
 } from '../model';
 import { guard, flatten, filterUndefined } from './misc';
 
@@ -36,7 +36,7 @@ export function semanticSpan(span: Span, semantics: Semantic[]): Span {
     };
 }
 
-export function imageSpan(imageData: ImageData): Span {
+export function imageSpan(imageData: Image): Span {
     return { image: imageData };
 }
 
@@ -67,7 +67,7 @@ type SpanMapFn<T> = {
     ref: (span: Span, refToId: string) => T,
     anchor: (span: Span, refId: string) => T,
     semantic: (span: Span, semantics: Semantic[]) => T,
-    image: (image: ImageData) => T,
+    image: (image: Image) => T,
 };
 type DefaultSpanHandler<T> = {
     default: (span: Span) => T,
