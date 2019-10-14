@@ -21,6 +21,7 @@ export type GroupNode = DefNode<'group'> & {
 };
 
 export type TableCell = {
+    width?: number,
     spans: Span[],
 };
 export type TableRow = {
