@@ -20,7 +20,9 @@ type TechNote = DefSemantic<'tech-note', {
 }>;
 
 export type FlagSemantic =
+    | DefSemantic<'code'>
     | DefSemantic<'poem'> | DefSemantic<'letter'>
+    | DefSemantic<'card'>
     | DefSemantic<'chapter-abstract'>
     | DefSemantic<'character-name'>
     | DefSemantic<'formated'> | DefSemantic<'side-note'>
