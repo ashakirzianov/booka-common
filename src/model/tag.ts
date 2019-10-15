@@ -11,7 +11,12 @@ export type UserTag =
     | Tag<'uploaded'>
     ;
 
-export type BookLicense = 'unknown' | 'public-domain-us';
+export type BookLicense =
+    | 'unknown'
+    | 'public-domain'
+    | 'public-domain-us'
+    | 'pg-copyrighted'
+    ;
 export type BookLicenseTag = Tag<'license', BookLicense>;
 
 export type BookMetaTag =
