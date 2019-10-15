@@ -277,3 +277,16 @@ export function findAnchor(spans: Span[], refId: string): number | undefined {
     }
     return undefined;
 }
+
+export function isEmptyContentSpan(span: Span): boolean {
+    return mapSpanFull(span, {
+        simple: s => s ? false : true,
+        compound: ss => ss.every(isEmptyContentSpan),
+        ref: isEmptyContentSpan,
+        attr: isEmptyContentSpan,
+        semantic: isEmptyContentSpan,
+        anchor: isEmptyContentSpan,
+        image: () => false,
+        default: () => false,
+    });
+}

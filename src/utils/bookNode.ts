@@ -3,7 +3,7 @@ import {
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    mapSpan, visitSpan, findAnchor,
+    mapSpan, visitSpan, findAnchor, isEmptyContentSpan,
 } from './span';
 import { addPaths, appendPath, leadPath, concatPath } from './bookRange';
 import { assertNever, flatten, filterUndefined } from './misc';
@@ -445,4 +445,29 @@ export function normalizeNodes(nodes: BookNode[]): BookNode[] {
 
 function couldBeNormalized(node: BookNode): boolean {
     return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
+}
+
+export function isEmptyContentNode(node: BookNode): boolean {
+    switch (node.node) {
+        case 'group':
+            return node.nodes.every(isEmptyContentNode);
+        case 'title':
+        case 'pph':
+            return isEmptyContentSpan(node.span);
+        case 'table':
+            return node.rows.every(
+                row => row.cells.every(
+                    cell => cell.spans.every(isEmptyContentSpan)
+                )
+            );
+        case 'list':
+            return node.items.every(
+                item => item.spans.every(isEmptyContentSpan)
+            );
+        case 'separator':
+            return true;
+        default:
+            assertNever(node);
+            return false;
+    }
 }

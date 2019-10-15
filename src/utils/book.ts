@@ -4,7 +4,7 @@ import {
 } from '../model';
 import { pathLessThan, nodesForRange } from './bookRange';
 import {
-    extractNodeText, normalizeNodes,
+    extractNodeText, normalizeNodes, isEmptyContentNode,
 } from './bookNode';
 import { extractSpanText } from './span';
 
@@ -50,20 +50,24 @@ type Anchor = {
     title: string,
     level: number,
 };
-// TODO: re-implement
+
 function* iterateAnchorPaths(nodes: BookNode[], prefix: BookPath = [], skipFirstChapters: boolean = true): IterableIterator<Anchor> {
+    let underTitle = false;
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
         if (node.node === 'title') {
             const chapterPrefix = [...prefix, idx];
             // Skip first subchapters -- merge with parents
-            if (!skipFirstChapters || idx !== 0) {
+            if (!skipFirstChapters || !underTitle) {
                 yield {
                     path: chapterPrefix,
                     title: extractSpanText(node.span),
                     level: node.level,
                 };
             }
+            underTitle = true;
+        } else if (!isEmptyContentNode(node)) {
+            underTitle = false;
         }
     }
 }
