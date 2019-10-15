@@ -1,9 +1,8 @@
 import { BookNode } from './bookNode';
-import { KnownTag } from './tag';
+import { KnownTag, BookLicense } from './tag';
 import { BookPath } from './bookRange';
 import { Image, ImageDic } from './image';
 
-export type BookLicense = 'unknown' | 'public-domain-us';
 export type BookMeta = {
     title?: string,
     author?: string,

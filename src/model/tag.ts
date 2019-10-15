@@ -2,13 +2,6 @@ export type Tag<K extends string = string, V = undefined> =
     & { tag: K }
     & (V extends undefined ? { value?: undefined } : { value: V })
     ;
-export type KnownTagName = KnownTag['tag'];
-export type KnownTagValue<N extends KnownTagName> = Extract<KnownTag, { tag: N }>['value'];
-
-export type KnownTag =
-    | UserTag
-    | BookMetaTag
-    ;
 
 export type ImpressionTag =
     | Tag<'liked'> | Tag<'favorite'>;
@@ -17,6 +10,9 @@ export type UserTag =
     | Tag<'finished'> | Tag<'want-to-read'> | Tag<'current'> | Tag<'in-library'>
     | Tag<'uploaded'>
     ;
+
+export type BookLicense = 'unknown' | 'public-domain-us';
+export type BookLicenseTag = Tag<'license', BookLicense>;
 
 export type BookMetaTag =
     | Tag<'pg-index', number> | Tag<'pg-skip'>
@@ -31,3 +27,12 @@ export type BookMetaTag =
     | Tag<'ISBN', string>
     | Tag<'rights', string>
     ;
+
+export type KnownTag =
+    | UserTag
+    | BookMetaTag
+    | BookLicenseTag
+    ;
+
+export type KnownTagName = KnownTag['tag'];
+export type KnownTagValue<N extends KnownTagName> = Extract<KnownTag, { tag: N }>['value'];
