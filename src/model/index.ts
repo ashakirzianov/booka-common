@@ -10,6 +10,7 @@ export * from './history';
 export * from './image';
 export * from './note';
 export * from './report';
+export * from './result';
 export * from './semantic';
 export * from './span';
 export * from './tag';
