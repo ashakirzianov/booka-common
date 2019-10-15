@@ -1,6 +1,6 @@
 import {
     Fail, Success,
-    Diagnostic, SimpleDiagnostic, CompoundDiagnostic, Severity,
+    Diagnostic, SimpleDiagnostic, CompoundDiagnostic, Severity, Result,
 } from '../model';
 
 export function filterSeverity(diag: Diagnostic, ...severities: Severity[]): Diagnostic {
@@ -55,4 +55,10 @@ export function success<Out>(value: Out, diagnostic?: Diagnostic): Success<Out> 
         success: true,
         value, diagnostic,
     };
+}
+
+export function projectResult<T, U>(result: Result<T>, f: (x: T) => U): Result<U> {
+    return result.success
+        ? { ...result, value: f(result.value) }
+        : result;
 }
