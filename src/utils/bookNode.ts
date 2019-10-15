@@ -78,7 +78,6 @@ export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
     }
 }
 
-// TODO: fix (support anchor spans)
 export function findReference(nodes: BookNode[], refId: string): [BookNode, BookPath] | undefined {
     for (const [sub, path] of iterateNodes(nodes)) {
         if (sub.refId === refId) {
@@ -94,7 +93,6 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
                         }
                     }
                     break;
-                // TODO: implement table, list
                 case 'table':
                     {
                         for (const row of sub.rows) {
@@ -139,7 +137,6 @@ export function extractRefsFromNodes(nodes: BookNode[]): string[] {
     return filterUndefined(results);
 }
 
-// TODO: re-implement
 export function extractNodeText(node: BookNode): string {
     switch (node.node) {
         case 'group':

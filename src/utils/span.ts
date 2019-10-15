@@ -254,7 +254,6 @@ export function spanLength(span: Span): number {
     });
 }
 
-// TODO: accept Span[]
 export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
     let offset = 0;
     for (const span of spans) {
