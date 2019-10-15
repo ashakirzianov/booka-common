@@ -84,3 +84,20 @@ export function normalizeBook(book: Book): Book {
         nodes: normalizeNodes(book.nodes),
     };
 }
+
+export function getCoverBuffer(book: Book): Buffer | undefined {
+    const coverImage = book.meta.coverImage;
+    if (coverImage === undefined) {
+        return undefined;
+    }
+    if (coverImage.image === 'buffer') {
+        return coverImage.buffer;
+    } else {
+        const resolved = book.images[coverImage.imageId];
+        if (resolved !== undefined && resolved.image === 'buffer') {
+            return resolved.buffer;
+        } else {
+            return undefined;
+        }
+    }
+}
