@@ -4,18 +4,12 @@ import { BookPath } from './bookRange';
 import { Image, ImageDic } from './image';
 
 export type BookLicense = 'unknown' | 'public-domain-us';
-// TODO: remove
-export type EpubBookSource = {
-    source: 'epub',
-    kind: string,
-};
 export type BookMeta = {
     title?: string,
     author?: string,
     coverImage?: Image,
-    // TODO: add license ?
+    license: BookLicense,
 };
-export type BookSource = EpubBookSource;
 export type Book = {
     nodes: BookNode[],
     meta: BookMeta,
