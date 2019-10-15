@@ -19,10 +19,15 @@ type TechNote = DefSemantic<'tech-note', {
     source?: string,
 }>;
 
+type RubySemantic = DefSemantic<'ruby', {
+    ruby?: string,
+}>;
+
 export type FlagSemantic =
-    | DefSemantic<'code'>
+    | DefSemantic<'right-to-left'>
+    | DefSemantic<'code'> | DefSemantic<'definition'>
     | DefSemantic<'poem'> | DefSemantic<'letter'>
-    | DefSemantic<'card'>
+    | DefSemantic<'card'> | DefSemantic<'address'>
     | DefSemantic<'chapter-abstract'>
     | DefSemantic<'character-name'>
     | DefSemantic<'formated'> | DefSemantic<'side-note'>
@@ -38,6 +43,7 @@ export type SemanticKey = Semantic['semantic'];
 export type SemanticForKey<K extends SemanticKey> = Extract<Semantic, { semantic: K }>;
 
 export type Semantic =
+    | RubySemantic
     | TechNote
     | Footnote | Footnotes
     | Correction
