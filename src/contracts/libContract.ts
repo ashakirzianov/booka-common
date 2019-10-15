@@ -1,4 +1,4 @@
-import { Book, BookInfo } from '../model';
+import { Book, BookDesc } from '../model';
 import { Paginate } from './helpers';
 
 export type LibContract = {
@@ -10,12 +10,12 @@ export type LibContract = {
     },
     '/all': {
         get: Paginate<{
-            return: BookInfo[],
+            return: BookDesc[],
         }>,
     },
     '/info': {
         get: {
-            return: BookInfo[],
+            return: BookDesc[],
             query: { ids: string[] },
         },
     },

@@ -2,7 +2,7 @@ import {
     Book, Highlight, Bookmark,
     AuthToken, AccountInfo,
     Comment, CommentLocation, CommentData, Vote, VoteKind,
-    NoteData, Note, BookInfo, IssueReportKind,
+    NoteData, Note, BookDesc, IssueReportKind,
 } from '../model';
 import { HasId, Paginate } from './helpers';
 import { KnownTag, KnownTagName } from '../model/tag';
@@ -24,7 +24,7 @@ export type BackContract = {
     },
     '/books/all': {
         get: Paginate<{
-            return: BookInfo[],
+            return: BookDesc[],
         }>,
     },
     '/books/upload': {
@@ -36,7 +36,7 @@ export type BackContract = {
     },
     '/books': {
         get: Paginate<{
-            return: BookInfo[],
+            return: BookDesc[],
             auth: string,
             query: {
                 tags?: string[],

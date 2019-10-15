@@ -16,8 +16,7 @@ export type Book = {
     images: ImageDic,
 };
 
-// TODO: remove
-export type BookInfo = {
+export type BookDesc = {
     id: string,
     title: string,
     author?: string,
