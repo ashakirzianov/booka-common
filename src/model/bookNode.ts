@@ -44,11 +44,17 @@ export type ImageNode = DefNode<'image'> & {
 
 export type SeparatorNode = DefNode<'separator'>;
 
+export type IgnoreNode = DefNode<'ignore'> & {
+    name?: string,
+    extra?: any,
+};
+
 export type BookNode =
     | ParagraphNode | TitleNode
     | TableNode | ListNode
     | ImageNode
     | SeparatorNode
+    | IgnoreNode
     ;
 
 export type NodeKind = BookNode['node'];
