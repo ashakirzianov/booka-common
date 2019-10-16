@@ -20,7 +20,8 @@ export type BookDesc = {
     id: string,
     title: string,
     author?: string,
-    cover?: string,
+    coverUrl?: string,
+    smallCoverUrl?: string,
     tags: KnownTag[],
 };
 
