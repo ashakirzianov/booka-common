@@ -1,8 +1,8 @@
 import { BookPath, BookRange, BookNode } from '../model';
 import { lastElement } from './misc';
 
-export function leadPath(head: number): BookPath {
-    return [head];
+export function nodePath(pcs: number[]): BookPath {
+    return pcs;
 }
 
 export function emptyPath(): BookPath {

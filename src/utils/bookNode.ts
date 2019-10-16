@@ -3,9 +3,9 @@ import {
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    mapSpan, visitSpan, findAnchor, isEmptyContentSpan,
+    mapSpan, visitSpan, isEmptyContentSpan, iterateSpans, isComplexSpan,
 } from './span';
-import { addPaths, appendPath, leadPath } from './bookRange';
+import { addPaths, appendPath, nodePath } from './bookRange';
 import { assertNever, flatten, filterUndefined, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -29,6 +29,26 @@ export function pphSpan(p: ParagraphNode): Span {
     return p.span;
 }
 
+export function nodeSpans(node: BookNode): Span[] {
+    switch (node.node) {
+        case 'title':
+        case 'pph':
+            return [node.span];
+        case 'table':
+            return flatten(
+                node.rows
+                    .map(row => row.cells.map(c => c.span))
+            );
+        case 'list':
+            return node.items.map(i => i.span);
+        case 'separator':
+            return [];
+        default:
+            assertNever(node);
+            return [];
+    }
+}
+
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
@@ -41,7 +61,7 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNod
 export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        const headPath = leadPath(idx);
+        const headPath = nodePath([idx]);
         yield [node, headPath];
     }
 }
@@ -59,43 +79,11 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
         if (sub.refId === refId) {
             return [sub, path];
         } else {
-            switch (sub.node) {
-                case 'title':
-                case 'pph':
-                    {
-                        const sym = findAnchor([sub.span], refId);
-                        if (sym !== undefined) {
-                            return [sub, appendPath(path, sym)];
-                        }
-                    }
-                    break;
-                case 'table':
-                    {
-                        for (const row of sub.rows) {
-                            for (const cell of row.cells) {
-                                const sym = findAnchor(cell.spans, refId);
-                                if (sym !== undefined) {
-                                    return [sub, appendPath(path, sym)];
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case 'list':
-                    {
-                        for (const item of sub.items) {
-                            const sym = findAnchor(item.spans, refId);
-                            if (sym !== undefined) {
-                                return [sub, appendPath(path, sym)];
-                            }
-                        }
-                    }
-                    break;
-                case 'separator':
-                    break;
-                default:
-                    assertNever(sub);
-                    break;
+            const spans = nodeSpans(sub);
+            for (const [span, sym] of iterateSpans(spans)) {
+                if (isComplexSpan(span) && span.refId === refId) {
+                    return [sub, appendPath(path, sym)];
+                }
             }
         }
     }
@@ -113,52 +101,9 @@ export function extractRefsFromNodes(nodes: BookNode[]): string[] {
 }
 
 export function extractNodeText(node: BookNode): string {
-    switch (node.node) {
-        case 'pph':
-        case 'title':
-            return extractSpanText(node.span);
-        case 'table':
-            return node.rows
-                .map(row =>
-                    row.cells.map(cell =>
-                        cell.spans.map(extractSpanText).join('')
-                    )
-                        .join('\n')
-                )
-                .join('\n');
-        case 'list':
-            return node.items
-                .map(i =>
-                    i.spans.map(extractSpanText).join('')
-                )
-                .join('\n');
-        case 'separator':
-            return '';
-        default:
-            assertNever(node);
-            return '';
-    }
-}
-
-export function extractSpans(node: BookNode): Span[] {
-    switch (node.node) {
-        case 'pph':
-        case 'title':
-            return [node.span];
-        case 'table':
-            return flatten(flatten(
-                node.rows.map(r => r.cells.map(c => c.spans))
-            ));
-        case 'list':
-            return flatten(
-                node.items.map(i => i.spans)
-            );
-        case 'separator':
-            return [];
-        default:
-            assertNever(node);
-            return [];
-    }
+    return nodeSpans(node)
+        .map(extractSpanText)
+        .join('\n');
 }
 
 // Process nodes:
@@ -170,48 +115,11 @@ export type VisitNodesArgs<T> = {
 export function visitNodes<T>(nodes: BookNode[], args: VisitNodesArgs<T>): T[] {
     const results: T[] = [];
     for (const node of nodes) {
-        switch (node.node) {
-            case 'pph':
-            case 'title':
-                if (args.span) {
-                    results.push(...visitSpan(node.span, args.span));
-                }
-                break;
-            case 'table':
-                if (args.span) {
-                    const spanProc = args.span;
-                    const fromRows = flatten(
-                        node.rows.map(row =>
-                            flatten(
-                                row.cells.map(cell =>
-                                    flatten(
-                                        cell.spans.map(s =>
-                                            visitSpan(s, spanProc)),
-                                    ))
-                            ),
-                        ),
-                    );
-                    results.push(...fromRows);
-                }
-                break;
-            case 'list':
-                if (args.span) {
-                    const spanProc = args.span;
-                    const fromItems = flatten(
-                        node.items.map(item =>
-                            flatten(
-                                item.spans.map(s => visitSpan(s, spanProc))
-                            ),
-                        ),
-                    );
-                    results.push(...fromItems);
-                }
-                break;
-            case 'separator':
-                break;
-            default:
-                assertNever(node);
-                break;
+        if (args.span) {
+            const spans = nodeSpans(node);
+            const spanProc = args.span;
+            const fromSpans = flatten(spans.map(s => visitSpan(s, spanProc)));
+            results.push(...fromSpans);
         }
         if (args.node) {
             results.push(args.node(node));
@@ -246,7 +154,7 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
                             cells: row.cells.map(
                                 cell => ({
                                     ...cell,
-                                    spans: cell.spans.map(s => processSpan(s, spanProc)),
+                                    span: processSpan(cell.span, spanProc),
                                 })
                             ),
                         })
@@ -260,7 +168,7 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
                     const items = curr.items.map(
                         item => ({
                             ...item,
-                            spans: item.spans.map(s => processSpan(s, spanProc)),
+                            span: processSpan(item.span, spanProc),
                         })
                     );
                     curr = { ...curr, items };
@@ -310,9 +218,7 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
                                     row.cells.map(
                                         async cell => ({
                                             ...cell,
-                                            spans: await Promise.all(
-                                                cell.spans.map(s => processSpanAsync(s, spanProc))
-                                            ),
+                                            span: await processSpanAsync(cell.span, spanProc),
                                         }),
                                     ),
                                 ),
@@ -329,9 +235,7 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
                         curr.items.map(
                             async item => ({
                                 ...item,
-                                spans: await Promise.all(
-                                    item.spans.map(s => processSpanAsync(s, spanProc)),
-                                ),
+                                span: await processSpanAsync(item.span, spanProc),
                             }),
                         ),
                     );
@@ -385,12 +289,12 @@ export function isEmptyContentNode(node: BookNode): boolean {
         case 'table':
             return node.rows.every(
                 row => row.cells.every(
-                    cell => cell.spans.every(isEmptyContentSpan)
+                    cell => isEmptyContentSpan(cell.span)
                 )
             );
         case 'list':
             return node.items.every(
-                item => item.spans.every(isEmptyContentSpan)
+                item => isEmptyContentSpan(item.span)
             );
         case 'separator':
             return true;

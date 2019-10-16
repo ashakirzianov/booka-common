@@ -18,9 +18,10 @@ export type TitleNode = DefNode<'title'> & {
 
 export type TableCell = {
     width?: number,
-    spans: Span[],
+    span: Span,
 };
 export type TableRow = {
+    kind?: 'header' | 'footer' | 'body',
     cells: TableCell[],
 };
 export type TableNode = DefNode<'table'> & {
@@ -29,7 +30,7 @@ export type TableNode = DefNode<'table'> & {
 
 export type ListKind = 'ordered' | 'basic';
 export type ListItem = {
-    spans: Span[],
+    span: Span,
 };
 export type ListNode = DefNode<'list'> & {
     kind: ListKind,
