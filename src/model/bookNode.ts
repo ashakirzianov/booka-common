@@ -6,6 +6,7 @@ type DefNode<N extends string> = {
     node: N,
     refId?: string,
     flags?: NodeFlag[],
+    title?: string,
 };
 
 export type ParagraphNode = DefNode<'pph'> & {
