@@ -16,10 +16,6 @@ export type TitleNode = DefNode<'title'> & {
     span: Span,
 };
 
-export type GroupNode = DefNode<'group'> & {
-    nodes: BookNode[],
-};
-
 export type TableCell = {
     width?: number,
     spans: Span[],
@@ -43,12 +39,9 @@ export type ListNode = DefNode<'list'> & {
 export type SeparatorNode = DefNode<'separator'>;
 
 export type BookNode =
-    | GroupNode
     | ParagraphNode | TitleNode
     | TableNode | ListNode | SeparatorNode
     ;
-
-export type HasSubnodes = GroupNode;
 
 export type NodeKind = BookNode['node'];
 export type NodeForKind<K extends NodeKind> = Extract<BookNode, { node: K }>;

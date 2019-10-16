@@ -1,5 +1,5 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, HasSubnodes, Image, BookFragment, Semantic,
+    BookNode, Span, BookPath, ParagraphNode, BookFragment, Semantic,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
@@ -29,16 +29,6 @@ export function pphSpan(p: ParagraphNode): Span {
     return p.span;
 }
 
-export function hasSubnodes(bn: BookNode): bn is HasSubnodes {
-    return bn.node === 'group';
-}
-
-export function getSubnodes(bn: BookNode): BookNode[] {
-    return hasSubnodes(bn)
-        ? bn.nodes
-        : [];
-}
-
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
@@ -53,25 +43,11 @@ export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]
         const node = nodes[idx];
         const headPath = leadPath(idx);
         yield [node, headPath];
-        if (hasSubnodes(node)) {
-            for (const [sub, path] of iterateNodes(node.nodes)) {
-                yield [sub, concatPath(headPath, path)];
-            }
-        }
-    }
-}
-
-export function* justNodeGenerator(nodes: BookNode[]): Generator<BookNode> {
-    for (const node of nodes) {
-        yield node;
-        if (hasSubnodes(node)) {
-            yield* justNodeGenerator(node.nodes);
-        }
     }
 }
 
 export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
-    for (const node of justNodeGenerator(nodes)) {
+    for (const [node] of iterateNodes(nodes)) {
         if (node.refId !== undefined) {
             yield node.refId;
         }
@@ -116,7 +92,6 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
                     }
                     break;
                 case 'separator':
-                case 'group':
                     break;
                 default:
                     assertNever(sub);
@@ -139,12 +114,6 @@ export function extractRefsFromNodes(nodes: BookNode[]): string[] {
 
 export function extractNodeText(node: BookNode): string {
     switch (node.node) {
-        case 'group':
-            return node.nodes
-                .map(extractNodeText)
-                .join('');
-        case undefined:
-            return extractSpanText(node);
         case 'pph':
         case 'title':
             return extractSpanText(node.span);
@@ -173,10 +142,6 @@ export function extractNodeText(node: BookNode): string {
 
 export function extractSpans(node: BookNode): Span[] {
     switch (node.node) {
-        case 'group':
-            return flatten(node.nodes.map(extractSpans));
-        case undefined:
-            return [node];
         case 'pph':
         case 'title':
             return [node.span];
@@ -206,9 +171,6 @@ export function visitNodes<T>(nodes: BookNode[], args: VisitNodesArgs<T>): T[] {
     const results: T[] = [];
     for (const node of nodes) {
         switch (node.node) {
-            case 'group':
-                results.push(...visitNodes(node.nodes, args));
-                break;
             case 'pph':
             case 'title':
                 if (args.span) {
@@ -268,12 +230,6 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
     for (const node of nodes) {
         let curr: BookNode | undefined = node;
         switch (curr.node) {
-            case 'group':
-                {
-                    const processed = processNodes(curr.nodes, args);
-                    curr = { ...curr, nodes: processed };
-                }
-                break;
             case 'pph':
             case 'title':
                 if (args.span) {
@@ -336,12 +292,6 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
     for (const node of nodes) {
         let curr: BookNode | undefined = node;
         switch (curr.node) {
-            case 'group':
-                {
-                    const processed = await processNodesAsync(curr.nodes, args);
-                    curr = { ...curr, nodes: processed };
-                }
-                break;
             case 'pph':
             case 'title':
                 if (args.span) {
@@ -419,19 +369,6 @@ export function normalizeNodes(nodes: BookNode[]): BookNode[] {
                     });
                 }
                 break;
-            case 'group':
-                {
-                    const normalized = normalizeNodes(node.nodes);
-                    if (couldBeNormalized(node)) {
-                        results.push(...normalized);
-                    } else {
-                        results.push({
-                            ...node,
-                            nodes: normalized,
-                        });
-                    }
-                }
-                break;
             default:
                 results.push(node);
                 break;
@@ -440,14 +377,8 @@ export function normalizeNodes(nodes: BookNode[]): BookNode[] {
     return results;
 }
 
-function couldBeNormalized(node: BookNode): boolean {
-    return node.refId === undefined && (node.semantics === undefined || node.semantics.length === 0);
-}
-
 export function isEmptyContentNode(node: BookNode): boolean {
     switch (node.node) {
-        case 'group':
-            return node.nodes.every(isEmptyContentNode);
         case 'title':
         case 'pph':
             return isEmptyContentSpan(node.span);
