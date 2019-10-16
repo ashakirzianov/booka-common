@@ -1,5 +1,5 @@
 export type NodeFlag =
-    | 'correction'
+    | 'correction' | 'abbreviation'
     | 'preserve'
     | 'footnote' | 'quote' | 'tech-note' | 'epigraph'
     | 'right-to-left'
