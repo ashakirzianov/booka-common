@@ -1,4 +1,5 @@
 export type Semantic =
+    | 'preserve'
     | 'footnote' | 'quote' | 'tech-note' | 'epigraph'
     | 'right-to-left'
     | 'code' | 'definition'
