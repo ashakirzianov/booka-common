@@ -1,11 +1,11 @@
 import { Span } from './span';
-import { Semantic } from './semantic';
+import { NodeFlag } from './nodeFlag';
 import { Image } from './image';
 
 type DefNode<N extends string> = {
     node: N,
     refId?: string,
-    semantics?: Semantic[],
+    flags?: NodeFlag[],
 };
 
 export type ParagraphNode = DefNode<'pph'> & {

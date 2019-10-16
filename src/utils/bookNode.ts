@@ -1,5 +1,5 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, BookFragment, Semantic,
+    BookNode, Span, BookPath, ParagraphNode, BookFragment, NodeFlag,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
@@ -12,10 +12,10 @@ export function assignId<N extends BookNode>(node: N, refId: string): N {
     return { ...node, refId };
 }
 
-export function appendSemantics<N extends BookNode>(node: N, semantics: Semantic[]): N {
-    return node.semantics
-        ? { ...node, semantics: distinct([...node.semantics, ...semantics]) }
-        : { ...node, semantics: distinct(semantics) };
+export function flagNode<N extends BookNode>(node: N, ...flags: NodeFlag[]): N {
+    return node.flags
+        ? { ...node, flags: distinct([...node.flags, ...flags]) }
+        : { ...node, flags: distinct(flags) };
 }
 
 export function makePph(span: Span): ParagraphNode {

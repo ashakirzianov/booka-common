@@ -1,4 +1,4 @@
-import { Semantic } from './semantic';
+import { NodeFlag } from './nodeFlag';
 import { Image } from './image';
 
 export type SimpleSpan = string;
@@ -23,7 +23,7 @@ export type ComplexSpanData = {
     refToId?: string,
     title?: string,
     ruby?: string,
-    flags?: Semantic[],
+    flags?: NodeFlag[],
 };
 export type ComplexSpan = ComplexSpanData & {
     span: Span,

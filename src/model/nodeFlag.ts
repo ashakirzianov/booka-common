@@ -1,4 +1,5 @@
-export type Semantic =
+export type NodeFlag =
+    | 'correction'
     | 'preserve'
     | 'footnote' | 'quote' | 'tech-note' | 'epigraph'
     | 'right-to-left'

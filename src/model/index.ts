@@ -11,7 +11,7 @@ export * from './image';
 export * from './note';
 export * from './report';
 export * from './result';
-export * from './semantic';
+export * from './nodeFlag';
 export * from './span';
 export * from './tag';
 export * from './vote';
