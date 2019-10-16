@@ -30,7 +30,7 @@ export type TableNode = DefNode<'table'> & {
     rows: TableRow[],
 };
 
-export type ListKind = 'ordered' | 'basic';
+export type ListKind = 'ordered' | 'definitions' | 'basic';
 export type ListItem = {
     span: Span,
 };

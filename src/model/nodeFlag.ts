@@ -3,7 +3,7 @@ export type NodeFlag =
     | 'preserve'
     | 'footnote' | 'quote' | 'tech-note' | 'epigraph'
     | 'right-to-left'
-    | 'code' | 'definition'
+    | 'code' | 'definition' | 'term'
     | 'poem' | 'letter'
     | 'card' | 'address'
     | 'chapter-abstract'
