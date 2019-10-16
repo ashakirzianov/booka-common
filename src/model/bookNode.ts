@@ -1,5 +1,6 @@
 import { Span } from './span';
 import { Semantic } from './semantic';
+import { Image } from './image';
 
 type DefNode<N extends string> = {
     node: N,
@@ -37,11 +38,17 @@ export type ListNode = DefNode<'list'> & {
     items: ListItem[],
 };
 
+export type ImageNode = DefNode<'image'> & {
+    image: Image,
+};
+
 export type SeparatorNode = DefNode<'separator'>;
 
 export type BookNode =
     | ParagraphNode | TitleNode
-    | TableNode | ListNode | SeparatorNode
+    | TableNode | ListNode
+    | ImageNode
+    | SeparatorNode
     ;
 
 export type NodeKind = BookNode['node'];

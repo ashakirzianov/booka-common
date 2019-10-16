@@ -42,6 +42,7 @@ export function nodeSpans(node: BookNode): Span[] {
         case 'list':
             return node.items.map(i => i.span);
         case 'separator':
+        case 'image':
             return [];
         default:
             assertNever(node);
@@ -175,6 +176,7 @@ export function processNodes(nodes: BookNode[], args: ProcessNodesArgs): BookNod
                 }
                 break;
             case 'separator':
+            case 'image':
                 break;
             default:
                 assertNever(curr);
@@ -243,6 +245,7 @@ export async function processNodesAsync(nodes: BookNode[], args: ProcessNodesAsy
                 }
                 break;
             case 'separator':
+            case 'image':
                 break;
             default:
                 assertNever(curr);
@@ -296,6 +299,8 @@ export function isEmptyContentNode(node: BookNode): boolean {
             return node.items.every(
                 item => isEmptyContentSpan(item.span)
             );
+        case 'image':
+            return false;
         case 'separator':
             return true;
         default:

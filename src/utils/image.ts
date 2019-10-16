@@ -9,6 +9,17 @@ export async function processNodesImages(nodes: BookNode[], fn: (image: Image) =
             image: async data => imageSpan(await fn(data)),
             default: async ss => ss,
         }),
+        node: async n => {
+            if (n.node === 'image') {
+                const processed = await fn(n.image);
+                return {
+                    ...n,
+                    image: processed,
+                };
+            } else {
+                return n;
+            }
+        },
     });
 }
 
