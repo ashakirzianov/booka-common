@@ -36,6 +36,7 @@ export type ListItem = {
 };
 export type ListNode = DefNode<'list'> & {
     kind: ListKind,
+    start?: number,
     items: ListItem[],
 };
 
