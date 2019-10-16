@@ -5,8 +5,8 @@ import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     mapSpan, visitSpan, findAnchor, isEmptyContentSpan,
 } from './span';
-import { addPaths, appendPath, leadPath, concatPath } from './bookRange';
-import { assertNever, flatten, filterUndefined } from './misc';
+import { addPaths, appendPath, leadPath } from './bookRange';
+import { assertNever, flatten, filterUndefined, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
     return { ...node, refId };
@@ -14,8 +14,8 @@ export function assignId<N extends BookNode>(node: N, refId: string): N {
 
 export function appendSemantics<N extends BookNode>(node: N, semantics: Semantic[]): N {
     return node.semantics
-        ? { ...node, semantics: [...node.semantics, ...semantics] }
-        : { ...node, semantics: semantics };
+        ? { ...node, semantics: distinct([...node.semantics, ...semantics]) }
+        : { ...node, semantics: distinct(semantics) };
 }
 
 export function makePph(span: Span): ParagraphNode {
