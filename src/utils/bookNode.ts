@@ -105,7 +105,7 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
 export function extractRefsFromNodes(nodes: BookNode[]): string[] {
     const results = visitNodes(nodes, {
         span: s => mapSpan(s, {
-            ref: (_, ref) => ref,
+            complex: (_, data) => data.refToId,
             default: () => undefined,
         }),
     });

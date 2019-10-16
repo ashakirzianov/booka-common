@@ -1,7 +1,7 @@
 import {
     Span, CompoundSpan, AttributeName, attributeNames,
-    SimpleSpan, RefSpan, SemanticSpan, AttributedSpan, ImageSpan,
-    Image, SpanAttribute, Semantic, AnchorSpan,
+    SimpleSpan, AttributedSpan, ImageSpan,
+    Image, SpanAttribute, ComplexSpan, ComplexSpanData,
 } from '../model';
 import { guard, flatten, filterUndefined } from './misc';
 
@@ -15,37 +15,14 @@ export function attrSpan(span: Span, attr: AttributeName): Span {
     } as Span;
 }
 
-export function refSpan(span: Span, refToId: string): Span {
-    return {
-        ref: span,
-        refToId,
-    };
-}
-
-export function anchorSpan(span: Span, refId: string): Span {
-    return {
-        a: span,
-        refId,
-    };
-}
-
-export function semanticSpan(span: Span, semantics: Semantic[]): Span {
-    return {
-        span: span,
-        semantics,
-    };
-}
-
 export function imageSpan(imageData: Image): Span {
     return { image: imageData };
 }
 
 export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
-export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
-export const isRefSpan = guard<RefSpan>(s => s.ref !== undefined);
-export const isAnchorSpan = guard<AnchorSpan>(s => s.a !== undefined);
-export const isSemanticSpan = guard<SemanticSpan>(s => s.span !== undefined);
 export const isImageSpan = guard<ImageSpan>(s => s.image !== undefined);
+export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
+export const isComplexSpan = guard<ComplexSpan>(s => s.a !== undefined);
 
 function getSpanAttr(span: AttributedSpan): SpanAttribute | undefined {
     for (const an of attributeNames) {
@@ -62,12 +39,10 @@ function getSpanAttr(span: AttributedSpan): SpanAttribute | undefined {
 
 type SpanMapFn<T> = {
     simple: (span: SimpleSpan) => T,
-    compound: (spans: Span[]) => T,
     attr: (span: Span, attr: AttributeName) => T,
-    ref: (span: Span, refToId: string) => T,
-    anchor: (span: Span, refId: string) => T,
-    semantic: (span: Span, semantics: Semantic[]) => T,
+    complex: (span: Span, data: ComplexSpanData) => T,
     image: (image: Image) => T,
+    compound: (spans: Span[]) => T,
 };
 type DefaultSpanHandler<T> = {
     default: (span: Span) => T,
@@ -81,17 +56,9 @@ export function mapSpan<T>(span: Span, fn: Partial<SpanMapFn<T>> & DefaultSpanHa
         return fn.compound
             ? fn.compound(span)
             : fn.default(span);
-    } else if (isRefSpan(span)) {
-        return fn.ref
-            ? fn.ref(span.ref, span.refToId)
-            : fn.default(span);
-    } else if (isAnchorSpan(span)) {
-        return fn.anchor
-            ? fn.anchor(span.a, span.refId)
-            : fn.default(span);
-    } else if (isSemanticSpan(span)) {
-        return fn.semantic
-            ? fn.semantic(span.span, span.semantics)
+    } else if (isComplexSpan(span)) {
+        return fn.complex
+            ? fn.complex(span.span, span)
             : fn.default(span);
     } else if (isImageSpan(span)) {
         return fn.image
@@ -116,9 +83,7 @@ export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
     const inside = mapSpanFull<T[]>(span, {
         compound: spans => flatten(spans.map(s => visitSpan(s, visitor))),
         attr: (s, attr) => visitSpan(s, visitor),
-        ref: (s, ref) => visitSpan(s, visitor),
-        anchor: (s, id) => visitSpan(s, visitor),
-        semantic: (s, sems) => visitSpan(s, visitor),
+        complex: s => visitSpan(s, visitor),
         simple: () => [],
         image: () => [],
         default: () => [],
@@ -129,12 +94,10 @@ export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     const inside = mapSpanFull(span, {
         simple: s => s,
-        compound: spans => compoundSpan(spans.map(s => processSpan(s, fn))),
         attr: (s, attr) => attrSpan(processSpan(s, fn), attr),
-        ref: (s, ref) => refSpan(processSpan(s, fn), ref),
-        anchor: (s, id) => anchorSpan(processSpan(s, fn), id),
         image: data => imageSpan(data),
-        semantic: (s, sems) => semanticSpan(processSpan(s, fn), sems),
+        compound: spans => compoundSpan(spans.map(s => processSpan(s, fn))),
+        complex: (s, data) => ({ ...data, span: processSpan(s, fn) }),
         default: s => s,
     });
     return fn(inside);
@@ -147,10 +110,8 @@ export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span
             spans.map(s => processSpanAsync(s, fn))
         )),
         attr: async (s, attr) => attrSpan(await processSpanAsync(s, fn), attr),
-        ref: async (s, ref) => refSpan(await processSpanAsync(s, fn), ref),
-        anchor: async (s, id) => anchorSpan(await processSpanAsync(s, fn), id),
+        complex: async (s, data) => ({ ...data, span: await processSpanAsync(s, fn) }),
         image: async data => imageSpan(data),
-        semantic: async (s, sems) => semanticSpan(await processSpanAsync(s, fn), sems),
         default: async s => s,
     });
     return fn(inside);
@@ -160,13 +121,11 @@ export function extractSpanText(span: Span): string {
     return mapSpanFull(span, {
         simple: s => s,
         attr: extractSpanText,
-        ref: extractSpanText,
-        anchor: extractSpanText,
+        image: () => '',
+        complex: extractSpanText,
         compound: ss => ss
             .map(extractSpanText)
             .join(''),
-        semantic: extractSpanText,
-        image: () => '',
         default: () => '',
     });
 }
@@ -176,17 +135,7 @@ export function normalizeSpan(span: Span): Span {
         return span;
     } else if (isCompoundSpan(span)) {
         return normalizeCompoundSpan(span);
-    } else if (isRefSpan(span)) {
-        return {
-            ...span,
-            ref: normalizeSpan(span.ref),
-        };
-    } else if (isAnchorSpan(span)) {
-        return {
-            ...span,
-            a: normalizeSpan(span.a),
-        };
-    } else if (isSemanticSpan(span)) {
+    } else if (isComplexSpan(span)) {
         return {
             ...span,
             span: normalizeSpan(span.span),
@@ -235,7 +184,7 @@ function normalizeCompoundSpan(spans: Span[]): Span {
 
 export function extractRefsFromSpan(span: Span): string[] {
     const results = visitSpan(span, s => mapSpan(s, {
-        ref: (_, ref) => ref,
+        complex: (_, data) => data.refToId,
         default: () => undefined,
     }));
     return filterUndefined(results);
@@ -244,11 +193,9 @@ export function extractRefsFromSpan(span: Span): string[] {
 export function spanLength(span: Span): number {
     return mapSpanFull(span, {
         simple: s => s.length,
-        compound: ss => ss.reduce((len, s) => len + spanLength(s), 0),
-        ref: spanLength,
-        semantic: spanLength,
         attr: spanLength,
-        anchor: spanLength,
+        complex: spanLength,
+        compound: ss => ss.reduce((len, s) => len + spanLength(s), 0),
         image: () => 0,
         default: () => 0,
     });
@@ -270,7 +217,7 @@ export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
 
 export function findAnchor(spans: Span[], refId: string): number | undefined {
     for (const [s, sym] of iterateSpans(spans)) {
-        if (isAnchorSpan(s) && s.refId === refId) {
+        if (isComplexSpan(s) && s.refId === refId) {
             return sym;
         }
     }
@@ -280,11 +227,9 @@ export function findAnchor(spans: Span[], refId: string): number | undefined {
 export function isEmptyContentSpan(span: Span): boolean {
     return mapSpanFull(span, {
         simple: s => s ? false : true,
-        compound: ss => ss.every(isEmptyContentSpan),
-        ref: isEmptyContentSpan,
         attr: isEmptyContentSpan,
-        semantic: isEmptyContentSpan,
-        anchor: isEmptyContentSpan,
+        complex: isEmptyContentSpan,
+        compound: ss => ss.every(isEmptyContentSpan),
         image: () => false,
         default: () => false,
     });

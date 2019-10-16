@@ -5,7 +5,7 @@ export type SimpleSpan = string;
 export type CompoundSpan = Span[];
 
 export const attributeNames = [
-    'italic', 'bold', 'small', 'big', 'sub', 'sup',
+    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote',
 ] as const;
 export type AttributeName = typeof attributeNames[number];
 export type AttributedSpan = {
@@ -18,31 +18,25 @@ export type SpanAttribute = {
     span: Span,
 };
 
-export type RefSpan = {
-    ref: Span,
-    refToId: string,
+export type ComplexSpanData = {
+    refId?: string,
+    refToId?: string,
+    title?: string,
+    ruby?: string,
+    flags?: Semantic[],
 };
-
-export type AnchorSpan = {
-    a: Span,
-    refId: string,
+export type ComplexSpan = ComplexSpanData & {
+    span: Span,
 };
 
 export type ImageSpan = {
     image: Image,
 };
 
-export type SemanticSpan = {
-    span: Span,
-    semantics: Semantic[],
-};
-
 export type Span =
     | SimpleSpan
-    | CompoundSpan
     | AttributedSpan
-    | RefSpan
-    | AnchorSpan
-    | SemanticSpan
     | ImageSpan
+    | CompoundSpan
+    | ComplexSpan
     ;
