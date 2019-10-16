@@ -136,10 +136,9 @@ export function normalizeSpan(span: Span): Span {
     } else if (isCompoundSpan(span)) {
         return normalizeCompoundSpan(span);
     } else if (isComplexSpan(span)) {
-        return {
-            ...span,
-            span: normalizeSpan(span.span),
-        };
+        if (Object.keys(span).length === 1) {
+            return span.span;
+        }
     } else if (isImageSpan(span)) {
         return span;
     } else {
