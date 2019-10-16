@@ -138,6 +138,8 @@ export function normalizeSpan(span: Span): Span {
     } else if (isComplexSpan(span)) {
         if (Object.keys(span).length === 1) {
             return span.span;
+        } else {
+            return span;
         }
     } else if (isImageSpan(span)) {
         return span;
