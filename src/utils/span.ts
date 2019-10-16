@@ -1,7 +1,7 @@
 import {
     Span, CompoundSpan, AttributeName, attributeNames,
     SimpleSpan, AttributedSpan, ImageSpan,
-    Image, SpanAttribute, ComplexSpan, ComplexSpanData,
+    Image, SpanAttribute, ComplexSpan, ComplexSpanData, NodeFlag,
 } from '../model';
 import { guard, flatten, filterUndefined } from './misc';
 
@@ -17,6 +17,13 @@ export function attrSpan(span: Span, attr: AttributeName): Span {
 
 export function imageSpan(imageData: Image): Span {
     return { image: imageData };
+}
+
+export function flagSpan(span: Span, ...flags: NodeFlag[]): Span {
+    return {
+        span,
+        flags: flags,
+    };
 }
 
 export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
