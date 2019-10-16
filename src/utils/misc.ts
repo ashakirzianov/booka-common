@@ -1,3 +1,7 @@
+export function assertType<T>(x: T) {
+    return;
+}
+
 export function assertNever<T = void>(x: never, handle: (x: unknown) => T): T;
 export function assertNever<T = void>(x: never): undefined;
 export function assertNever<T = void>(x: never, handle?: (x: unknown) => T): T | undefined {
@@ -54,4 +58,9 @@ export function distinct<T>(arr: T[], eq?: (l: T, r: T) => boolean): T[] {
 
         return res;
     }, []);
+}
+
+export type TypeGuard<T extends X, X = any> = (x: X) => x is T;
+export function guard<T extends X, X = any>(g: (x: X) => boolean): TypeGuard<T, X> {
+    return g as any;
 }

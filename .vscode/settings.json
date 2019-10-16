@@ -44,8 +44,10 @@
         "reparser",
         "reresult",
         "rgrove",
+        "sems",
         "slugify",
         "subcomments",
+        "subnode",
         "titlepage",
         "traum",
         "upsert",
@@ -56,4 +58,5 @@
         "zipfile"
     ],
     "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.tsdk": "node_modules/typescript/lib",
 }

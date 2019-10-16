@@ -1,23 +1,27 @@
-import { VolumeNode, BookContentNode } from './nodes';
-import { KnownTag } from './tag';
+import { BookNode } from './bookNode';
+import { KnownTag, BookLicense } from './tag';
 import { BookPath } from './bookRange';
+import { Image, ImageDic } from './image';
 
-export type BookLicense = 'unknown' | 'public-domain-us';
-export type EpubBookSource = {
-    source: 'epub',
-    kind: string,
+export type BookMeta = {
+    title?: string,
+    author?: string,
+    coverImage?: Image,
+    license: BookLicense,
 };
-export type BookSource = EpubBookSource;
 export type Book = {
-    volume: VolumeNode,
+    nodes: BookNode[],
+    meta: BookMeta,
     tags: KnownTag[],
+    images: ImageDic,
 };
 
-export type BookInfo = {
+export type BookDesc = {
     id: string,
     title: string,
     author?: string,
-    cover?: string,
+    coverUrl?: string,
+    smallCoverUrl?: string,
     tags: KnownTag[],
 };
 
@@ -25,11 +29,12 @@ export type BookFragment = {
     current: BookPath,
     next?: BookPath,
     previous?: BookPath,
-    nodes: BookContentNode[],
+    images?: ImageDic,
+    nodes: BookNode[],
 };
 
 export type TableOfContentsItem = {
-    title: string[],
+    title: string,
     level: number,
     path: BookPath,
 };

@@ -1,5 +1,5 @@
-import { GeneratedContentNode } from './nodes';
 import { BookPath } from './bookRange';
+import { EditableNode } from './editable';
 
 export type CommentLocation = {
     bookId: string,
@@ -11,10 +11,10 @@ export type CommentDescription = {
     textPreview: string,
 };
 export type CommentKind = 'question' | 'statement';
-export type CommentContentNode = GeneratedContentNode;
+export type CommentContentNode = EditableNode;
 export type CommentData = {
     kind: CommentKind,
-    content: GeneratedContentNode[],
+    content: CommentContentNode[],
 };
 
 export type Comment = CommentData & {

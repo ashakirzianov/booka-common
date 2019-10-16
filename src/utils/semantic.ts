@@ -1,5 +1,15 @@
-import { Node, SemanticKey, SemanticForKey } from '../model';
+import {
+    BookNode,
+    SemanticKey, SemanticForKey, FlagSemantic, FlagSemanticKey,
+} from '../model';
 
-export function hasSemantic<S extends SemanticKey, N extends Node>(node: N, semanticKey: S): node is N & SemanticForKey<S> {
-    return (node as any).semantic === semanticKey;
+export function getSemantic<S extends SemanticKey>(node: BookNode, semanticKey: S): SemanticForKey<S> | undefined {
+    return node.node === undefined || node.semantics === undefined
+        ? undefined
+        : node.semantics
+            .find(s => s.semantic === semanticKey) as SemanticForKey<S>;
+}
+
+export function flagSemantic(flag: FlagSemanticKey): FlagSemantic {
+    return { semantic: flag };
 }

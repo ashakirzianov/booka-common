@@ -1,31 +1,48 @@
-import { SupportSemantic } from './semantic';
+import { Semantic } from './semantic';
+import { Image } from './image';
 
-export type AttributeName =
-    | 'italic' | 'bold'
-    | 'small' | 'big'
-    | 'subscript' | 'superscript'
-    | 'quote'
-    | 'poem' | 'line' // TODO: remove ?
-    ;
-export type SimpleSpan = string & { span?: undefined };
+export type SimpleSpan = string;
+export type CompoundSpan = Span[];
+
+export const attributeNames = [
+    'italic', 'bold', 'small', 'big', 'sub', 'sup',
+] as const;
+export type AttributeName = typeof attributeNames[number];
 export type AttributedSpan = {
-    span: 'attrs',
-    content: Span,
-    attrs?: AttributeName[],
+    [k in AttributeName]: {
+        [kk in k]: Span;
+    };
+}[AttributeName];
+export type SpanAttribute = {
+    attr: AttributeName,
+    span: Span,
 };
-export type CompoundSpan = {
-    span: 'compound',
-    spans: Span[],
-};
+
 export type RefSpan = {
-    span: 'ref',
+    ref: Span,
     refToId: string,
-    content: Span,
 };
 
-export type ComplexSpan = SupportSemantic<
-    CompoundSpan | RefSpan | AttributedSpan,
-    'correction'
->;
+export type AnchorSpan = {
+    a: Span,
+    refId: string,
+};
 
-export type Span = SimpleSpan | ComplexSpan;
+export type ImageSpan = {
+    image: Image,
+};
+
+export type SemanticSpan = {
+    span: Span,
+    semantics: Semantic[],
+};
+
+export type Span =
+    | SimpleSpan
+    | CompoundSpan
+    | AttributedSpan
+    | RefSpan
+    | AnchorSpan
+    | SemanticSpan
+    | ImageSpan
+    ;

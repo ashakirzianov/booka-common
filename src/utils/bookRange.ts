@@ -1,9 +1,9 @@
-import { BookPath, BookRange, BookContentNode } from '../model';
-import { hasSubnodes } from './nodes';
+import { BookPath, BookRange, BookNode } from '../model';
+import { hasSubnodes } from './bookNode';
 import { lastElement } from './misc';
 
-export function leadPath(): BookPath {
-    return [0];
+export function leadPath(head: number): BookPath {
+    return [head];
 }
 
 export function emptyPath(): BookPath {
@@ -31,6 +31,10 @@ export function incrementPath(path: BookPath, inc: number): BookPath {
 
 export function appendPath(path: BookPath, lastIdx: number): BookPath {
     return path.concat([lastIdx]);
+}
+
+export function concatPath(path: BookPath, tail: BookPath): BookPath {
+    return path.concat(tail);
 }
 
 export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
@@ -147,7 +151,23 @@ export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): Boo
     }
 }
 
-export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: number): BookContentNode[] {
+export function nodeForPath(nodes: BookNode[], path: BookPath): BookNode | undefined {
+    if (path.length === 0) {
+        return undefined;
+    }
+    const head = nodes[path[0]];
+    if (path.length === 0) {
+        return head;
+    } else {
+        if (hasSubnodes(head)) {
+            return nodeForPath(head.nodes, pathTail(path));
+        } else {
+            return undefined;
+        }
+    }
+}
+
+export function nodesAfterPath(top: BookNode[], path: BookPath, count?: number): BookNode[] {
     if (path.length === 0) {
         const start = 0;
         const end = count === undefined
@@ -166,7 +186,6 @@ export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: n
             return [];
         }
         switch (head.node) {
-            case 'chapter':
             case 'group':
                 return nodesAfterPath(head.nodes, path.slice(1), count);
             default:
@@ -175,7 +194,7 @@ export function nodesAfterPath(top: BookContentNode[], path: BookPath, count?: n
     }
 }
 
-export function nodesForRange(nodes: BookContentNode[], range: BookRange): BookContentNode[] {
+export function nodesForRange(nodes: BookNode[], range: BookRange): BookNode[] {
     if (!range.end) {
         return nodesAfterPath(nodes, range.start);
     }
