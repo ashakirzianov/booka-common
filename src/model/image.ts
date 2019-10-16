@@ -7,7 +7,7 @@ export type ImageExternal = ImageBase<'external'> & {
     url: string,
 };
 export type ImageBuffer = ImageBase<'buffer'> & {
-    buffer: Buffer,
+    base64: string,
 };
 export type ImageRef = ImageBase<'ref'>;
 export type Image =

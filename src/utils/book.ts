@@ -85,17 +85,17 @@ export function normalizeBook(book: Book): Book {
     };
 }
 
-export function getCoverBuffer(book: Book): Buffer | undefined {
+export function getCoverBase64(book: Book): string | undefined {
     const coverImage = book.meta.coverImage;
     if (coverImage === undefined) {
         return undefined;
     }
     if (coverImage.image === 'buffer') {
-        return coverImage.buffer;
+        return coverImage.base64;
     } else {
         const resolved = book.images[coverImage.imageId];
         if (resolved !== undefined && resolved.image === 'buffer') {
-            return resolved.buffer;
+            return resolved.base64;
         } else {
             return undefined;
         }
