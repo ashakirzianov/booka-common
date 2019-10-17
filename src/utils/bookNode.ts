@@ -3,7 +3,7 @@ import {
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    mapSpan, visitSpan, isEmptyContentSpan, iterateSpans, isComplexSpan,
+    mapSpan, visitSpan, isEmptyContentSpan, iterateSpans, isComplexSpan, compoundSpan,
 } from './span';
 import { addPaths, appendPath, nodePath } from './bookRange';
 import { assertNever, flatten, filterUndefined, distinct } from './misc';
@@ -339,5 +339,46 @@ export function isEmptyContentNode(node: BookNode): boolean {
         default:
             assertNever(node);
             return false;
+    }
+}
+
+export function convertNodeToSpan(node: BookNode): Span {
+    const span: Span = { span: convertNodeToSpanImpl(node) };
+
+    span.refId = node.refId;
+    span.flags = node.flags;
+    span.title = node.title;
+
+    return span;
+}
+
+function convertNodeToSpanImpl(node: BookNode): Span {
+    switch (node.node) {
+        case 'title':
+        case 'pph':
+            return node.span;
+        case 'list':
+            return node.items.reduce(
+                (res, i) =>
+                    compoundSpan([res, '\n', i.span]),
+                [] as Span);
+        case 'table':
+            return node.rows.reduce(
+                (res, row) => {
+                    const rowSpan = row.cells.reduce((s, cell) =>
+                        compoundSpan([s, ' | ', cell.span]),
+                        [] as Span);
+                    return compoundSpan([res, '\n', rowSpan]);
+                },
+                [] as Span,
+            );
+        case 'image':
+            return { image: node.image };
+        case 'ignore':
+        case 'separator':
+            return [];
+        default:
+            assertNever(node);
+            return [];
     }
 }
