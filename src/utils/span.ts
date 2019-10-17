@@ -29,7 +29,7 @@ export function flagSpan(span: Span, ...flags: NodeFlag[]): Span {
 export const isSimpleSpan = guard<SimpleSpan>(s => typeof s === 'string');
 export const isImageSpan = guard<ImageSpan>(s => s.image !== undefined);
 export const isCompoundSpan = guard<CompoundSpan>(s => Array.isArray(s));
-export const isComplexSpan = guard<ComplexSpan>(s => s.a !== undefined);
+export const isComplexSpan = guard<ComplexSpan>(s => s.span !== undefined);
 
 function getSpanAttr(span: AttributedSpan): SpanAttribute | undefined {
     for (const an of attributeNames) {
