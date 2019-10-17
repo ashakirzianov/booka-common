@@ -31,10 +31,10 @@ export type ImageSpan = DefNode<'image-span'> & {
     image: Image,
 };
 
-export type Span =
+export type SingleSpan =
     | SimpleSpan
     | AttributedSpan
     | ImageSpan
-    | CompoundSpan
     | RubySpan | RefSpan
     ;
+export type Span = SingleSpan | CompoundSpan;

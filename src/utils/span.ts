@@ -1,7 +1,7 @@
 import {
-    Span, CompoundSpan, SimpleSpan,
+    Span, CompoundSpan, SimpleSpan, SingleSpan,
 } from '../model';
-import { assertNever } from './misc';
+import { assertNever, flatten } from './misc';
 
 export function compoundSpan(spans: Span[]): Span {
     return spans;
@@ -15,9 +15,15 @@ export function isCompoundSpan(span: Span): span is CompoundSpan {
     return Array.isArray(span);
 }
 
+export function isSingleSpan(span: Span): span is SingleSpan {
+    return !isCompoundSpan(span);
+}
+
 export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
     const insideSpans = containedSpans(span);
-    const inside = insideSpans.map(visitor);
+    const inside = flatten(
+        insideSpans.map(s => visitSpan(s, visitor))
+    );
     return [...inside, visitor(span)];
 }
 
