@@ -16,6 +16,7 @@ export type BookLicense =
     | 'public-domain'
     | 'public-domain-us'
     | 'pg-copyrighted'
+    | 'pg-unknown'
     ;
 export type BookLicenseTag = Tag<'license', BookLicense>;
 
