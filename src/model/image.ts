@@ -2,6 +2,8 @@ type ImageBase<K extends string> = {
     image: K,
     imageId: string,
     title?: string,
+    width?: number,
+    height?: number,
 };
 export type ImageExternal = ImageBase<'external'> & {
     url: string,
