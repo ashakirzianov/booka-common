@@ -52,7 +52,7 @@ export function nodeSpans(node: BookNode): Span[] {
 }
 
 export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
-    for (const [node, path] of iterateNodes(fragment.nodes)) {
+    for (const [node, path] of iterateBookNodes(fragment.nodes)) {
         yield [
             node as BookNode,
             addPaths(fragment.current, path),
@@ -60,7 +60,7 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNod
     }
 }
 
-export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
+export function* iterateBookNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
         const headPath = nodePath([idx]);
@@ -68,8 +68,8 @@ export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]
     }
 }
 
-export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
-    for (const [node] of iterateNodes(nodes)) {
+export function* iterateBookNodeIds(nodes: BookNode[]): Generator<string> {
+    for (const [node] of iterateBookNodes(nodes)) {
         if (node.refId !== undefined) {
             yield node.refId;
         }
@@ -77,8 +77,8 @@ export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
 }
 
 export function findReference(nodes: BookNode[], refId: string): [BookNode, BookPath] | undefined {
-    for (const [node, path] of iterateNodes(nodes)) {
-        for (const nodeRefId of iterateNodeRefIds(node)) {
+    for (const [node, path] of iterateBookNodes(nodes)) {
+        for (const nodeRefId of iterateBookNodeRefIds(node)) {
             if (node.refId === refId) {
                 return [node, path];
             }
@@ -94,7 +94,7 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
     return undefined;
 }
 
-export function* iterateNodeRefIds(node: BookNode): Generator<string> {
+export function* iterateBookNodeRefIds(node: BookNode): Generator<string> {
     if (node.refId !== undefined) {
         yield node.refId;
     }
