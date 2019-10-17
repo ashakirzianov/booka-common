@@ -5,7 +5,7 @@ export type ImageProcessor = (image: Image) => Promise<Image>;
 export async function processNodesImages(nodes: BookNode[], fn: (image: Image) => Promise<Image>): Promise<BookNode[]> {
     return processNodesAsync(nodes, {
         span: async s => {
-            switch (s.spanKind) {
+            switch (s.node) {
                 case 'image-span':
                     return {
                         ...s,

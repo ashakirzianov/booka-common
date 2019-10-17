@@ -1,13 +1,6 @@
 import { Span } from './span';
-import { NodeFlag } from './nodeFlag';
 import { Image } from './image';
-
-type DefNode<N extends string> = {
-    node: N,
-    refId?: string,
-    flags?: NodeFlag[],
-    title?: string,
-};
+import { DefNode } from './node';
 
 export type ParagraphNode = DefNode<'pph'> & {
     span: Span,
@@ -61,6 +54,3 @@ export type BookNode =
     | SeparatorNode
     | IgnoreNode
     ;
-
-export type NodeKind = BookNode['node'];
-export type NodeForKind<K extends NodeKind> = Extract<BookNode, { node: K }>;

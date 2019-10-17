@@ -1,5 +1,5 @@
 import {
-    Span, CompoundSpan,
+    Span, CompoundSpan, SimpleSpan,
 } from '../model';
 import { assertNever } from './misc';
 
@@ -22,7 +22,7 @@ export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
 }
 
 function containedSpans(span: Span): Span[] {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -47,7 +47,7 @@ export function processSpan(span: Span, fn: (s: Span) => Span): Span {
 }
 
 function processContainedSpans(span: Span, fn: (s: Span) => Span): Span {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -75,7 +75,7 @@ export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span
 }
 
 async function processContainedSpansAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -98,7 +98,7 @@ async function processContainedSpansAsync(span: Span, fn: (s: Span) => Promise<S
 }
 
 export function extractSpanText(span: Span): string {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -118,7 +118,7 @@ export function extractSpanText(span: Span): string {
 }
 
 export function normalizeSpan(span: Span): Span {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -167,7 +167,7 @@ function normalizeCompoundSpan(spans: Span[]): Span {
 }
 
 export function spanLength(span: Span): number {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
@@ -201,7 +201,7 @@ export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
 }
 
 export function isEmptyContentSpan(span: Span): boolean {
-    switch (span.spanKind) {
+    switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':

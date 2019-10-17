@@ -124,7 +124,7 @@ export function* iterateNodeRefIds(node: BookNode): Generator<string> {
 export function extractRefsFromNodes(nodes: BookNode[]): string[] {
     const results = visitNodes(nodes, {
         span: s => {
-            switch (s.spanKind) {
+            switch (s.node) {
                 case 'ref':
                     return s.refToId;
                 default:
@@ -347,7 +347,7 @@ export function isEmptyContentNode(node: BookNode): boolean {
 }
 
 export function convertNodeToSpan(node: BookNode): Span {
-    const span: Span = { spanKind: 'span', span: convertNodeToSpanImpl(node) };
+    const span: Span = { node: 'span', span: convertNodeToSpanImpl(node) };
 
     span.refId = node.refId;
     span.flags = node.flags;
@@ -377,7 +377,7 @@ function convertNodeToSpanImpl(node: BookNode): Span {
                 [] as Span,
             );
         case 'image':
-            return { spanKind: 'image-span', image: node.image };
+            return { node: 'image-span', image: node.image };
         case 'ignore':
         case 'separator':
             return [];
