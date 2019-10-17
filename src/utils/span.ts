@@ -120,9 +120,20 @@ export function extractSpanText(span: Span): string {
 export function normalizeSpan(span: Span): Span {
     switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small':
         case 'sub': case 'sup':
-            return normalizeSpan(span.span);
+            return {
+                ...span,
+                span: normalizeSpan(span.span),
+            };
+        case 'span':
+            // If no props set
+            return Object.keys(span).length === 2
+                ? normalizeSpan(span.span)
+                : {
+                    ...span,
+                    span: normalizeSpan(span.span),
+                };
         case 'image-span':
             return span;
         case undefined:
