@@ -1,35 +1,45 @@
 import { NodeFlag } from './nodeFlag';
 import { Image } from './image';
 
-export type SimpleSpan = string;
-export type CompoundSpan = Span[];
+type DefSpan<K extends string> = {
+    spanKind: K,
+    refId?: string,
+    title?: string,
+    flags?: NodeFlag[],
+};
+type NotObjectSpan = {
+    spanKind?: undefined,
+    refId?: undefined,
+    title?: undefined,
+    flags?: undefined,
+};
+
+export type SimpleSpan = string & NotObjectSpan;
+export type CompoundSpan = Span[] & NotObjectSpan;
 
 export const attributeNames = [
-    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote',
+    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote', 'span',
 ] as const;
 export type AttributeName = typeof attributeNames[number];
-export type AttributedSpan = {
-    [k in AttributeName]: {
-        [kk in k]: Span;
-    };
-}[AttributeName];
+export type AttributedSpan = DefSpan<AttributeName> & {
+    span: Span,
+};
 export type SpanAttribute = {
     attr: AttributeName,
     span: Span,
 };
 
-export type ComplexSpanData = {
-    refId?: string,
-    refToId?: string,
-    title?: string,
-    ruby?: string,
-    flags?: NodeFlag[],
-};
-export type ComplexSpan = ComplexSpanData & {
+export type RubySpan = DefSpan<'ruby'> & {
     span: Span,
+    explanation: string,
 };
 
-export type ImageSpan = {
+export type RefSpan = DefSpan<'ref'> & {
+    span: Span,
+    refToId: string,
+};
+
+export type ImageSpan = DefSpan<'image-span'> & {
     image: Image,
 };
 
@@ -38,5 +48,5 @@ export type Span =
     | AttributedSpan
     | ImageSpan
     | CompoundSpan
-    | ComplexSpan
+    | RubySpan | RefSpan
     ;

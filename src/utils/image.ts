@@ -1,14 +1,20 @@
 import { Image, BookNode, Book, ImageDic } from '../model';
 import { processNodesAsync } from './bookNode';
-import { mapSpan, imageSpan } from './span';
 
 export type ImageProcessor = (image: Image) => Promise<Image>;
 export async function processNodesImages(nodes: BookNode[], fn: (image: Image) => Promise<Image>): Promise<BookNode[]> {
     return processNodesAsync(nodes, {
-        span: s => mapSpan(s, {
-            image: async data => imageSpan(await fn(data)),
-            default: async ss => ss,
-        }),
+        span: async s => {
+            switch (s.spanKind) {
+                case 'image-span':
+                    return {
+                        ...s,
+                        image: await fn(s.image),
+                    };
+                default:
+                    return s;
+            }
+        },
         node: async n => {
             if (n.node === 'image') {
                 const processed = await fn(n.image);

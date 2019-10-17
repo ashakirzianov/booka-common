@@ -3,7 +3,7 @@ import {
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    mapSpan, visitSpan, isEmptyContentSpan, iterateSpans, isComplexSpan, compoundSpan,
+    visitSpan, isEmptyContentSpan, iterateSpans, compoundSpan,
 } from './span';
 import { addPaths, appendPath, nodePath } from './bookRange';
 import { assertNever, flatten, filterUndefined, distinct } from './misc';
@@ -86,7 +86,7 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
 
         const spans = nodeSpans(node);
         for (const [span, sym] of iterateSpans(spans)) {
-            if (isComplexSpan(span) && span.refId === refId) {
+            if (span.refId === refId) {
                 return [node, appendPath(path, sym)];
             }
         }
@@ -123,10 +123,14 @@ export function* iterateNodeRefIds(node: BookNode): Generator<string> {
 
 export function extractRefsFromNodes(nodes: BookNode[]): string[] {
     const results = visitNodes(nodes, {
-        span: s => mapSpan(s, {
-            complex: (_, data) => data.refToId,
-            default: () => undefined,
-        }),
+        span: s => {
+            switch (s.spanKind) {
+                case 'ref':
+                    return s.refToId;
+                default:
+                    return undefined;
+            }
+        },
     });
     return filterUndefined(results);
 }
@@ -343,7 +347,7 @@ export function isEmptyContentNode(node: BookNode): boolean {
 }
 
 export function convertNodeToSpan(node: BookNode): Span {
-    const span: Span = { span: convertNodeToSpanImpl(node) };
+    const span: Span = { spanKind: 'span', span: convertNodeToSpanImpl(node) };
 
     span.refId = node.refId;
     span.flags = node.flags;
@@ -373,7 +377,7 @@ function convertNodeToSpanImpl(node: BookNode): Span {
                 [] as Span,
             );
         case 'image':
-            return { image: node.image };
+            return { spanKind: 'image-span', image: node.image };
         case 'ignore':
         case 'separator':
             return [];
