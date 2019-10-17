@@ -19,10 +19,12 @@ export type TitleNode = DefNode<'title'> & {
 };
 
 export type TableCell = {
+    refId?: string,
     width?: number,
     span: Span,
 };
 export type TableRow = {
+    refId?: string,
     kind?: 'header' | 'footer' | 'body',
     cells: TableCell[],
 };
@@ -32,6 +34,7 @@ export type TableNode = DefNode<'table'> & {
 
 export type ListKind = 'ordered' | 'definitions' | 'basic';
 export type ListItem = {
+    refId?: string,
     span: Span,
 };
 export type ListNode = DefNode<'list'> & {

@@ -77,19 +77,48 @@ export function* iterateNodeIds(nodes: BookNode[]): Generator<string> {
 }
 
 export function findReference(nodes: BookNode[], refId: string): [BookNode, BookPath] | undefined {
-    for (const [sub, path] of iterateNodes(nodes)) {
-        if (sub.refId === refId) {
-            return [sub, path];
-        } else {
-            const spans = nodeSpans(sub);
-            for (const [span, sym] of iterateSpans(spans)) {
-                if (isComplexSpan(span) && span.refId === refId) {
-                    return [sub, appendPath(path, sym)];
-                }
+    for (const [node, path] of iterateNodes(nodes)) {
+        for (const nodeRefId of iterateNodeRefIds(node)) {
+            if (node.refId === refId) {
+                return [node, path];
+            }
+        }
+
+        const spans = nodeSpans(node);
+        for (const [span, sym] of iterateSpans(spans)) {
+            if (isComplexSpan(span) && span.refId === refId) {
+                return [node, appendPath(path, sym)];
             }
         }
     }
     return undefined;
+}
+
+export function* iterateNodeRefIds(node: BookNode): Generator<string> {
+    if (node.refId !== undefined) {
+        yield node.refId;
+    }
+    switch (node.node) {
+        case 'table':
+            for (const row of node.rows) {
+                if (row.refId !== undefined) {
+                    yield row.refId;
+                }
+                for (const cell of row.cells) {
+                    if (cell.refId !== undefined) {
+                        yield cell.refId;
+                    }
+                }
+            }
+            break;
+        case 'list':
+            for (const item of node.items) {
+                if (item.refId !== undefined) {
+                    yield item.refId;
+                }
+            }
+            break;
+    }
 }
 
 export function extractRefsFromNodes(nodes: BookNode[]): string[] {
