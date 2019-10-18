@@ -1,32 +1,26 @@
 import { Image, BookNode, Book, ImageDic } from '../model';
-import { processNodesAsync } from './bookNode';
+import { processNodeSpansAsync } from './bookNode';
 
 export type ImageProcessor = (image: Image) => Promise<Image>;
 export async function processNodesImages(nodes: BookNode[], fn: (image: Image) => Promise<Image>): Promise<BookNode[]> {
-    return processNodesAsync(nodes, {
-        span: async s => {
-            switch (s.node) {
-                case 'image-span':
-                    return {
-                        ...s,
-                        image: await fn(s.image),
-                    };
-                default:
-                    return s;
-            }
-        },
-        node: async n => {
-            if (n.node === 'image') {
-                const processed = await fn(n.image);
+    const results: BookNode[] = [];
+    for (const node of nodes) {
+        const processed = await processNodeSpansAsync(node, async s => {
+            if (s.node === 'image-span') {
                 return {
-                    ...n,
-                    image: processed,
+                    ...s,
+                    image: await fn(s.image),
                 };
             } else {
-                return n;
+                return s;
             }
-        },
-    });
+        });
+        if (processed.node === 'image') {
+            processed.image = await fn(processed.image);
+        }
+        results.push(node);
+    }
+    return results;
 }
 
 export async function processBookImages(book: Book, fn: ImageProcessor): Promise<Book> {

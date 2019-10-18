@@ -64,3 +64,14 @@ export type TypeGuard<T extends X, X = any> = (x: X) => x is T;
 export function guard<T extends X, X = any>(g: (x: X) => boolean): TypeGuard<T, X> {
     return g as any;
 }
+
+export function definedKeys(obj: any): string[] {
+    const keys: string[] = [];
+    for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+            keys.push(key);
+        }
+    }
+
+    return keys;
+}

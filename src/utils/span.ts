@@ -1,7 +1,7 @@
 import {
     Span, CompoundSpan, SimpleSpan, SingleSpan,
 } from '../model';
-import { assertNever, flatten } from './misc';
+import { assertNever, definedKeys } from './misc';
 
 export function compoundSpan(spans: Span[]): Span {
     return spans;
@@ -17,14 +17,6 @@ export function isCompoundSpan(span: Span): span is CompoundSpan {
 
 export function isSingleSpan(span: Span): span is SingleSpan {
     return !isCompoundSpan(span);
-}
-
-export function visitSpan<T>(span: Span, visitor: (s: Span) => T): T[] {
-    const insideSpans = containedSpans(span);
-    const inside = flatten(
-        insideSpans.map(s => visitSpan(s, visitor))
-    );
-    return [...inside, visitor(span)];
 }
 
 function containedSpans(span: Span): Span[] {
@@ -48,58 +40,48 @@ function containedSpans(span: Span): Span[] {
 }
 
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
-    const inside = processContainedSpans(span, fn);
-    return fn(inside);
-}
-
-function processContainedSpans(span: Span, fn: (s: Span) => Span): Span {
     switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
-            return {
+            return fn({
                 ...span,
                 span: processSpan(span.span, fn),
-            };
+            });
         case 'image-span':
-            return span;
+            return fn(span);
         case undefined:
             if (isSimpleSpan(span)) {
-                return span;
+                return fn(span);
             } else if (isCompoundSpan(span)) {
-                return span.map(s => processSpan(s, fn));
+                return fn(span.map(s => processSpan(s, fn)));
             }
         default:
             assertNever(span);
-            return span;
+            return fn(span);
     }
 }
 
 export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
-    const inside = await processContainedSpansAsync(span, fn);
-    return fn(inside);
-}
-
-async function processContainedSpansAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
     switch (span.node) {
         case 'big': case 'bold': case 'italic': case 'quote':
         case 'ref': case 'ruby': case 'small': case 'span':
         case 'sub': case 'sup':
-            return {
+            return fn({
                 ...span,
                 span: await processSpanAsync(span.span, fn),
-            };
+            });
         case 'image-span':
-            return span;
+            return fn(span);
         case undefined:
             if (isSimpleSpan(span)) {
-                return span;
+                return fn(span);
             } else if (isCompoundSpan(span)) {
-                return Promise.all(span.map(s => processSpanAsync(s, fn)));
+                return fn(await Promise.all(span.map(s => processSpanAsync(s, fn))));
             }
         default:
             assertNever(span);
-            return span;
+            return fn(span);
     }
 }
 
@@ -134,7 +116,7 @@ export function normalizeSpan(span: Span): Span {
             };
         case 'span':
             // If no props set
-            return Object.keys(span).length === 2
+            return definedKeys(span).length === 2
                 ? normalizeSpan(span.span)
                 : {
                     ...span,
@@ -207,11 +189,9 @@ export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
     let offset = 0;
     for (const span of spans) {
         yield [span, 0];
-        if (isCompoundSpan(span)) {
-            const subs = span;
-            for (const [sub, sym] of iterateSpans(subs)) {
-                yield [sub, sym + offset];
-            }
+        const subs = containedSpans(span);
+        for (const [sub, sym] of iterateSpans(subs)) {
+            yield [sub, sym + offset];
         }
         offset += spanLength(span);
     }
