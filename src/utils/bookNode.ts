@@ -236,7 +236,7 @@ export function isEmptyContentNode(node: BookNode): boolean {
 }
 
 export function convertNodeToSpan(node: BookNode): Span {
-    const span: Span = { span: 'span', content: convertNodeToSpanImpl(node) };
+    const span: Span = { span: 'plain', content: convertNodeToSpanImpl(node) };
 
     span.refId = node.refId;
     span.flags = node.flags;
@@ -266,7 +266,7 @@ function convertNodeToSpanImpl(node: BookNode): Span {
                 [] as Span,
             );
         case 'image':
-            return { span: 'image-span', image: node.image };
+            return { span: 'image', image: node.image };
         case 'ignore':
         case 'separator':
             return [];

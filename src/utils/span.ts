@@ -22,10 +22,10 @@ export function isSingleSpan(span: Span): span is SingleSpan {
 function containedSpans(span: Span): Span[] {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return [span.content];
-        case 'image-span':
+        case 'image':
             return [];
         case undefined:
             if (isSimpleSpan(span)) {
@@ -42,13 +42,13 @@ function containedSpans(span: Span): Span[] {
 export function processSpan(span: Span, fn: (s: Span) => Span): Span {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return fn({
                 ...span,
                 content: processSpan(span.content, fn),
             });
-        case 'image-span':
+        case 'image':
             return fn(span);
         case undefined:
             if (isSimpleSpan(span)) {
@@ -65,13 +65,13 @@ export function processSpan(span: Span, fn: (s: Span) => Span): Span {
 export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span>): Promise<Span> {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return fn({
                 ...span,
                 content: await processSpanAsync(span.content, fn),
             });
-        case 'image-span':
+        case 'image':
             return fn(span);
         case undefined:
             if (isSimpleSpan(span)) {
@@ -88,10 +88,10 @@ export async function processSpanAsync(span: Span, fn: (s: Span) => Promise<Span
 export function extractSpanText(span: Span): string {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return extractSpanText(span.content);
-        case 'image-span':
+        case 'image':
             return '';
         case undefined:
             if (isSimpleSpan(span)) {
@@ -114,7 +114,7 @@ export function normalizeSpan(span: Span): Span {
                 ...span,
                 content: normalizeSpan(span.content),
             };
-        case 'span':
+        case 'plain':
             // If no props set
             return definedKeys(span).length === 2
                 ? normalizeSpan(span.content)
@@ -122,7 +122,7 @@ export function normalizeSpan(span: Span): Span {
                     ...span,
                     content: normalizeSpan(span.content),
                 };
-        case 'image-span':
+        case 'image':
             return span;
         case undefined:
             if (isSimpleSpan(span)) {
@@ -168,10 +168,10 @@ function normalizeCompoundSpan(spans: Span[]): Span {
 export function spanLength(span: Span): number {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return spanLength(span.content);
-        case 'image-span':
+        case 'image':
             return 0;
         case undefined:
             if (isSimpleSpan(span)) {
@@ -200,10 +200,10 @@ export function* iterateSpans(spans: Span[]): Generator<[Span, number]> {
 export function isEmptyContentSpan(span: Span): boolean {
     switch (span.span) {
         case 'big': case 'bold': case 'italic': case 'quote':
-        case 'ref': case 'ruby': case 'small': case 'span':
+        case 'ref': case 'ruby': case 'small': case 'plain':
         case 'sub': case 'sup':
             return isEmptyContentSpan(span.content);
-        case 'image-span':
+        case 'image':
             return false;
         case undefined:
             if (isSimpleSpan(span)) {

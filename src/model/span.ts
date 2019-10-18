@@ -18,7 +18,7 @@ export type SimpleSpan = string & NotObjectSpan;
 export type CompoundSpan = Span[] & NotObjectSpan;
 
 export const attributeNames = [
-    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote', 'span',
+    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote', 'plain',
 ] as const;
 export type AttributeName = typeof attributeNames[number];
 export type AttributedSpan = DefSpan<AttributeName> & {
@@ -35,7 +35,7 @@ export type RefSpan = DefSpan<'ref'> & {
     refToId: string,
 };
 
-export type ImageSpan = DefSpan<'image-span'> & {
+export type ImageSpan = DefSpan<'image'> & {
     image: Image,
 };
 
