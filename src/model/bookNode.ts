@@ -1,6 +1,13 @@
 import { Span } from './span';
 import { Image } from './image';
-import { DefNode } from './node';
+import { NodeFlag } from './nodeFlag';
+
+type DefNode<N extends string> = {
+    node: N,
+    refId?: string,
+    flags?: NodeFlag[],
+    title?: string,
+};
 
 export type ParagraphNode = DefNode<'pph'> & {
     span: Span,

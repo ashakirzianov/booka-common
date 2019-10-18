@@ -6,7 +6,7 @@ export async function processNodesImages(nodes: BookNode[], fn: (image: Image) =
     const results: BookNode[] = [];
     for (const node of nodes) {
         const processed = await processNodeSpansAsync(node, async s => {
-            if (s.node === 'image-span') {
+            if (s.span === 'image-span') {
                 return {
                     ...s,
                     image: await fn(s.image),
