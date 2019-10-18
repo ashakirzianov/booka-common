@@ -11,7 +11,6 @@ export * from './hash';
 export * from './image';
 export * from './misc';
 export * from './result';
-export * from './semantic';
 export * from './span';
 export * from './tag';
 export * from './types';

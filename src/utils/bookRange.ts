@@ -1,9 +1,8 @@
 import { BookPath, BookRange, BookNode } from '../model';
-import { hasSubnodes } from './bookNode';
 import { lastElement } from './misc';
 
-export function leadPath(head: number): BookPath {
-    return [head];
+export function nodePath(pcs: number[]): BookPath {
+    return pcs;
 }
 
 export function emptyPath(): BookPath {
@@ -159,11 +158,7 @@ export function nodeForPath(nodes: BookNode[], path: BookPath): BookNode | undef
     if (path.length === 0) {
         return head;
     } else {
-        if (hasSubnodes(head)) {
-            return nodeForPath(head.nodes, pathTail(path));
-        } else {
-            return undefined;
-        }
+        return undefined;
     }
 }
 
@@ -181,16 +176,7 @@ export function nodesAfterPath(top: BookNode[], path: BookPath, count?: number):
             : start + count;
         return top.slice(start, end);
     } else {
-        const head = top[path[0]];
-        if (head === undefined) {
-            return [];
-        }
-        switch (head.node) {
-            case 'group':
-                return nodesAfterPath(head.nodes, path.slice(1), count);
-            default:
-                return [];
-        }
+        return [];
     }
 }
 
@@ -206,19 +192,7 @@ export function nodesForRange(nodes: BookNode[], range: BookRange): BookNode[] {
     } else if (isSubpath(range.start, range.end)) {
         const forPath = nodesAfterPath(nodes, range.start);
         const headNode = forPath[0];
-        if (!hasSubnodes(headNode)) {
-            return [headNode];
-        } else {
-            const tailEnd = range.end.slice(range.start.length || 1);
-            const children = nodesForRange(headNode.nodes, {
-                start: [0],
-                end: tailEnd,
-            });
-            return [{
-                ...headNode,
-                nodes: children,
-            }];
-        }
+        return [headNode];
     } else if (range.end && !pathLessThan(range.start, range.end)) {
         return [];
     } else {

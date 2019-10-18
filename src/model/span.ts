@@ -1,48 +1,48 @@
-import { Semantic } from './semantic';
+import { NodeFlag } from './nodeFlag';
 import { Image } from './image';
 
-export type SimpleSpan = string;
-export type CompoundSpan = Span[];
-
-export const attributeNames = [
-    'italic', 'bold', 'small', 'big', 'sub', 'sup',
-] as const;
-export type AttributeName = typeof attributeNames[number];
-export type AttributedSpan = {
-    [k in AttributeName]: {
-        [kk in k]: Span;
-    };
-}[AttributeName];
-export type SpanAttribute = {
-    attr: AttributeName,
-    span: Span,
+type DefSpan<K extends string> = {
+    span: K,
+    refId?: string,
+    flags?: NodeFlag[],
+    title?: string,
+};
+type NotObjectSpan = {
+    span?: undefined,
+    refId?: undefined,
+    flags?: undefined,
+    title?: undefined,
 };
 
-export type RefSpan = {
-    ref: Span,
+export type SimpleSpan = string & NotObjectSpan;
+export type CompoundSpan = Span[] & NotObjectSpan;
+
+export const attributeNames = [
+    'italic', 'bold', 'small', 'big', 'sub', 'sup', 'quote', 'plain',
+] as const;
+export type AttributeName = typeof attributeNames[number];
+export type AttributedSpan = DefSpan<AttributeName> & {
+    content: Span,
+};
+
+export type RubySpan = DefSpan<'ruby'> & {
+    content: Span,
+    explanation: string,
+};
+
+export type RefSpan = DefSpan<'ref'> & {
+    content: Span,
     refToId: string,
 };
 
-export type AnchorSpan = {
-    a: Span,
-    refId: string,
-};
-
-export type ImageSpan = {
+export type ImageSpan = DefSpan<'image'> & {
     image: Image,
 };
 
-export type SemanticSpan = {
-    span: Span,
-    semantics: Semantic[],
-};
-
-export type Span =
+export type SingleSpan =
     | SimpleSpan
-    | CompoundSpan
     | AttributedSpan
-    | RefSpan
-    | AnchorSpan
-    | SemanticSpan
     | ImageSpan
+    | RubySpan | RefSpan
     ;
+export type Span = SingleSpan | CompoundSpan;

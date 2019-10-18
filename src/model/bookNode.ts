@@ -1,10 +1,12 @@
 import { Span } from './span';
-import { Semantic } from './semantic';
+import { Image } from './image';
+import { NodeFlag } from './nodeFlag';
 
 type DefNode<N extends string> = {
     node: N,
     refId?: string,
-    semantics?: Semantic[],
+    flags?: NodeFlag[],
+    title?: string,
 };
 
 export type ParagraphNode = DefNode<'pph'> & {
@@ -16,39 +18,46 @@ export type TitleNode = DefNode<'title'> & {
     span: Span,
 };
 
-export type GroupNode = DefNode<'group'> & {
-    nodes: BookNode[],
-};
-
 export type TableCell = {
+    refId?: string,
     width?: number,
-    spans: Span[],
+    span: Span,
 };
 export type TableRow = {
+    refId?: string,
+    kind?: 'header' | 'footer' | 'body',
     cells: TableCell[],
 };
 export type TableNode = DefNode<'table'> & {
     rows: TableRow[],
 };
 
-export type ListKind = 'ordered' | 'basic';
+export type ListKind = 'ordered' | 'definitions' | 'basic';
 export type ListItem = {
-    spans: Span[],
+    refId?: string,
+    span: Span,
 };
 export type ListNode = DefNode<'list'> & {
     kind: ListKind,
+    start?: number,
     items: ListItem[],
+};
+
+export type ImageNode = DefNode<'image'> & {
+    image: Image,
 };
 
 export type SeparatorNode = DefNode<'separator'>;
 
+export type IgnoreNode = DefNode<'ignore'> & {
+    name?: string,
+    extra?: any,
+};
+
 export type BookNode =
-    | GroupNode
     | ParagraphNode | TitleNode
-    | TableNode | ListNode | SeparatorNode
+    | TableNode | ListNode
+    | ImageNode
+    | SeparatorNode
+    | IgnoreNode
     ;
-
-export type HasSubnodes = GroupNode;
-
-export type NodeKind = BookNode['node'];
-export type NodeForKind<K extends NodeKind> = Extract<BookNode, { node: K }>;
