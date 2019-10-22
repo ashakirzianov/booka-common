@@ -8,6 +8,7 @@ export * from './editable';
 export * from './highlights';
 export * from './history';
 export * from './image';
+export * from './locator';
 export * from './note';
 export * from './report';
 export * from './result';

@@ -1,12 +1,11 @@
 import {
     Book, Highlight, Bookmark,
     AuthToken, AccountInfo,
-    Comment, CommentLocation, CommentData, Vote, VoteKind,
+    Comment, CommentPost, Vote, VoteKind,
     NoteData, Note, BookDesc, IssueReportKind,
+    KnownTag, KnownTagName, BookEvent, BookmarkUpdate, BookPositionLocator, CommentUpdate, ResolvedVote,
 } from '../model';
 import { HasId, Paginate } from './helpers';
-import { KnownTag, KnownTagName } from '../model/tag';
-import { BookEvent } from '../model/history';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -54,9 +53,6 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            query: {
-                bookId: string,
-            },
             body: Highlight,
         },
         patch: {
@@ -86,9 +82,6 @@ export type BackContract = {
         post: {
             return: HasId[],
             auth: string,
-            query: {
-                bookId: string,
-            },
             body: Bookmark[],
         },
         delete: {
@@ -106,21 +99,18 @@ export type BackContract = {
             query: {
                 bookId: string,
             },
-            body: Pick<Bookmark, 'source' | 'created' | 'location'>,
+            body: BookmarkUpdate,
         },
     },
     '/comments': {
         get: {
             return: Comment[],
-            body: CommentLocation,
+            body: BookPositionLocator,
         },
         post: {
             return: HasId,
             auth: string,
-            body: {
-                location: CommentLocation,
-                comment: CommentData,
-            },
+            body: CommentPost,
         },
         patch: {
             return: boolean,
@@ -128,7 +118,7 @@ export type BackContract = {
             query: {
                 commentId: string,
             },
-            body: Partial<CommentData>,
+            body: CommentUpdate,
         },
         delete: {
             return: boolean,
@@ -145,12 +135,12 @@ export type BackContract = {
             query: {
                 commentId: string,
             },
-            body: CommentData,
+            body: CommentPost,
         },
     },
     '/votes': {
         get: Paginate<{
-            return: Vote[],
+            return: ResolvedVote[],
             auth: string,
             query: {
                 bookId?: string,

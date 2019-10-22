@@ -1,4 +1,4 @@
-import { BookPath } from './bookRange';
+import { BookPositionLocator } from './locator';
 
 export type BookmarkSource = string;
 export type BookmarkKind = 'manual' | 'current' | 'navigation';
@@ -6,6 +6,7 @@ export type Bookmark = {
     _id: string,
     source: BookmarkSource,
     kind: BookmarkKind,
-    location: BookPath,
+    location: BookPositionLocator,
     created: Date,
 };
+export type BookmarkUpdate = Pick<Bookmark, 'source' | 'created' | 'location'>;

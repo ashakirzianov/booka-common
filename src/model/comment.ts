@@ -1,26 +1,25 @@
-import { BookPath } from './bookRange';
 import { EditableNode } from './editable';
+import { BookPositionLocator } from './locator';
 
-export type CommentLocation = {
-    bookId: string,
-    path: BookPath,
-};
 export type CommentDescription = {
     commentId: string,
-    location?: CommentLocation,
+    location: BookPositionLocator,
     textPreview: string,
 };
+
 export type CommentKind = 'question' | 'statement';
 export type CommentContentNode = EditableNode;
-export type CommentData = {
+export type CommentPost = {
     kind: CommentKind,
     content: CommentContentNode[],
+    location: BookPositionLocator,
 };
 
-export type Comment = CommentData & {
+export type Comment = CommentPost & {
     _id: string,
     children: Comment[],
     rating: number,
     lastEdited: Date,
-    location?: CommentLocation,
 };
+
+export type CommentUpdate = Partial<Pick<CommentPost, 'content' | 'kind'>>;

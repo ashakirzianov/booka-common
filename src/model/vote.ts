@@ -2,8 +2,14 @@ import { CommentDescription } from './comment';
 
 export type VoteKind = 'like' | 'dislike';
 
-export type Vote = {
-    _id: string,
+export type VotePost = {
     kind: VoteKind,
-    comment: CommentDescription,
+    commentId: string,
+};
+export type Vote = VotePost & {
+    _id: string,
+};
+
+export type ResolvedVote = Vote & {
+    preview: CommentDescription,
 };
