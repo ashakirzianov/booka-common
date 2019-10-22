@@ -41,3 +41,14 @@ export type TableOfContentsItem = {
 export type TableOfContents = {
     items: TableOfContentsItem[],
 };
+
+export type BookPositionLocator = {
+    id: string,
+    path: BookPath,
+};
+
+export type BookRangeLocator = {
+    id: string,
+    start: BookPath,
+    end?: BookPath,
+};
