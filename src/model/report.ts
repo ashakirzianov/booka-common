@@ -1,10 +1,7 @@
-import { AccountInfo } from './account';
-import { CommentDescription } from './comment';
+import { CommentLocator } from './locator';
 
 export type IssueReportKind = 'spam' | 'hate-speech';
-export type IssueReport = {
+export type IssueReportPost = {
     kind: IssueReportKind,
-    author: AccountInfo,
-    comment: CommentDescription,
-    date: Date,
+    comment: CommentLocator,
 };

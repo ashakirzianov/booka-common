@@ -1,12 +1,14 @@
 import { EditableNode } from './editable';
+import { HasId } from './base';
 
-export type NoteContentNode = EditableNode;
-export type NoteData = {
-    content: NoteContentNode[],
+export type NoteContent = EditableNode;
+export type NotePost = {
+    content: NoteContent[],
     title?: string,
 };
 
-export type Note = NoteData & {
-    _id: string,
+export type NoteUpdate = HasId & Partial<NotePost>;
+
+export type Note = NotePost & HasId & {
     lastEdited: Date,
 };

@@ -1,9 +1,12 @@
-import { BookRangeLocator } from './book';
+import { BookRangeLocator } from './locator';
+import { HasId } from './base';
+import { EditableNode } from './editable';
 
-export type HighlightComment = string;
-export type Highlight = {
-    _id: string,
+export type HighlightContent = EditableNode;
+export type HighlightPost = {
     group: string,
     location: BookRangeLocator,
-    comment?: HighlightComment,
+    comment?: HighlightContent,
 };
+export type HighlightUpdate = HasId & Partial<HighlightPost>;
+export type Highlight = HighlightPost & HasId;

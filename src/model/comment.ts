@@ -1,25 +1,20 @@
 import { EditableNode } from './editable';
-import { BookPositionLocator } from './locator';
+import { BookPositionLocator, CommentLocator } from './locator';
+import { HasId } from './base';
 
-export type CommentDescription = {
-    commentId: string,
-    location: BookPositionLocator,
-    textPreview: string,
-};
-
+export type CommentTargetLocator = CommentLocator | BookPositionLocator;
 export type CommentKind = 'question' | 'statement';
 export type CommentContentNode = EditableNode;
 export type CommentPost = {
     kind: CommentKind,
     content: CommentContentNode[],
-    location: BookPositionLocator,
+    target: CommentTargetLocator,
 };
 
-export type Comment = CommentPost & {
-    _id: string,
+export type CommentUpdate = HasId & Partial<Pick<CommentPost, 'content' | 'kind'>>;
+
+export type Comment = CommentPost & HasId & {
     children: Comment[],
     rating: number,
     lastEdited: Date,
 };
-
-export type CommentUpdate = Partial<Pick<CommentPost, 'content' | 'kind'>>;
