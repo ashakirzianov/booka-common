@@ -2,11 +2,11 @@ import {
     Book, BookDesc, BookEvent, BookPositionLocator,
     AuthToken, AccountInfo,
     Highlight, HighlightUpdate, HighlightPost,
-    Bookmark, BookmarkUpdate,
+    Bookmark, CurrentBookmarkUpdate, BookmarkPost,
     Comment, CommentPost, CommentUpdate,
     NotePost, Note, NoteUpdate,
     Vote, VotePost,
-    IssueReportPost,
+    IssueReportKind,
     KnownTag, KnownTagName,
     HasId,
 } from '../model';
@@ -20,33 +20,6 @@ export type BackContract = {
         },
     },
     '/me/info': { get: { return: AccountInfo, auth: string } },
-    '/books/single': {
-        get: {
-            return: Book,
-            query: { id: string },
-        },
-    },
-    '/books/all': {
-        get: Paginate<{
-            return: BookDesc[],
-        }>,
-    },
-    '/books/upload': {
-        post: {
-            return: string,
-            files: 'book',
-            auth: string,
-        },
-    },
-    '/books': {
-        get: Paginate<{
-            return: BookDesc[],
-            auth: string,
-            query: {
-                tags?: string[],
-            },
-        }>,
-    },
     '/highlights': {
         get: {
             return: Highlight[],
@@ -82,9 +55,9 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId[],
+            return: HasId,
             auth: string,
-            body: Bookmark[],
+            body: BookmarkPost,
         },
         delete: {
             return: boolean,
@@ -98,10 +71,7 @@ export type BackContract = {
         put: {
             return: HasId,
             auth: string,
-            query: {
-                bookId: string,
-            },
-            body: BookmarkUpdate,
+            body: CurrentBookmarkUpdate,
         },
     },
     '/comments': {
@@ -167,7 +137,7 @@ export type BackContract = {
             },
         },
     },
-    '/notes/single': {
+    '/notes/id': {
         get: {
             return: Note,
             auth: string,
@@ -176,7 +146,7 @@ export type BackContract = {
             },
         },
     },
-    '/notes/many': {
+    '/notes/book': {
         get: {
             return: Note[],
             auth: string,
@@ -207,9 +177,6 @@ export type BackContract = {
         get: Paginate<{
             return: BookEvent[],
             auth: string,
-            query: {
-                page?: number,
-            },
         }>,
         post: {
             return: boolean,
@@ -230,7 +197,10 @@ export type BackContract = {
         post: {
             return: boolean,
             auth: string,
-            body: IssueReportPost,
+            query: {
+                kind: IssueReportKind,
+                commentId: string,
+            },
         },
     },
 };

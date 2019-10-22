@@ -9,7 +9,7 @@ export type BookmarkPost = {
     location: BookPositionLocator,
     created: Date,
 };
-export type BookmarkUpdate = HasId & Omit<BookmarkPost, 'kind'>;
+export type CurrentBookmarkUpdate = Omit<BookmarkPost, 'kind'>;
 export type Bookmark = BookmarkPost & HasId & {
     preview: string,
 };
