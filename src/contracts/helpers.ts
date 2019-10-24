@@ -7,5 +7,5 @@ export type Page<T> = {
 type ArrayType<T> = T extends Array<infer U> ? U : never;
 export type Paginate<T extends PathMethodContract> = Omit<T, 'return'> & {
     return: Page<ArrayType<T['return']>>,
-    query?: { page?: number },
+    query: { page?: number },
 };

@@ -1,4 +1,6 @@
-import { Book, BookDesc, BookFragment, BookPositionLocator, SearchResult } from '../model';
+import {
+    Book, BookDesc, BookFragment, BookPositionLocator, SearchResult,
+} from '../model';
 import { Paginate } from './helpers';
 
 export type LibContract = {
