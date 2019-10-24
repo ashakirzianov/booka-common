@@ -1,10 +1,10 @@
-import { Book, BookDesc, BookFragment, BookPath, BookPositionLocator } from '../model';
+import { Book, BookDesc, BookFragment, BookPositionLocator, SearchResult } from '../model';
 import { Paginate } from './helpers';
 
 export type LibContract = {
     '/search': {
         get: Paginate<{
-            return: BookDesc[],
+            return: SearchResult[],
             query: { query: string },
             auth?: string,
         }>,
