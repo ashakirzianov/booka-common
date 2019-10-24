@@ -37,7 +37,7 @@ export type LibContract = {
     },
     '/previews': {
         get: {
-            return: string[],
+            return: Array<string | undefined>,
             body: BookPositionLocator[],
         },
     },

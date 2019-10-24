@@ -2,11 +2,18 @@ import {
     BookPath, BookFragment, Book, BookNode,
     TableOfContents, TableOfContentsItem, Image,
 } from '../model';
-import { pathLessThan, nodesForRange } from './bookRange';
+import { pathLessThan, nodesForRange, nodeForPath } from './bookRange';
 import {
     extractNodeText, normalizeNodes, isEmptyContentNode,
 } from './bookNode';
 import { extractSpanText } from './span';
+
+export function previewForPath(book: Book, path: BookPath): string | undefined {
+    const node = nodeForPath(book.nodes, path);
+    return node !== undefined
+        ? extractNodeText(node)
+        : undefined;
+}
 
 export function tocForBook(book: Book): TableOfContents {
     const anchors = Array.from(iterateAnchorPaths(book.nodes, [], false));
