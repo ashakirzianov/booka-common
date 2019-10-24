@@ -33,6 +33,7 @@ export type LibContract = {
         post: {
             return: string,
             files: 'book',
+            auth: string,
         },
     },
     '/previews': {
