@@ -1,12 +1,16 @@
 import {
-    Book, Highlight, Bookmark,
+    Book, BookDesc, BookEvent, BookPositionLocator,
     AuthToken, AccountInfo,
-    Comment, CommentLocation, CommentData, Vote, VoteKind,
-    NoteData, Note, BookDesc, IssueReportKind,
+    Highlight, HighlightUpdate, HighlightPost,
+    Bookmark, CurrentBookmarkUpdate, BookmarkPost,
+    Comment, CommentPost, CommentUpdate,
+    NotePost, Note, NoteUpdate,
+    Vote, VotePost,
+    IssueReportKind,
+    KnownTag, KnownTagName,
+    HasId,
 } from '../model';
-import { HasId, Paginate } from './helpers';
-import { KnownTag, KnownTagName } from '../model/tag';
-import { BookEvent } from '../model/history';
+import { Paginate } from './helpers';
 
 export type BackContract = {
     '/auth/fbtoken': {
@@ -16,33 +20,6 @@ export type BackContract = {
         },
     },
     '/me/info': { get: { return: AccountInfo, auth: string } },
-    '/books/single': {
-        get: {
-            return: Book,
-            query: { id: string },
-        },
-    },
-    '/books/all': {
-        get: Paginate<{
-            return: BookDesc[],
-        }>,
-    },
-    '/books/upload': {
-        post: {
-            return: string,
-            files: 'book',
-            auth: string,
-        },
-    },
-    '/books': {
-        get: Paginate<{
-            return: BookDesc[],
-            auth: string,
-            query: {
-                tags?: string[],
-            },
-        }>,
-    },
     '/highlights': {
         get: {
             return: Highlight[],
@@ -54,18 +31,12 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            query: {
-                bookId: string,
-            },
-            body: Highlight,
+            body: HighlightPost,
         },
         patch: {
             return: boolean,
             auth: string,
-            query: {
-                highlightId: string,
-            },
-            body: Partial<Highlight>,
+            body: HighlightUpdate,
         },
         delete: {
             return: boolean,
@@ -84,12 +55,9 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId[],
+            return: HasId,
             auth: string,
-            query: {
-                bookId: string,
-            },
-            body: Bookmark[],
+            body: BookmarkPost,
         },
         delete: {
             return: boolean,
@@ -103,32 +71,23 @@ export type BackContract = {
         put: {
             return: HasId,
             auth: string,
-            query: {
-                bookId: string,
-            },
-            body: Pick<Bookmark, 'source' | 'created' | 'location'>,
+            body: CurrentBookmarkUpdate,
         },
     },
     '/comments': {
         get: {
             return: Comment[],
-            body: CommentLocation,
+            body: BookPositionLocator,
         },
         post: {
             return: HasId,
             auth: string,
-            body: {
-                location: CommentLocation,
-                comment: CommentData,
-            },
+            body: CommentPost,
         },
         patch: {
             return: boolean,
             auth: string,
-            query: {
-                commentId: string,
-            },
-            body: Partial<CommentData>,
+            body: CommentUpdate,
         },
         delete: {
             return: boolean,
@@ -136,16 +95,6 @@ export type BackContract = {
             query: {
                 commentId: string,
             },
-        },
-    },
-    '/subcomments': {
-        post: {
-            return: HasId,
-            auth: string,
-            query: {
-                commentId: string,
-            },
-            body: CommentData,
         },
     },
     '/votes': {
@@ -159,10 +108,7 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            query: {
-                commentId: string,
-                kind: VoteKind,
-            },
+            body: VotePost,
         },
         delete: {
             return: boolean,
@@ -176,15 +122,12 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: NoteData,
+            body: NotePost,
         },
         patch: {
             return: boolean,
             auth: string,
-            query: {
-                noteId: string,
-            },
-            body: Partial<NoteData>,
+            body: NoteUpdate,
         },
         delete: {
             return: boolean,
@@ -194,7 +137,7 @@ export type BackContract = {
             },
         },
     },
-    '/notes/single': {
+    '/notes/id': {
         get: {
             return: Note,
             auth: string,
@@ -203,7 +146,7 @@ export type BackContract = {
             },
         },
     },
-    '/notes/many': {
+    '/notes/book': {
         get: {
             return: Note[],
             auth: string,
@@ -234,9 +177,6 @@ export type BackContract = {
         get: Paginate<{
             return: BookEvent[],
             auth: string,
-            query: {
-                page?: number,
-            },
         }>,
         post: {
             return: boolean,
@@ -258,8 +198,8 @@ export type BackContract = {
             return: boolean,
             auth: string,
             query: {
-                commentId: string,
                 kind: IssueReportKind,
+                commentId: string,
             },
         },
     },

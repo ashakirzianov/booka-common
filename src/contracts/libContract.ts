@@ -1,8 +1,24 @@
-import { Book, BookDesc } from '../model';
+import {
+    Book, BookDesc, BookFragment, BookPositionLocator, SearchResult,
+} from '../model';
 import { Paginate } from './helpers';
 
 export type LibContract = {
-    '/download': {
+    '/search': {
+        get: Paginate<{
+            return: SearchResult[],
+            query: { query: string },
+            auth?: string,
+        }>,
+    },
+    '/fragment': {
+        get: {
+            return: BookFragment,
+            body: BookPositionLocator,
+            auth?: string,
+        },
+    },
+    '/full': {
         get: {
             query: { id: string },
             return: Book,
@@ -13,16 +29,17 @@ export type LibContract = {
             return: BookDesc[],
         }>,
     },
-    '/info': {
-        get: {
-            return: BookDesc[],
-            query: { ids: string[] },
-        },
-    },
     '/upload': {
         post: {
             return: string,
             files: 'book',
+            auth: string,
+        },
+    },
+    '/previews': {
+        get: {
+            return: Array<string | undefined>,
+            body: BookPositionLocator[],
         },
     },
 };

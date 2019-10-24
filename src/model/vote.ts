@@ -1,9 +1,12 @@
-import { CommentDescription } from './comment';
+import { HasId } from './base';
 
 export type VoteKind = 'like' | 'dislike';
 
-export type Vote = {
-    _id: string,
+export type VotePost = {
     kind: VoteKind,
-    comment: CommentDescription,
+    commentId: string,
+};
+
+export type Vote = VotePost & HasId & {
+    commentPreview: string,
 };
