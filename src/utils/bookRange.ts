@@ -232,3 +232,17 @@ export function isOverlap(left: BookRange, right: BookRange): boolean {
 
     return first.end === undefined || !pathLessThan(first.end, second.start);
 }
+
+export function pathToString(path: BookPath) {
+    return path.join('-');
+}
+
+export function pathFromString(pathString: string): BookPath | undefined {
+    const comps = pathString
+        .split('-')
+        .map(c => parseInt(c, 10));
+
+    return comps.every(c => !isNaN(c))
+        ? nodePath(comps)
+        : undefined;
+}
