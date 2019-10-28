@@ -31,7 +31,6 @@ export function fragmentForPath(book: Book, path: BookPath): BookFragment {
 
     return {
         previous, current, next, nodes,
-        images: book.images,
     };
 }
 
