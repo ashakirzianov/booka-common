@@ -14,7 +14,10 @@ export type LibContract = {
     '/fragment': {
         get: {
             return: BookFragment,
-            body: BookPositionLocator,
+            query: {
+                id: string,
+                path: string,
+            },
             auth?: string,
         },
     },
@@ -37,7 +40,7 @@ export type LibContract = {
         },
     },
     '/previews': {
-        get: {
+        post: {
             return: Array<string | undefined>,
             body: BookPositionLocator[],
         },
