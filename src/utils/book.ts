@@ -16,9 +16,20 @@ export function previewForPath(book: Book, path: BookPath): string | undefined {
 }
 
 export function tocForBook(book: Book): TableOfContents {
-    const anchors = Array.from(iterateAnchorPaths(book.nodes, [], false));
+    const anchors = Array.from(iterateTocItems(book.nodes));
     const items: TableOfContentsItem[] = anchors;
     return { items };
+}
+function* iterateTocItems(nodes: BookNode[]): IterableIterator<TableOfContentsItem> {
+    for (const [node, nodePath] of iterateNodes(nodes)) {
+        if (node.node === 'title') {
+            yield {
+                path: nodePath,
+                title: extractSpanText(node.span),
+                level: node.level,
+            };
+        }
+    }
 }
 
 export function fragmentForPath(book: Book, path: BookPath): BookFragment {
@@ -54,33 +65,6 @@ export function fragmentForPath(book: Book, path: BookPath): BookFragment {
         current = pair;
         isUnderTitle = true;
         nodes = [];
-    }
-}
-
-// TODO: remove
-type Anchor = {
-    path: BookPath,
-    title: string,
-    level: number,
-};
-function* iterateAnchorPaths(nodes: BookNode[], prefix: BookPath = [], skipFirstChapters: boolean = true): IterableIterator<Anchor> {
-    let underTitle = false;
-    for (let idx = 0; idx < nodes.length; idx++) {
-        const node = nodes[idx];
-        if (node.node === 'title') {
-            const chapterPrefix = [...prefix, idx];
-            // Skip first subchapters -- merge with parents
-            if (!skipFirstChapters || !underTitle) {
-                yield {
-                    path: chapterPrefix,
-                    title: extractSpanText(node.span),
-                    level: node.level,
-                };
-            }
-            underTitle = true;
-        } else if (!isEmptyContentNode(node)) {
-            underTitle = false;
-        }
     }
 }
 
