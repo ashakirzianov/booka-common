@@ -1,4 +1,4 @@
-import { BookPath, BookRange, BookNode } from '../model';
+import { BookPath, BookRange, BookNode, BookRangeLocator } from '../model';
 import { lastElement } from './misc';
 
 export function nodePath(pcs: number[]): BookPath {
@@ -247,4 +247,21 @@ export function pathFromString(pathString: string): BookPath | undefined {
     return comps.every(c => !isNaN(c))
         ? nodePath(comps)
         : undefined;
+}
+
+export function rangeToString(range: BookRange): string {
+    return `${pathToString(range.start)}_${range.end ? pathToString(range.end) : ''}`;
+}
+
+export function rangeFromString(rangeString: string): BookRange | undefined {
+    const paths = rangeString.split('_');
+    if (paths.length !== 2) {
+        return undefined;
+    }
+    const start = pathFromString(paths[0]);
+    if (start === undefined) {
+        return undefined;
+    }
+    const end = pathFromString(paths[1]);
+    return { start, end };
 }
