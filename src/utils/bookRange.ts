@@ -40,7 +40,9 @@ export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
     if (toAdd.length === 0) {
         return path;
     }
-    const result = [...path];
+    const result = path.length > 0
+        ? [...path]
+        : [0];
     result[result.length - 1] += toAdd[0];
     return [...result, ...toAdd.slice(1)];
 }
