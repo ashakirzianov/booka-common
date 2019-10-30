@@ -1,10 +1,11 @@
 import {
     BookPath, BookFragment, Book, BookNode,
-    TableOfContents, TableOfContentsItem, Image, BookAnchor,
+    TableOfContents, TableOfContentsItem, BookAnchor,
 } from '../model';
-import { pathLessThan, nodesForRange, nodeForPath, emptyPath } from './bookRange';
+import { pathLessThan, nodeForPath, emptyPath } from './bookRange';
 import {
-    extractNodeText, normalizeNodes, isEmptyContentNode, iterateNodes, nodeLength,
+    extractNodeText, normalizeNodes, isEmptyContentNode,
+    iterateNodes, nodeLength,
 } from './bookNode';
 import { extractSpanText } from './span';
 
@@ -74,7 +75,7 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
                 break;
             } else {
                 nodes.push(node);
-                currentLength += nodeLength(node);
+                currentLength += length;
             }
         } else {
             previous = current;
