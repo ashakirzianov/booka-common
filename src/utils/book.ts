@@ -1,6 +1,6 @@
 import {
     BookPath, BookFragment, Book, BookNode,
-    TableOfContents, TableOfContentsItem, Image,
+    TableOfContents, TableOfContentsItem, Image, BookAnchor,
 } from '../model';
 import { pathLessThan, nodesForRange, nodeForPath, emptyPath } from './bookRange';
 import {
@@ -37,39 +37,40 @@ export function tocForBook(book: Book): TableOfContents {
 }
 
 export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: number): BookFragment {
-    type PathTitle = {
-        path: BookPath,
-        title: string | undefined,
-    };
-    let previous: PathTitle | undefined = undefined;
-    let current: PathTitle = {
+    let previous: BookAnchor | undefined = undefined;
+    let current: BookAnchor = {
         path: emptyPath(),
         title: book.meta.title,
+        position: 0,
     };
-    let next: PathTitle | undefined = undefined;
+    let next: BookAnchor | undefined = undefined;
     let nodes: BookNode[] = [];
+    let currentPosition = 0;
     let currentLength = 0;
     let isUnderTitle = true;
     let isPastCurrent = false;
     for (const [node, currPath] of iterateNodes(book.nodes)) {
+        const length = nodeLength(node);
         if (node.node !== 'title' || isUnderTitle) {
             nodes.push(node);
             if (isUnderTitle && !isEmptyContentNode(node)) {
                 isUnderTitle = false;
             }
             if (fragmentLength) {
-                currentLength += nodeLength(node);
+                currentLength += length;
             }
             continue;
         }
-        const pair: PathTitle = {
+        const anchor: BookAnchor = {
             path: currPath,
             title: extractSpanText(node.span),
+            position: currentPosition,
         };
+        currentPosition += length;
         isPastCurrent = isPastCurrent || pathLessThan(path, currPath);
         if (isPastCurrent) {
             if (!fragmentLength || currentLength >= fragmentLength) {
-                next = pair;
+                next = anchor;
                 break;
             } else {
                 nodes.push(node);
@@ -77,7 +78,7 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
             }
         } else {
             previous = current;
-            current = pair;
+            current = anchor;
             isUnderTitle = true;
             nodes = [];
             currentLength = 0;

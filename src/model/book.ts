@@ -25,19 +25,15 @@ export type BookDesc = {
     tags: KnownTag[],
 };
 
+export type BookAnchor = {
+    path: BookPath,
+    title: string | undefined,
+    position: number,
+};
 export type BookFragment = {
-    current: {
-        path: BookPath,
-        title: string | undefined,
-    },
-    next?: {
-        path: BookPath,
-        title: string | undefined,
-    },
-    previous?: {
-        path: BookPath,
-        title: string | undefined,
-    },
+    current: BookAnchor,
+    next?: BookAnchor,
+    previous?: BookAnchor,
     images?: ImageDic,
     nodes: BookNode[],
 };
