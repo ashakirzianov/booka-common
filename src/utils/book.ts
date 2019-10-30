@@ -46,7 +46,8 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
     let nodes: BookNode[] = [];
     let currentLength = 0;
     let isUnderTitle = true;
-    for (const [node, nodePath] of iterateNodes(book.nodes)) {
+    let isPastCurrent = false;
+    for (const [node, currPath] of iterateNodes(book.nodes)) {
         if (node.node !== 'title' || isUnderTitle) {
             nodes.push(node);
             if (isUnderTitle && !isEmptyContentNode(node)) {
@@ -58,10 +59,11 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
             continue;
         }
         const pair: PathTitle = {
-            path: nodePath,
-            title: node.title,
+            path: currPath,
+            title: extractSpanText(node.span),
         };
-        if (pathLessThan(path, nodePath)) {
+        isPastCurrent = isPastCurrent || pathLessThan(path, currPath);
+        if (isPastCurrent) {
             if (!fragmentLength || currentLength >= fragmentLength) {
                 next = pair;
                 break;
