@@ -46,7 +46,9 @@ export type TableOfContentsItem = {
     title: string,
     level: number,
     path: BookPath,
+    position: number,
 };
 export type TableOfContents = {
     items: TableOfContentsItem[],
+    length: number,
 };

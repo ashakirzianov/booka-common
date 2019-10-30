@@ -16,20 +16,24 @@ export function previewForPath(book: Book, path: BookPath): string | undefined {
 }
 
 export function tocForBook(book: Book): TableOfContents {
-    const anchors = Array.from(iterateTocItems(book.nodes));
-    const items: TableOfContentsItem[] = anchors;
-    return { items };
-}
-function* iterateTocItems(nodes: BookNode[]): IterableIterator<TableOfContentsItem> {
-    for (const [node, nodePath] of iterateNodes(nodes)) {
+    const items: TableOfContentsItem[] = [];
+    let position: number = 0;
+    for (const [node, nodePath] of iterateNodes(book.nodes)) {
         if (node.node === 'title') {
-            yield {
+            items.push({
                 path: nodePath,
                 title: extractSpanText(node.span),
                 level: node.level,
-            };
+                position,
+            });
         }
+        position += nodeLength(node);
     }
+
+    return {
+        items,
+        length: position,
+    };
 }
 
 export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: number): BookFragment {
