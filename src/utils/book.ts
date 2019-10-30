@@ -66,6 +66,10 @@ export function fragmentForPath(book: Book, path: BookPath): BookFragment {
         isUnderTitle = true;
         nodes = [];
     }
+
+    return {
+        previous, current, next, nodes,
+    };
 }
 
 export function extractBookText(book: Book): string {

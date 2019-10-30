@@ -26,14 +26,17 @@ export type BookDesc = {
 };
 
 export type BookFragment = {
-    current: BookPath,
+    current: {
+        path: BookPath,
+        title: string | undefined,
+    },
     next?: {
         path: BookPath,
-        title: string,
+        title: string | undefined,
     },
     previous?: {
         path: BookPath,
-        title: string,
+        title: string | undefined,
     },
     images?: ImageDic,
     nodes: BookNode[],
