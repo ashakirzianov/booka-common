@@ -46,6 +46,7 @@ export type TableOfContentsItem = {
     position: number,
 };
 export type TableOfContents = {
+    title: string | undefined,
     items: TableOfContentsItem[],
     length: number,
 };

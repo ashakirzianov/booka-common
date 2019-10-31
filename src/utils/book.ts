@@ -32,6 +32,7 @@ export function tocForBook(book: Book): TableOfContents {
     }
 
     return {
+        title: book.meta.title,
         items,
         length: position,
     };
