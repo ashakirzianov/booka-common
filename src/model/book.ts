@@ -35,6 +35,7 @@ export type BookFragment = {
     next?: BookAnchor,
     previous?: BookAnchor,
     images?: ImageDic,
+    toc?: TableOfContents,
     nodes: BookNode[],
 };
 
