@@ -37,6 +37,7 @@ export function tocForBook(book: Book): TableOfContents {
     };
 }
 
+export const defaultFragmentLength = 3000;
 export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: number): BookFragment {
     let previous: BookAnchor | undefined = undefined;
     let current: BookAnchor = {
