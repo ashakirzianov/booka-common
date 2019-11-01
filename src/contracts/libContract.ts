@@ -1,5 +1,5 @@
 import {
-    Book, BookDesc, BookFragment, BookPositionLocator, SearchResult,
+    Book, BookDesc, BookFragment, SearchResult, BookPath,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -42,7 +42,10 @@ export type LibContract = {
     '/previews': {
         post: {
             return: Array<string | undefined>,
-            body: BookPositionLocator[],
+            body: Array<{
+                id: string,
+                path: BookPath,
+            }>,
         },
     },
 };

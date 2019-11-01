@@ -9,7 +9,6 @@ export * from './bookRange';
 export * from './editable';
 export * from './hash';
 export * from './image';
-export * from './locator';
 export * from './misc';
 export * from './result';
 export * from './span';

@@ -1,4 +1,4 @@
-import { BookPath, BookRange, BookNode, BookRangeLocator } from '../model';
+import { BookPath, BookRange, BookNode } from '../model';
 import { lastElement } from './misc';
 
 export function nodePath(pcs: number[]): BookPath {

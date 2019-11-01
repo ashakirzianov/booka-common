@@ -1,7 +1,9 @@
-import { CommentLocator } from './locator';
-
+export type IssueTargetLocator = {
+    target: 'comment',
+    commentId: string,
+};
 export type IssueReportKind = 'spam' | 'hate-speech';
 export type IssueReportPost = {
     kind: IssueReportKind,
-    comment: CommentLocator,
+    target: IssueTargetLocator,
 };
