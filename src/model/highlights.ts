@@ -1,6 +1,6 @@
 import { HasId } from './base';
 import { EditableNode } from './editable';
-import { BookRange } from './bookRange';
+import { BookRange } from './bookPath';
 
 export type HighlightContent = EditableNode;
 export type HighlightPost = {

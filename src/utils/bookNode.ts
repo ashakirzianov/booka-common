@@ -5,7 +5,7 @@ import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     isEmptyContentSpan, iterateSpans, compoundSpan, spanLength,
 } from './span';
-import { addPaths, appendPath, nodePath } from './bookRange';
+import { addPaths, appendPath, nodePath } from './bookPath';
 import { assertNever, flatten, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {

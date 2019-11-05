@@ -2,7 +2,7 @@ import {
     BookPath, BookFragment, Book, BookNode,
     TableOfContents, TableOfContentsItem, BookAnchor,
 } from '../model';
-import { pathLessThan, nodeForPath, emptyPath } from './bookRange';
+import { pathLessThan, nodeForPath, emptyPath } from './bookPath';
 import {
     extractNodeText, normalizeNodes, isEmptyContentNode,
     iterateNodes, nodeLength, iterateBookFragment,

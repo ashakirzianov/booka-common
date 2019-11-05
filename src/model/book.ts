@@ -1,6 +1,6 @@
 import { BookNode } from './bookNode';
 import { KnownTag, BookLicense } from './tag';
-import { BookPath } from './bookRange';
+import { BookPath } from './bookPath';
 import { Image, ImageDic } from './image';
 
 export type BookMeta = {

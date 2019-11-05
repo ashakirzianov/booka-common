@@ -1,5 +1,5 @@
 import { HasId } from './base';
-import { BookPath } from './bookRange';
+import { BookPath } from './bookPath';
 
 export type BookmarkSource = string;
 export type BookmarkKind = 'manual' | 'current' | 'navigation';

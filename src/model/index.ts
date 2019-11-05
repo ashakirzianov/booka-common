@@ -3,7 +3,7 @@ export * from './base';
 export * from './book';
 export * from './bookmarks';
 export * from './bookNode';
-export * from './bookRange';
+export * from './bookPath';
 export * from './comment';
 export * from './editable';
 export * from './highlights';
