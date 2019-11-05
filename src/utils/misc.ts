@@ -75,15 +75,3 @@ export function definedKeys(obj: any): string[] {
 
     return keys;
 }
-
-export function compare(left: number | undefined, right: number | undefined): number {
-    if (left === right) {
-        return 0;
-    } else if (left === undefined) {
-        return 1;
-    } else if (right === undefined) {
-        return -1;
-    } else {
-        return left < right ? 1 : -1;
-    }
-}

@@ -1,5 +1,4 @@
 import { BookPath, BookRange, BookNodePath } from '../model';
-import { compare } from './misc';
 
 export function firstPath(): BookPath {
     return bookPath(0);
@@ -21,15 +20,16 @@ export function samePath(p1: BookPath, p2: BookPath) {
     return sameNode(p1, p2) && p1.span === p2.span;
 }
 
-export function comparePaths(left?: BookPath, right?: BookPath): number {
-    const nodeResult = compare(left?.node, right?.node);
-    return nodeResult === 0
-        ? compare(left?.span, right?.span)
-        : nodeResult;
+export function comparePaths(left: BookPath, right: BookPath): number {
+    if (left.node === right.node) {
+        return (left.span ?? 0) - (right.span ?? 0);
+    } else {
+        return left.node - right.node;
+    }
 }
 
 export function pathLessThan(left: BookPath, right: BookPath): boolean {
-    return comparePaths(left, right) === -1;
+    return comparePaths(left, right) < 0;
 }
 
 export function addNodePaths(path: BookNodePath, toAdd: BookNodePath): BookPath {

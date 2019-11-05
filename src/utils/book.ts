@@ -46,7 +46,7 @@ export function tocForBook(book: Book): TableOfContents {
     };
 }
 
-export const defaultFragmentLength = 3000;
+export const defaultFragmentLength = 1500;
 export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: number): BookFragment {
     let previous: BookAnchor | undefined = undefined;
     let current: BookAnchor = {
@@ -64,13 +64,11 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
         const length = nodeLength(node);
         if (node.node !== 'title' || isUnderTitle) {
             nodes.push(node);
-            if (isUnderTitle && !isEmptyContentNode(node)) {
+            if (isUnderTitle && !isEmptyContentNode(node) && node.node !== 'title') {
                 isUnderTitle = false;
             }
-            if (fragmentLength) {
-                currentLength += length;
-                currentPosition += length;
-            }
+            currentLength += length;
+            currentPosition += length;
             continue;
         }
         const anchor: BookAnchor = {
