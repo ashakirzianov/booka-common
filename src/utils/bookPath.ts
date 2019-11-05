@@ -57,14 +57,6 @@ export function bookRangeUnordered(f: BookPath, s: BookPath): BookRange {
     }
 }
 
-export function isOverlap(left: BookRange, right: BookRange): boolean {
-    const [first, second] = pathLessThan(left.start, right.start)
-        ? [left, right]
-        : [right, left];
-
-    return first.end === undefined || !pathLessThan(first.end, second.start);
-}
-
 export function pathToString(path: BookPath) {
     return path.span === undefined
         ? `${path.node}`
