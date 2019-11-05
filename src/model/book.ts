@@ -18,6 +18,7 @@ export type Book = {
 
 export type BookDesc = {
     id: string,
+    alias: string,
     title: string,
     author?: string,
     coverUrl?: string,
