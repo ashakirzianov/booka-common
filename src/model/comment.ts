@@ -1,8 +1,15 @@
 import { EditableNode } from './editable';
-import { BookPositionLocator, CommentLocator } from './locator';
 import { HasId } from './base';
+import { BookPath } from './bookRange';
 
-export type CommentTargetLocator = CommentLocator | BookPositionLocator;
+export type CommentTargetLocator = {
+    target: 'pph',
+    bookId: string,
+    path: BookPath,
+} | {
+    target: 'comment',
+    commentId: string,
+};
 export type CommentKind = 'question' | 'statement';
 export type CommentContentNode = EditableNode;
 export type CommentPost = {

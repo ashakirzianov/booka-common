@@ -1,5 +1,5 @@
 import {
-    Book, BookDesc, BookEvent, BookPositionLocator,
+    BookEvent,
     AuthToken, AccountInfo,
     Highlight, HighlightUpdate, HighlightPost,
     Bookmark, CurrentBookmarkUpdate, BookmarkPost,
@@ -77,7 +77,10 @@ export type BackContract = {
     '/comments': {
         get: {
             return: Comment[],
-            body: BookPositionLocator,
+            query: {
+                id: string,
+                path: string,
+            },
         },
         post: {
             return: HasId,

@@ -40,7 +40,9 @@ export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
     if (toAdd.length === 0) {
         return path;
     }
-    const result = [...path];
+    const result = path.length > 0
+        ? [...path]
+        : [0];
     result[result.length - 1] += toAdd[0];
     return [...result, ...toAdd.slice(1)];
 }
@@ -231,4 +233,35 @@ export function isOverlap(left: BookRange, right: BookRange): boolean {
         : [right, left];
 
     return first.end === undefined || !pathLessThan(first.end, second.start);
+}
+
+export function pathToString(path: BookPath) {
+    return path.join('-');
+}
+
+export function pathFromString(pathString: string): BookPath | undefined {
+    const comps = pathString
+        .split('-')
+        .map(c => parseInt(c, 10));
+
+    return comps.every(c => !isNaN(c))
+        ? nodePath(comps)
+        : undefined;
+}
+
+export function rangeToString(range: BookRange): string {
+    return `${pathToString(range.start)}_${range.end ? pathToString(range.end) : ''}`;
+}
+
+export function rangeFromString(rangeString: string): BookRange | undefined {
+    const paths = rangeString.split('_');
+    if (paths.length !== 2) {
+        return undefined;
+    }
+    const start = pathFromString(paths[0]);
+    if (start === undefined) {
+        return undefined;
+    }
+    const end = pathFromString(paths[1]);
+    return { start, end };
 }

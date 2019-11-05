@@ -3,9 +3,9 @@ import {
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
-    isEmptyContentSpan, iterateSpans, compoundSpan,
+    isEmptyContentSpan, iterateSpans, compoundSpan, spanLength,
 } from './span';
-import { addPaths, appendPath, nodePath, samePath } from './bookRange';
+import { addPaths, appendPath, nodePath } from './bookRange';
 import { assertNever, flatten, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -33,7 +33,7 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNod
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
             node as BookNode,
-            addPaths(fragment.current, path),
+            addPaths(fragment.current.path, path),
         ];
     }
 }
@@ -243,6 +243,12 @@ export function convertNodeToSpan(node: BookNode): Span {
     span.title = node.title;
 
     return span;
+}
+
+export function nodeLength(node: BookNode): number {
+    const spans = nodeSpans(node);
+    const length = spans.reduce((len, s) => len + spanLength(s), 0);
+    return length;
 }
 
 function convertNodeToSpanImpl(node: BookNode): Span {

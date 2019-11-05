@@ -25,11 +25,17 @@ export type BookDesc = {
     tags: KnownTag[],
 };
 
+export type BookAnchor = {
+    path: BookPath,
+    title: string | undefined,
+    position: number,
+};
 export type BookFragment = {
-    current: BookPath,
-    next?: BookPath,
-    previous?: BookPath,
+    current: BookAnchor,
+    next?: BookAnchor,
+    previous?: BookAnchor,
     images?: ImageDic,
+    toc?: TableOfContents,
     nodes: BookNode[],
 };
 
@@ -37,7 +43,10 @@ export type TableOfContentsItem = {
     title: string,
     level: number,
     path: BookPath,
+    position: number,
 };
 export type TableOfContents = {
+    title: string | undefined,
     items: TableOfContentsItem[],
+    length: number,
 };
