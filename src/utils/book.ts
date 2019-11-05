@@ -77,6 +77,7 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
             position: currentPosition,
         };
         currentPosition += length;
+        isUnderTitle = true;
         isPastCurrent = isPastCurrent || pathLessThan(path, currPath);
         if (isPastCurrent) {
             if (!fragmentLength || currentLength >= fragmentLength) {
@@ -89,9 +90,8 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
         } else {
             previous = current;
             current = anchor;
-            isUnderTitle = true;
-            nodes = [];
-            currentLength = 0;
+            nodes = [node];
+            currentLength = length;
         }
     }
 
