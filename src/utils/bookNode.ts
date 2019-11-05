@@ -1,11 +1,11 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, BookFragment, NodeFlag, BookNodePath,
+    BookNode, Span, BookPath, BookFragment, NodeFlag, BookNodePath,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     isEmptyContentSpan, iterateSpans, compoundSpan, spanLength,
 } from './span';
-import { bookPath, addNodePaths, pathWithSpan } from './bookPath';
+import { addNodePaths, pathWithSpan, nodePath } from './bookPath';
 import { assertNever, flatten, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -30,7 +30,7 @@ export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNod
 export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookNodePath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        const headPath = bookPath(idx);
+        const headPath = nodePath(idx);
         yield [node, headPath];
     }
 }
