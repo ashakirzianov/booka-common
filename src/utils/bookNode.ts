@@ -1,11 +1,11 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, BookFragment, NodeFlag,
+    BookNode, Span, BookPath, ParagraphNode, BookFragment, NodeFlag, BookNodePath,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     isEmptyContentSpan, iterateSpans, compoundSpan, spanLength,
 } from './span';
-import { nodePath, addPaths, pathWithSpan } from './bookPath';
+import { bookPath, addNodePaths, pathWithSpan } from './bookPath';
 import { assertNever, flatten, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -18,19 +18,19 @@ export function flagNode<N extends BookNode>(node: N, ...flags: NodeFlag[]): N {
         : { ...node, flags: distinct(flags) };
 }
 
-export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
+export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookNodePath]> {
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
             node as BookNode,
-            addPaths(fragment.current.path, path),
+            addNodePaths(fragment.current.path, path),
         ];
     }
 }
 
-export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
+export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookNodePath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        const headPath = nodePath(idx);
+        const headPath = bookPath(idx);
         yield [node, headPath];
     }
 }

@@ -1,12 +1,16 @@
-import { BookPath, BookRange } from '../model';
+import { BookPath, BookRange, BookNodePath } from '../model';
 import { compare } from './misc';
 
 export function firstPath(): BookPath {
-    return nodePath(0);
+    return bookPath(0);
 }
 
-export function nodePath(node: number, span?: number): BookPath {
+export function nodePath(node: number): BookNodePath {
     return { node };
+}
+
+export function bookPath(node: number, span?: number): BookPath {
+    return { node, span };
 }
 
 export function sameNode(p1: BookPath, p2: BookPath): boolean {
@@ -28,7 +32,7 @@ export function pathLessThan(left: BookPath, right: BookPath): boolean {
     return comparePaths(left, right) === -1;
 }
 
-export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
+export function addNodePaths(path: BookNodePath, toAdd: BookNodePath): BookPath {
     return {
         node: path.node + toAdd.node,
     };
@@ -36,36 +40,6 @@ export function addPaths(path: BookPath, toAdd: BookPath): BookPath {
 
 export function pathWithSpan(path: BookPath, span: number): BookPath {
     return { ...path, span };
-}
-
-export function relativePath(path: BookPath, relativeTo: BookPath): BookPath | undefined {
-    if (relativeTo.node > path.node) {
-        return undefined;
-    } else if (relativeTo.span !== undefined) {
-        if (path.span === undefined || relativeTo.span > path.span) {
-            return undefined;
-        } else {
-            return {
-                node: path.node - relativeTo.node,
-                span: path.span - relativeTo.span,
-            };
-        }
-    } else {
-        return {
-            node: path.node - relativeTo.node,
-            span: path.span,
-        };
-    }
-}
-
-export function rangeRelativeToPath(range: BookRange, relativeTo: BookPath): BookRange | undefined {
-    const start = relativePath(range.start, relativeTo);
-    if (start) {
-        const end = range.end && relativePath(range.end, relativeTo);
-        return { start, end };
-    } else {
-        return undefined;
-    }
 }
 
 export function bookRange(start?: BookPath, end?: BookPath): BookRange {
@@ -103,7 +77,7 @@ export function pathFromString(pathString: string): BookPath | undefined {
         .map(c => parseInt(c, 10));
     if (comps.length === 1 || comps.length === 2) {
         return comps.every(c => !isNaN(c))
-            ? nodePath(comps[0], comps[1])
+            ? bookPath(comps[0], comps[1])
             : undefined;
     } else {
         return undefined;

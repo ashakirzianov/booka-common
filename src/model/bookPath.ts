@@ -1,5 +1,7 @@
-export type BookPath = {
+export type BookNodePath = {
     node: number,
+};
+export type BookPath = BookNodePath & {
     span?: number,
 };
 
