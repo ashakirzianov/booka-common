@@ -57,15 +57,16 @@ export function bookRangeUnordered(f: BookPath, s: BookPath): BookRange {
     }
 }
 
+const spanSeparator = '-';
 export function pathToString(path: BookPath) {
     return path.span === undefined
         ? `${path.node}`
-        : `${path.node}@${path.span}`;
+        : `${path.node}${spanSeparator}${path.span}`;
 }
 
 export function pathFromString(pathString: string): BookPath | undefined {
     const comps = pathString
-        .split('@')
+        .split(spanSeparator)
         .map(c => parseInt(c, 10));
     if (comps.length === 1 || comps.length === 2) {
         return comps.every(c => !isNaN(c))
@@ -76,12 +77,13 @@ export function pathFromString(pathString: string): BookPath | undefined {
     }
 }
 
+const rangeSeparator = 'to';
 export function rangeToString(range: BookRange): string {
-    return `${pathToString(range.start)}_${range.end ? pathToString(range.end) : ''}`;
+    return `${pathToString(range.start)}${rangeSeparator}${range.end ? pathToString(range.end) : ''}`;
 }
 
 export function rangeFromString(rangeString: string): BookRange | undefined {
-    const paths = rangeString.split('_');
+    const paths = rangeString.split(rangeSeparator);
     if (paths.length !== 2) {
         return undefined;
     }
