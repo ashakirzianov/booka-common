@@ -2,15 +2,23 @@ import {
     BookPath, BookFragment, Book, BookNode,
     TableOfContents, TableOfContentsItem, BookAnchor,
 } from '../model';
-import { pathLessThan, nodeForPath, emptyPath } from './bookPath';
+import { pathLessThan, firstPath } from './bookPath';
 import {
     extractNodeText, normalizeNodes, isEmptyContentNode,
     iterateNodes, nodeLength, iterateBookFragment,
 } from './bookNode';
 import { extractSpanText } from './span';
 
+export function nodeForPath(book: Book, path: BookPath): BookNode | undefined {
+    if (book.nodes.length <= path.node) {
+        return undefined;
+    } else {
+        return book.nodes[path.node];
+    }
+}
+
 export function previewForPath(book: Book, path: BookPath): string | undefined {
-    const node = nodeForPath(book.nodes, path);
+    const node = nodeForPath(book, path);
     return node !== undefined
         ? extractNodeText(node)
         : undefined;
@@ -42,7 +50,7 @@ export const defaultFragmentLength = 3000;
 export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: number): BookFragment {
     let previous: BookAnchor | undefined = undefined;
     let current: BookAnchor = {
-        path: emptyPath(),
+        path: firstPath(),
         title: book.meta.title,
         position: 0,
     };
