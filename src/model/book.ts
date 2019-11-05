@@ -1,6 +1,6 @@
 import { BookNode } from './bookNode';
 import { KnownTag, BookLicense } from './tag';
-import { BookPath } from './bookRange';
+import { BookPath, BookNodePath } from './bookPath';
 import { Image, ImageDic } from './image';
 
 export type BookMeta = {
@@ -18,6 +18,7 @@ export type Book = {
 
 export type BookDesc = {
     id: string,
+    alias: string,
     title: string,
     author?: string,
     coverUrl?: string,
@@ -26,7 +27,7 @@ export type BookDesc = {
 };
 
 export type BookAnchor = {
-    path: BookPath,
+    path: BookNodePath,
     title: string | undefined,
     position: number,
 };

@@ -1,11 +1,11 @@
 import {
-    BookNode, Span, BookPath, ParagraphNode, BookFragment, NodeFlag,
+    BookNode, Span, BookPath, BookFragment, NodeFlag, BookNodePath,
 } from '../model';
 import {
     extractSpanText, normalizeSpan, processSpan, processSpanAsync,
     isEmptyContentSpan, iterateSpans, compoundSpan, spanLength,
 } from './span';
-import { addPaths, appendPath, nodePath } from './bookRange';
+import { addNodePaths, pathWithSpan, nodePath } from './bookPath';
 import { assertNever, flatten, distinct } from './misc';
 
 export function assignId<N extends BookNode>(node: N, refId: string): N {
@@ -18,30 +18,19 @@ export function flagNode<N extends BookNode>(node: N, ...flags: NodeFlag[]): N {
         : { ...node, flags: distinct(flags) };
 }
 
-export function makePph(span: Span): ParagraphNode {
-    return {
-        node: 'pph',
-        span,
-    };
-}
-
-export function pphSpan(p: ParagraphNode): Span {
-    return p.span;
-}
-
-export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookPath]> {
+export function* iterateBookFragment(fragment: BookFragment): Generator<[BookNode, BookNodePath]> {
     for (const [node, path] of iterateNodes(fragment.nodes)) {
         yield [
             node as BookNode,
-            addPaths(fragment.current.path, path),
+            addNodePaths(fragment.current.path, path),
         ];
     }
 }
 
-export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookPath]> {
+export function* iterateNodes(nodes: BookNode[]): Generator<[BookNode, BookNodePath]> {
     for (let idx = 0; idx < nodes.length; idx++) {
         const node = nodes[idx];
-        const headPath = nodePath([idx]);
+        const headPath = nodePath(idx);
         yield [node, headPath];
     }
 }
@@ -62,7 +51,7 @@ export function findReference(nodes: BookNode[], refId: string): [BookNode, Book
         const spans = nodeSpans(node);
         for (const [span, sym] of iterateSpans(spans)) {
             if (span.refId === refId) {
-                return [node, appendPath(path, sym)];
+                return [node, pathWithSpan(path, sym)];
             }
         }
     }
@@ -94,12 +83,6 @@ export function* iterateNodeRefIds(node: BookNode): Generator<string> {
             }
             break;
     }
-}
-
-export function extractNodeText(node: BookNode): string {
-    return nodeSpans(node)
-        .map(extractSpanText)
-        .join('\n');
 }
 
 export function processNodes(nodes: BookNode[], fn: (node: BookNode) => BookNode): BookNode[] {
@@ -202,6 +185,18 @@ export async function processNodeSpansAsync(node: BookNode, fn: (s: Span) => Pro
     }
 }
 
+export function nodeLength(node: BookNode): number {
+    const spans = nodeSpans(node);
+    const length = spans.reduce((len, s) => len + spanLength(s), 0);
+    return length;
+}
+
+export function extractNodeText(node: BookNode): string {
+    return nodeSpans(node)
+        .map(extractSpanText)
+        .join('\n');
+}
+
 export function normalizeNodes(nodes: BookNode[]): BookNode[] {
     const results: BookNode[] = processNodes(nodes, node => {
         return processNodeSpans(node, normalizeSpan);
@@ -243,12 +238,6 @@ export function convertNodeToSpan(node: BookNode): Span {
     span.title = node.title;
 
     return span;
-}
-
-export function nodeLength(node: BookNode): number {
-    const spans = nodeSpans(node);
-    const length = spans.reduce((len, s) => len + spanLength(s), 0);
-    return length;
 }
 
 function convertNodeToSpanImpl(node: BookNode): Span {

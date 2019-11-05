@@ -1,6 +1,6 @@
 import { EditableNode } from './editable';
 import { HasId } from './base';
-import { BookPath } from './bookRange';
+import { BookPath } from './bookPath';
 
 export type CommentTargetLocator = {
     target: 'pph',

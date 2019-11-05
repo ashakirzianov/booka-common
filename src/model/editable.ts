@@ -1,4 +1,4 @@
-import { BookRange } from './bookRange';
+import { BookRange } from './bookPath';
 import { ParagraphNode } from './bookNode';
 
 export type BookId = string;
