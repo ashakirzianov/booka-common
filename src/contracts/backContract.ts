@@ -68,6 +68,10 @@ export type BackContract = {
         },
     },
     '/bookmarks/current': {
+        get: {
+            return: Bookmark[],
+            auth: string,
+        },
         put: {
             return: HasId,
             auth: string,
