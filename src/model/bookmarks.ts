@@ -13,6 +13,4 @@ export type BookmarkPost = {
     created: Date,
 };
 export type CurrentBookmarkUpdate = Omit<BookmarkPost, 'kind'>;
-export type Bookmark = BookmarkPost & HasId & {
-    preview: string,
-};
+export type Bookmark = BookmarkPost & HasId;
