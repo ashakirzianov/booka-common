@@ -39,13 +39,16 @@ export type LibContract = {
             auth: string,
         },
     },
-    '/previews': {
+    '/meta': {
         post: {
-            return: Array<string | undefined>,
-            body: Array<{
+            return: {
+                desc: BookDesc,
+                previews: string[],
+            },
+            body: {
                 id: string,
-                path: BookPath,
-            }>,
+                previews: BookPath[],
+            },
         },
     },
 };
