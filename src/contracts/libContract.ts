@@ -41,14 +41,14 @@ export type LibContract = {
     },
     '/meta': {
         post: {
-            return: {
+            return: Array<{
                 desc: BookDesc,
                 previews: string[],
-            },
-            body: {
+            }>,
+            body: Array<{
                 id: string,
                 previews: BookPath[],
-            },
+            }>,
         },
     },
 };
