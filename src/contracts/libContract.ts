@@ -44,7 +44,7 @@ export type LibContract = {
             return: Array<{
                 card: LibraryCard,
                 previews: Array<string | undefined>,
-            }>,
+            } | undefined>,
             body: Array<{
                 id: string,
                 previews?: BookPath[],
