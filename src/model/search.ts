@@ -1,8 +1,8 @@
-import { BookDesc } from './book';
+import { LibraryCard } from './book';
 
 export type BookSearchResult = {
     search: 'book',
-    desc: BookDesc,
+    desc: LibraryCard,
 };
 
 export type SearchResult = BookSearchResult;

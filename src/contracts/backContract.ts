@@ -9,6 +9,7 @@ import {
     IssueReportKind,
     KnownTag, KnownTagName,
     HasId,
+    ResolvedCurrentBookmark,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -68,6 +69,10 @@ export type BackContract = {
         },
     },
     '/bookmarks/current': {
+        get: {
+            return: ResolvedCurrentBookmark[],
+            auth: string,
+        },
         put: {
             return: HasId,
             auth: string,
