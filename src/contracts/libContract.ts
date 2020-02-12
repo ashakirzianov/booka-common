@@ -1,5 +1,5 @@
 import {
-    Book, BookDesc, BookFragment, SearchResult, BookPath,
+    Book, LibraryCard, BookFragment, SearchResult, BookPath,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -29,7 +29,7 @@ export type LibContract = {
     },
     '/all': {
         get: Paginate<{
-            return: BookDesc[],
+            return: LibraryCard[],
         }>,
     },
     '/upload': {
@@ -42,7 +42,7 @@ export type LibContract = {
     '/meta': {
         post: {
             return: Array<{
-                desc: BookDesc,
+                card: LibraryCard,
                 previews: string[],
             }>,
             body: Array<{

@@ -16,7 +16,7 @@ export type Book = {
     images: ImageDic,
 };
 
-export type BookDesc = {
+export type LibraryCard = {
     id: string,
     alias: string,
     title: string,
