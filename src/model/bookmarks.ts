@@ -1,5 +1,6 @@
 import { HasId } from './base';
 import { BookPath } from './bookPath';
+import { LibraryCard } from './book';
 
 export type BookmarkSource = string;
 export type BookmarkKind = 'manual' | 'current' | 'navigation';
@@ -14,3 +15,12 @@ export type BookmarkPost = {
 };
 export type CurrentBookmarkUpdate = Omit<BookmarkPost, 'kind'>;
 export type Bookmark = BookmarkPost & HasId;
+
+export type ResolvedCurrentBookmark = {
+    card: LibraryCard,
+    locations: {
+        source: BookmarkSource,
+        path: BookPath,
+        created: Date,
+    },
+};
