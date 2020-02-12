@@ -18,9 +18,9 @@ export type Bookmark = BookmarkPost & HasId;
 
 export type ResolvedCurrentBookmark = {
     card: LibraryCard,
-    locations: {
+    locations: Array<{
         source: BookmarkSource,
         path: BookPath,
         created: Date,
-    },
+    }>,
 };
