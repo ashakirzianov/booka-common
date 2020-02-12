@@ -39,15 +39,15 @@ export type LibContract = {
             auth: string,
         },
     },
-    '/meta': {
+    '/card/batch': {
         post: {
             return: Array<{
                 card: LibraryCard,
-                previews: string[],
+                previews: Array<string | undefined>,
             }>,
             body: Array<{
                 id: string,
-                previews: BookPath[],
+                previews?: BookPath[],
             }>,
         },
     },
