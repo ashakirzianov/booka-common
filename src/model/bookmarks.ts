@@ -1,6 +1,6 @@
 import { HasId } from './base';
 import { BookPath } from './bookPath';
-import { LibraryCard } from './book';
+import { LibraryCard } from './card';
 
 export type BookmarkSource = string;
 export type BookmarkKind = 'manual' | 'current' | 'navigation';

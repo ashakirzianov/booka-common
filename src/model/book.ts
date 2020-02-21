@@ -16,16 +16,6 @@ export type Book = {
     images: ImageDic,
 };
 
-export type LibraryCard = {
-    id: string,
-    alias: string,
-    title: string,
-    author?: string,
-    coverUrl?: string,
-    smallCoverUrl?: string,
-    tags: KnownTag[],
-};
-
 export type BookAnchor = {
     path: BookNodePath,
     title: string | undefined,
