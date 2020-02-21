@@ -10,6 +10,8 @@ import {
     KnownTag, KnownTagName,
     HasId,
     ResolvedCurrentBookmark,
+    CardCollection,
+    CardCollectionName,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -77,6 +79,28 @@ export type BackContract = {
             return: HasId,
             auth: string,
             body: CurrentBookmarkUpdate,
+        },
+    },
+    '/collections': {
+        get: {
+            return: CardCollection[],
+            auth: string,
+        },
+        post: {
+            query: {
+                bookId: string,
+                collection: CardCollectionName,
+            },
+            return: boolean,
+            auth: string,
+        },
+        delete: {
+            query: {
+                bookId: string,
+                collection: CardCollectionName,
+            },
+            return: boolean,
+            auth: string,
         },
     },
     '/comments': {
