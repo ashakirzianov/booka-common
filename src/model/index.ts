@@ -4,6 +4,7 @@ export * from './book';
 export * from './bookmarks';
 export * from './bookNode';
 export * from './bookPath';
+export * from './card';
 export * from './comment';
 export * from './editable';
 export * from './highlights';

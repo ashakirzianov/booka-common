@@ -1,4 +1,4 @@
-import { LibraryCard } from './book';
+import { LibraryCard } from './card';
 
 export type BookSearchResult = {
     search: 'book',
