@@ -8,10 +8,18 @@ type DefEntity<Key extends string> = {
     local?: true,
 };
 
-export type BookmarkSource = string;
+export type EntitySource = string;
+
+export type CurrentBookPosition = DefEntity<'current-position'> & {
+    source: EntitySource,
+    bookId: string,
+    path: BookPath,
+    created: Date,
+};
+
 export type BookmarkKind = 'manual' | 'current' | 'navigation';
 export type Bookmark = DefEntity<'bookmark'> & {
-    source: BookmarkSource,
+    source: EntitySource,
     kind: BookmarkKind,
     location: {
         bookId: string,
@@ -54,7 +62,7 @@ export type Vote = DefEntity<'vote'> & {
 };
 
 export type Entity =
-    | Bookmark | Highlight | Comment | Vote
+    | Bookmark | CurrentBookPosition | Highlight | Comment | Vote
     ;
 
 // TODO: rethink
@@ -62,7 +70,7 @@ export type ResolvedCurrentBookmark = {
     card: LibraryCard,
     locations: Array<{
         preview: string | undefined,
-        source: BookmarkSource,
+        source: EntitySource,
         path: BookPath,
         created: Date,
     }>,
