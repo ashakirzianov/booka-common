@@ -1,11 +1,8 @@
 import {
     BookEvent,
     AuthToken, AccountInfo,
-    Highlight, HighlightUpdate, HighlightPost,
-    Bookmark, CurrentBookmarkUpdate, BookmarkPost,
-    Comment, CommentPost, CommentUpdate,
+    Highlight, Bookmark, Comment, Vote,
     NotePost, Note, NoteUpdate,
-    Vote, VotePost,
     IssueReportKind,
     KnownTag, KnownTagName,
     HasId,
@@ -34,12 +31,12 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: HighlightPost,
+            body: Highlight,
         },
         patch: {
             return: boolean,
             auth: string,
-            body: HighlightUpdate,
+            body: Highlight,
         },
         delete: {
             return: boolean,
@@ -60,7 +57,7 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: BookmarkPost,
+            body: Bookmark,
         },
         delete: {
             return: boolean,
@@ -78,7 +75,7 @@ export type BackContract = {
         put: {
             return: HasId,
             auth: string,
-            body: CurrentBookmarkUpdate,
+            body: Bookmark,
         },
     },
     '/collections': {
@@ -114,12 +111,12 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: CommentPost,
+            body: Comment,
         },
         patch: {
             return: boolean,
             auth: string,
-            body: CommentUpdate,
+            body: Comment,
         },
         delete: {
             return: boolean,
@@ -140,7 +137,7 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: VotePost,
+            body: Vote,
         },
         delete: {
             return: boolean,
