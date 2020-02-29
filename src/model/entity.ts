@@ -23,6 +23,7 @@ export type ResolvedCurrentPosition = {
         source: EntitySource,
         path: BookPath,
         created: Date,
+        preview?: string,
     }>,
 };
 
