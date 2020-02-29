@@ -17,9 +17,13 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     created: Date,
 };
 export type CurrentPositionPost = EntityData<CurrentPosition>;
-export type ResolvedCurrentPosition = CurrentPosition & {
+export type ResolvedCurrentPosition = {
     card: LibraryCard,
-    preview: string,
+    locations: Array<{
+        source: EntitySource,
+        path: BookPath,
+        created: Date,
+    }>,
 };
 
 export type Bookmark = DefEntity<'bookmark'> & {
