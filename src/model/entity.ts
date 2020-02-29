@@ -10,11 +10,15 @@ type DefEntity<Key extends string> = {
 
 export type EntitySource = string;
 
-export type CurrentBookPosition = DefEntity<'current-position'> & {
+export type CurrentPosition = DefEntity<'current-position'> & {
     source: EntitySource,
     bookId: string,
     path: BookPath,
     created: Date,
+};
+export type ResolvedCurrentPosition = CurrentPosition & {
+    card: LibraryCard,
+    preview: string,
 };
 
 export type Bookmark = DefEntity<'bookmark'> & {
@@ -54,19 +58,8 @@ export type Vote = DefEntity<'vote'> & {
 };
 
 export type Entity =
-    | Bookmark | CurrentBookPosition | Highlight | Comment | Vote
+    | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
 export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
 export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
-
-// TODO: rethink
-export type ResolvedCurrentBookmark = {
-    card: LibraryCard,
-    locations: Array<{
-        preview: string | undefined,
-        source: EntitySource,
-        path: BookPath,
-        created: Date,
-    }>,
-};
