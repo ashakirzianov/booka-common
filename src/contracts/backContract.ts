@@ -1,13 +1,12 @@
 import {
     BookEvent,
     AuthToken, AccountInfo,
-    Highlight, Bookmark, Comment, Vote,
+    Highlight, Bookmark, Comment, Vote, CurrentPositionPost,
     NotePost, Note, NoteUpdate,
     IssueReportKind,
     KnownTag, KnownTagName,
+    CardCollection, CardCollectionName, ResolvedCurrentPosition,
     HasId,
-    ResolvedCurrentBookmark,
-    CardCollection, CardCollectionName,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -66,15 +65,15 @@ export type BackContract = {
             },
         },
     },
-    '/bookmarks/current': {
+    '/current-position': {
         get: {
-            return: ResolvedCurrentBookmark[],
+            return: ResolvedCurrentPosition[],
             auth: string,
         },
         put: {
             return: HasId,
             auth: string,
-            body: Bookmark,
+            body: CurrentPositionPost,
         },
     },
     '/collections': {

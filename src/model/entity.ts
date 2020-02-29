@@ -16,6 +16,7 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     path: BookPath,
     created: Date,
 };
+export type CurrentPositionPost = EntityData<CurrentPosition>;
 export type ResolvedCurrentPosition = CurrentPosition & {
     card: LibraryCard,
     preview: string,
@@ -61,5 +62,5 @@ export type Entity =
     | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
-export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
-export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
+type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
