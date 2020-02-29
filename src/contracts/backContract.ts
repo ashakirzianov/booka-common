@@ -7,11 +7,7 @@ import {
     KnownTag, KnownTagName,
     HasId,
     ResolvedCurrentBookmark,
-    CardCollection,
-    CardCollectionName,
-    Entity,
-    EntityData,
-    EntityId,
+    CardCollection, CardCollectionName,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -23,22 +19,6 @@ export type BackContract = {
         },
     },
     '/me/info': { get: { return: AccountInfo, auth: string } },
-    '/entities': {
-        get: {
-            auth: string,
-            return: Entity[],
-        },
-        post: {
-            auth: string,
-            body: EntityData[],
-            return: Array<Entity | false>,
-        },
-        delete: {
-            auth: string,
-            body: EntityId[],
-            return: Array<EntityId | false>,
-        },
-    },
     '/highlights': {
         get: {
             return: Highlight[],
