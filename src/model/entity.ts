@@ -65,6 +65,8 @@ export type Entity =
     | Bookmark | CurrentBookPosition | Highlight | Comment | Vote
     ;
 
+export type EntityData<E extends Entity> = Omit<E, keyof DefEntity<any>>;
+
 // TODO: rethink
 export type ResolvedCurrentBookmark = {
     card: LibraryCard,
