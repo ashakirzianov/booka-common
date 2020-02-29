@@ -1,11 +1,14 @@
 import {
     BookEvent,
     AuthToken, AccountInfo,
-    Highlight, Bookmark, Comment, Vote, CurrentPositionPost,
+    Highlight, HighlightPost, HighlightUpdate,
+    Bookmark, BookmarkPost,
+    CurrentPositionPost, ResolvedCurrentPosition,
+    Comment, Vote,
     NotePost, Note, NoteUpdate,
     IssueReportKind,
     KnownTag, KnownTagName,
-    CardCollection, CardCollectionName, ResolvedCurrentPosition,
+    CardCollection, CardCollectionName,
     HasId,
 } from '../model';
 import { Paginate } from './helpers';
@@ -29,12 +32,12 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: Highlight,
+            body: HighlightPost,
         },
         patch: {
             return: boolean,
             auth: string,
-            body: Highlight,
+            body: HighlightUpdate,
         },
         delete: {
             return: boolean,
@@ -55,7 +58,7 @@ export type BackContract = {
         post: {
             return: HasId,
             auth: string,
-            body: Bookmark,
+            body: BookmarkPost,
         },
         delete: {
             return: boolean,

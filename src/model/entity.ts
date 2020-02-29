@@ -1,10 +1,10 @@
 import { BookPath, BookRange } from './bookPath';
 import { EditableNode } from './editable';
 import { LibraryCard } from './card';
+import { HasId } from './base';
 
-type DefEntity<Key extends string> = {
+type DefEntity<Key extends string> = HasId & {
     entity: Key,
-    _id: string,
     local?: true,
 };
 
@@ -31,6 +31,7 @@ export type Bookmark = DefEntity<'bookmark'> & {
     bookId: string,
     path: BookPath,
 };
+export type BookmarkPost = EntityData<Bookmark>;
 
 export type Highlight = DefEntity<'highlight'> & {
     group: string,
@@ -38,6 +39,8 @@ export type Highlight = DefEntity<'highlight'> & {
     range: BookRange,
     comment?: EditableNode[],
 };
+export type HighlightPost = EntityData<Highlight>;
+export type HighlightUpdate = Partial<Highlight>;
 
 export type CommentTargetLocator = {
     target: 'pph',
