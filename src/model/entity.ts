@@ -57,7 +57,8 @@ export type Entity =
     | Bookmark | CurrentBookPosition | Highlight | Comment | Vote
     ;
 
-export type EntityData<E extends Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
 
 // TODO: rethink
 export type ResolvedCurrentBookmark = {
