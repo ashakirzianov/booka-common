@@ -17,15 +17,9 @@ export type CurrentBookPosition = DefEntity<'current-position'> & {
     created: Date,
 };
 
-export type BookmarkKind = 'manual' | 'current' | 'navigation';
 export type Bookmark = DefEntity<'bookmark'> & {
-    source: EntitySource,
-    kind: BookmarkKind,
-    location: {
-        bookId: string,
-        path: BookPath,
-    },
-    created: Date,
+    bookId: string,
+    path: BookPath,
 };
 
 export type Highlight = DefEntity<'highlight'> & {
