@@ -24,10 +24,8 @@ export type Bookmark = DefEntity<'bookmark'> & {
 
 export type Highlight = DefEntity<'highlight'> & {
     group: string,
-    location: {
-        bookId: string,
-        range: BookRange,
-    },
+    bookId: string,
+    range: BookRange,
     comment?: EditableNode[],
 };
 
