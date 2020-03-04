@@ -33,11 +33,6 @@ export type LibContract = {
             },
         },
     },
-    '/all': {
-        get: Paginate<{
-            return: LibraryCard[],
-        }>,
-    },
     '/upload': {
         post: {
             return: string,
