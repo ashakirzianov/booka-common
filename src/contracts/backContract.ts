@@ -29,7 +29,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Highlight,
             auth: string,
             body: HighlightPost,
         },
@@ -55,7 +55,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Bookmark,
             auth: string,
             body: BookmarkPost,
         },
@@ -109,7 +109,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Comment,
             auth: string,
             body: Comment,
         },
@@ -135,7 +135,7 @@ export type BackContract = {
             },
         }>,
         post: {
-            return: HasId,
+            return: Vote,
             auth: string,
             body: Vote,
         },
@@ -149,7 +149,7 @@ export type BackContract = {
     },
     '/notes': {
         post: {
-            return: HasId,
+            return: Note,
             auth: string,
             body: NotePost,
         },
