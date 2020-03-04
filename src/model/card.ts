@@ -12,7 +12,6 @@ export type LibraryCard = {
 
 export type CardCollectionName =
     | 'reading-list';
-export type CardCollection = {
-    name: CardCollectionName,
-    cards: LibraryCard[],
+export type CardCollections = {
+    [k in CardCollectionName]?: LibraryCard[];
 };

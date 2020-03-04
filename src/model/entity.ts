@@ -17,14 +17,15 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     created: Date,
 };
 export type CurrentPositionPost = EntityData<CurrentPosition>;
+export type BookPositionData = {
+    source: EntitySource,
+    path: BookPath,
+    created: Date,
+    preview?: string,
+};
 export type ResolvedCurrentPosition = {
     card: LibraryCard,
-    locations: Array<{
-        source: EntitySource,
-        path: BookPath,
-        created: Date,
-        preview?: string,
-    }>,
+    locations: BookPositionData[],
 };
 
 export type Bookmark = DefEntity<'bookmark'> & {
@@ -33,8 +34,9 @@ export type Bookmark = DefEntity<'bookmark'> & {
 };
 export type BookmarkPost = EntityData<Bookmark>;
 
+export type HighlightGroup = string;
 export type Highlight = DefEntity<'highlight'> & {
-    group: string,
+    group: HighlightGroup,
     bookId: string,
     range: BookRange,
     comment?: EditableNode[],
@@ -70,5 +72,5 @@ export type Entity =
     | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
-type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
-type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
+export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;

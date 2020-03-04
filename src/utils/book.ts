@@ -2,7 +2,7 @@ import {
     BookPath, BookFragment, Book, BookNode,
     TableOfContents, TableOfContentsItem, BookAnchor,
 } from '../model';
-import { pathLessThan, firstPath } from './bookPath';
+import { pathLessThan, firstPath, inRange } from './bookPath';
 import {
     extractNodeText, normalizeNodes, isEmptyContentNode,
     iterateNodes, nodeLength, iterateBookFragment,
@@ -17,8 +17,27 @@ export function nodeForPath(book: Book, path: BookPath): BookNode | undefined {
     }
 }
 
+export function fragmentNodeForPath(fragment: BookFragment, path: BookPath): BookNode | undefined {
+    if (!inRange(path, {
+        start: fragment.current.path,
+        end: fragment.next?.path,
+    })) {
+        return undefined;
+    }
+
+    const offset = path.node - fragment.current.path.node;
+    return fragment.nodes[offset];
+}
+
 export function previewForPath(book: Book, path: BookPath): string | undefined {
     const node = nodeForPath(book, path);
+    return node !== undefined
+        ? extractNodeText(node)
+        : undefined;
+}
+
+export function fragmentPreviewForPath(fragment: BookFragment, path: BookPath): string | undefined {
+    const node = fragmentNodeForPath(fragment, path);
     return node !== undefined
         ? extractNodeText(node)
         : undefined;

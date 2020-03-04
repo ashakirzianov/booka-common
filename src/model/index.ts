@@ -6,7 +6,6 @@ export * from './bookPath';
 export * from './card';
 export * from './editable';
 export * from './entity';
-export * from './history';
 export * from './image';
 export * from './nodeFlag';
 export * from './note';

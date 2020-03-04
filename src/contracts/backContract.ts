@@ -1,5 +1,4 @@
 import {
-    BookEvent,
     AuthToken, AccountInfo,
     Highlight, HighlightPost, HighlightUpdate,
     Bookmark, BookmarkPost,
@@ -8,7 +7,7 @@ import {
     NotePost, Note, NoteUpdate,
     IssueReportKind,
     KnownTag, KnownTagName,
-    CardCollection, CardCollectionName,
+    CardCollections, CardCollectionName,
     HasId,
 } from '../model';
 import { Paginate } from './helpers';
@@ -30,7 +29,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Highlight,
             auth: string,
             body: HighlightPost,
         },
@@ -56,7 +55,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Bookmark,
             auth: string,
             body: BookmarkPost,
         },
@@ -81,7 +80,7 @@ export type BackContract = {
     },
     '/collections': {
         get: {
-            return: CardCollection[],
+            return: CardCollections,
             auth: string,
         },
         post: {
@@ -110,7 +109,7 @@ export type BackContract = {
             },
         },
         post: {
-            return: HasId,
+            return: Comment,
             auth: string,
             body: Comment,
         },
@@ -136,7 +135,7 @@ export type BackContract = {
             },
         }>,
         post: {
-            return: HasId,
+            return: Vote,
             auth: string,
             body: Vote,
         },
@@ -150,7 +149,7 @@ export type BackContract = {
     },
     '/notes': {
         post: {
-            return: HasId,
+            return: Note,
             auth: string,
             body: NotePost,
         },
@@ -200,26 +199,6 @@ export type BackContract = {
             query: {
                 bookId: string,
                 tag: KnownTagName,
-            },
-        },
-    },
-    '/history/books': {
-        get: Paginate<{
-            return: BookEvent[],
-            auth: string,
-        }>,
-        post: {
-            return: boolean,
-            auth: string,
-            query: {
-                bookId: string[],
-            },
-        }
-        delete: {
-            return: boolean,
-            auth: string,
-            query: {
-                id: string[],
             },
         },
     },

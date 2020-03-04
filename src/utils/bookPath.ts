@@ -57,6 +57,23 @@ export function bookRangeUnordered(f: BookPath, s: BookPath): BookRange {
     }
 }
 
+export function inRange(path: BookPath, range: BookRange): boolean {
+    return !pathLessThan(path, range.start)
+        && (!range.end || pathLessThan(path, range.end));
+}
+
+export function doesRangeOverlap(r1: BookRange, r2: BookRange): boolean {
+    if (pathLessThan(r1.start, r2.start)) {
+        return r1.end
+            ? !pathLessThan(r1.end, r2.start)
+            : true;
+    } else {
+        return r2.end
+            ? !pathLessThan(r2.end, r1.start)
+            : true;
+    }
+}
+
 const spanSeparator = '-';
 export function pathToString(path: BookPath) {
     return path.span === undefined

@@ -85,3 +85,18 @@ export function uuid() {
         return v.toString(16);
     });
 }
+
+export function replaceOrAdd<T>(arr: T[], pred: (x: T) => boolean, replacement: T): T[] {
+    let isReplaced = false;
+    const result = arr.map(x => {
+        if (!isReplaced && pred(x)) {
+            isReplaced = true;
+            return replacement;
+        } else {
+            return x;
+        }
+    });
+    return isReplaced
+        ? result
+        : [...result, replacement];
+}
