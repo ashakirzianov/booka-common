@@ -71,5 +71,5 @@ export type Entity =
     | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
-type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
-type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
+export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
