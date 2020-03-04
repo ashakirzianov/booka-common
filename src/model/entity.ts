@@ -33,8 +33,9 @@ export type Bookmark = DefEntity<'bookmark'> & {
 };
 export type BookmarkPost = EntityData<Bookmark>;
 
+export type HighlightGroup = string;
 export type Highlight = DefEntity<'highlight'> & {
-    group: string,
+    group: HighlightGroup,
     bookId: string,
     range: BookRange,
     comment?: EditableNode[],
