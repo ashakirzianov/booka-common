@@ -203,26 +203,6 @@ export type BackContract = {
             },
         },
     },
-    '/history/books': {
-        get: Paginate<{
-            return: BookEvent[],
-            auth: string,
-        }>,
-        post: {
-            return: boolean,
-            auth: string,
-            query: {
-                bookId: string[],
-            },
-        }
-        delete: {
-            return: boolean,
-            auth: string,
-            query: {
-                id: string[],
-            },
-        },
-    },
     '/report': {
         post: {
             return: boolean,
