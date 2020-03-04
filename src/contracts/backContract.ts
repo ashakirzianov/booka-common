@@ -1,5 +1,4 @@
 import {
-    BookEvent,
     AuthToken, AccountInfo,
     Highlight, HighlightPost, HighlightUpdate,
     Bookmark, BookmarkPost,
