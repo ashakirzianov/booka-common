@@ -13,7 +13,10 @@ export type LibContract = {
     },
     '/fragment': {
         get: {
-            return: BookFragment,
+            return: {
+                fragment: BookFragment,
+                card: LibraryCard,
+            },
             query: {
                 id: string,
                 path: string,
@@ -24,7 +27,10 @@ export type LibContract = {
     '/full': {
         get: {
             query: { id: string },
-            return: Book,
+            return: {
+                book: Book,
+                card: LibraryCard,
+            },
         },
     },
     '/all': {
