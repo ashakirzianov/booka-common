@@ -2,7 +2,7 @@ import {
     AuthToken, AccountInfo,
     Highlight, HighlightPost, HighlightUpdate,
     Bookmark, BookmarkPost,
-    CurrentPositionPost, ResolvedCurrentPosition,
+    CurrentPositionPost,
     Comment, Vote,
     NotePost, Note, NoteUpdate,
     IssueReportKind,
@@ -70,7 +70,7 @@ export type BackContract = {
     },
     '/current-position': {
         get: {
-            return: ResolvedCurrentPosition[],
+            return: CurrentPosition[],
             auth: string,
         },
         put: {
