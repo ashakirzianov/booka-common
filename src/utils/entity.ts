@@ -1,20 +1,32 @@
 import {
     Bookmark, BookPath, ResolvedCurrentPosition, BookPositionData,
-    EntityData, EntityKind, EntityForKind,
+    EntityData,
+    Highlight,
+    CurrentPosition,
 } from '../model';
 import { samePath, pathLessThan } from './bookPath';
 import { uuid } from './misc';
 
-function makeLocalEntityConstructor<K extends EntityKind>(entity: K) {
-    return (data: EntityData): EntityForKind<K> => ({
-        entity,
+export function localBookmark(data: EntityData<Bookmark>): Bookmark {
+    return {
         uuid: uuid(),
         ...data,
-    } as any);
+    };
 }
-export const localBookmark = makeLocalEntityConstructor('bookmark');
-export const localHighlight = makeLocalEntityConstructor('highlight');
-export const localCurrentPosition = makeLocalEntityConstructor('current-position');
+
+export function localHighlight(data: EntityData<Highlight>): Highlight {
+    return {
+        uuid: uuid(),
+        ...data,
+    };
+}
+
+export function localCurrentPosition(data: EntityData<CurrentPosition>): CurrentPosition {
+    return {
+        uuid: uuid(),
+        ...data,
+    };
+}
 
 export function findBookmark(bookmarks: Bookmark[], bookId: string, path: BookPath): Bookmark | undefined {
     return bookmarks.find(
