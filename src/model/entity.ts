@@ -15,7 +15,7 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     path: BookPath,
     created: Date,
 };
-export type CurrentPositionPost = EntityData<CurrentPosition>;
+export type CurrentPositionPost = EntityData<'current-position'>;
 export type BookPositionData = {
     source: EntitySource,
     path: BookPath,
@@ -31,7 +31,7 @@ export type Bookmark = DefEntity<'bookmark'> & {
     bookId: string,
     path: BookPath,
 };
-export type BookmarkPost = EntityData<Bookmark>;
+export type BookmarkPost = EntityData<'bookmark'>;
 
 export type HighlightGroup = string;
 export type Highlight = DefEntity<'highlight'> & {
@@ -40,7 +40,7 @@ export type Highlight = DefEntity<'highlight'> & {
     range: BookRange,
     comment?: EditableNode[],
 };
-export type HighlightPost = EntityData<Highlight>;
+export type HighlightPost = EntityData<'highlight'>;
 export type HighlightUpdate = Partial<Highlight>;
 
 export type CommentTargetLocator = {
@@ -71,5 +71,7 @@ export type Entity =
     | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
-export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityKind = Entity['entity'];
+export type EntityForKind<K extends EntityKind> = Extract<Entity, { entity: K }>;
+export type EntityData<K extends EntityKind = EntityKind> = Omit<EntityForKind<K>, keyof DefEntity<any>>;
 export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
