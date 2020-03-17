@@ -9,6 +9,7 @@ import {
     KnownTag, KnownTagName,
     CardCollections, CardCollectionName,
     HasId,
+    CurrentPosition,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -34,7 +35,7 @@ export type BackContract = {
             body: HighlightPost,
         },
         patch: {
-            return: boolean,
+            return: Highlight,
             auth: string,
             body: HighlightUpdate,
         },
@@ -73,7 +74,7 @@ export type BackContract = {
             auth: string,
         },
         put: {
-            return: HasId,
+            return: CurrentPosition,
             auth: string,
             body: CurrentPositionPost,
         },
@@ -114,7 +115,7 @@ export type BackContract = {
             body: Comment,
         },
         patch: {
-            return: boolean,
+            return: Comment,
             auth: string,
             body: Comment,
         },
@@ -154,7 +155,7 @@ export type BackContract = {
             body: NotePost,
         },
         patch: {
-            return: boolean,
+            return: Note,
             auth: string,
             body: NoteUpdate,
         },
