@@ -39,8 +39,8 @@ export type Highlight = DefEntity<'highlight'> & {
     range: BookRange,
     comment?: EditableNode[],
 };
-export type HighlightPost = EntityData<'highlight'>;
-export type HighlightUpdate = Partial<Highlight>;
+export type HighlightPost = Highlight;
+export type HighlightUpdate = EntityId<Highlight> & Partial<Highlight>;
 
 export type CommentTargetLocator = {
     target: 'pph',
