@@ -1,11 +1,10 @@
 import { BookPath, BookRange } from './bookPath';
 import { EditableNode } from './editable';
 import { LibraryCard } from './card';
-import { HasId } from './base';
 
-type DefEntity<Key extends string> = HasId & {
+type DefEntity<Key extends string> = {
     entity: Key,
-    local?: true,
+    uuid: string,
 };
 
 export type EntitySource = string;
