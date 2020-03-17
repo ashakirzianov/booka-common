@@ -35,7 +35,7 @@ export type BackContract = {
             body: HighlightPost,
         },
         patch: {
-            return: Highlight,
+            return: Highlight | false,
             auth: string,
             body: HighlightUpdate,
         },
@@ -115,7 +115,7 @@ export type BackContract = {
             body: Comment,
         },
         patch: {
-            return: Comment,
+            return: Comment | false,
             auth: string,
             body: Comment,
         },
@@ -155,7 +155,7 @@ export type BackContract = {
             body: NotePost,
         },
         patch: {
-            return: Note,
+            return: Note | false,
             auth: string,
             body: NoteUpdate,
         },
