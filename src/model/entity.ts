@@ -1,11 +1,9 @@
 import { BookPath, BookRange } from './bookPath';
 import { EditableNode } from './editable';
 import { LibraryCard } from './card';
-import { HasId } from './base';
 
-type DefEntity<Key extends string> = HasId & {
-    entity: Key,
-    local?: true,
+type DefEntity<Key extends string> = {
+    uuid: string,
 };
 
 export type EntitySource = string;
@@ -17,22 +15,12 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     created: Date,
 };
 export type CurrentPositionPost = EntityData<CurrentPosition>;
-export type BookPositionData = {
-    source: EntitySource,
-    path: BookPath,
-    created: Date,
-    preview?: string,
-};
-export type ResolvedCurrentPosition = {
-    card: LibraryCard,
-    locations: BookPositionData[],
-};
 
 export type Bookmark = DefEntity<'bookmark'> & {
     bookId: string,
     path: BookPath,
 };
-export type BookmarkPost = EntityData<Bookmark>;
+export type BookmarkPost = Bookmark;
 
 export type HighlightGroup = string;
 export type Highlight = DefEntity<'highlight'> & {
@@ -41,8 +29,8 @@ export type Highlight = DefEntity<'highlight'> & {
     range: BookRange,
     comment?: EditableNode[],
 };
-export type HighlightPost = EntityData<Highlight>;
-export type HighlightUpdate = Partial<Highlight>;
+export type HighlightPost = Highlight;
+export type HighlightUpdate = EntityId<Highlight> & Partial<Highlight>;
 
 export type CommentTargetLocator = {
     target: 'pph',
@@ -72,5 +60,5 @@ export type Entity =
     | Bookmark | CurrentPosition | Highlight | Comment | Vote
     ;
 
-export type EntityData<E extends Entity = Entity> = Omit<E, keyof DefEntity<any>>;
+export type EntityData<T> = Omit<T, 'uuid'>;
 export type EntityId<E extends Entity = Entity> = Pick<E, keyof DefEntity<any>>;
