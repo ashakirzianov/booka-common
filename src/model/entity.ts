@@ -14,7 +14,7 @@ export type CurrentPosition = DefEntity<'current-position'> & {
     path: BookPath,
     created: Date,
 };
-export type CurrentPositionPost = CurrentPosition;
+export type CurrentPositionPost = EntityData<CurrentPosition>;
 export type BookPositionData = {
     source: EntitySource,
     path: BookPath,

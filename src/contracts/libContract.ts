@@ -40,12 +40,18 @@ export type LibContract = {
             auth: string,
         },
     },
+    '/card': {
+        get: {
+            query: { id: string },
+            return: LibraryCard,
+        },
+    },
     '/card/batch': {
         post: {
             return: Array<{
                 card: LibraryCard,
                 previews: Array<string | undefined>,
-            } | undefined>,
+            }>,
             body: Array<{
                 id: string,
                 previews?: BookPath[],
