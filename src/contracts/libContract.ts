@@ -38,6 +38,9 @@ export type LibContract = {
             return: string,
             files: 'book',
             auth: string,
+            query: {
+                publicDomain?: boolean,
+            },
         },
     },
     '/card': {
