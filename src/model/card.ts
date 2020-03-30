@@ -11,7 +11,7 @@ export type LibraryCard = {
 };
 
 export type CardCollectionName =
-    | 'reading-list';
-export type CardCollections = {
-    [k in CardCollectionName]?: LibraryCard[];
+    | 'reading-list' | 'uploads';
+export type CardCollection = {
+    cards: LibraryCard[],
 };
