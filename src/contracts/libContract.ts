@@ -61,7 +61,7 @@ export type LibContract = {
             }>,
         },
     },
-    '/userUploads': {
+    '/user-uploads': {
         get: {
             return: CardCollection,
             auth: string,
