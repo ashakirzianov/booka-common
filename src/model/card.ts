@@ -15,3 +15,6 @@ export type CardCollectionName =
 export type CardCollection = {
     cards: LibraryCard[],
 };
+export type CardCollections = {
+    [k in CardCollectionName]?: LibraryCard[];
+};
