@@ -13,6 +13,7 @@ export type LibraryCard = {
 export type CardCollectionName =
     | 'reading-list' | 'uploads';
 export type CardCollection = {
+    name: CardCollectionName,
     cards: LibraryCard[],
 };
 export type CardCollections = {
