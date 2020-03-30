@@ -1,5 +1,5 @@
 import {
-    Book, LibraryCard, BookFragment, SearchResult, BookPath,
+    Book, LibraryCard, BookFragment, SearchResult, BookPath, CardCollection,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -59,6 +59,12 @@ export type LibContract = {
                 id: string,
                 previews?: BookPath[],
             }>,
+        },
+    },
+    '/userUploads': {
+        get: {
+            return: CardCollection,
+            auth: string,
         },
     },
 };
