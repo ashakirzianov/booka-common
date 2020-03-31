@@ -37,7 +37,7 @@ export function sourceToString(source: EntitySource): string {
         : source.mobile === false ? ' Desktop'
             : '';
     const versionSuffix = source.version
-        ? ` ${source.version}`
+        ? ` v${source.version}`
         : '';
     const result = `${kindToString(source.kind)}${mobileSuffix}${versionSuffix}`;
     return result;
