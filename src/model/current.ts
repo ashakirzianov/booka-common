@@ -3,12 +3,13 @@ import { BookPath } from './bookPath';
 
 export type BrowserSource = {
     source: 'browser',
-    browser: 'safari' | 'chrome' | 'firefox' | 'edge' | 'ie' | 'other',
+    kind: 'safari' | 'chrome' | 'firefox' | 'edge' | 'ie' | 'other',
     mobile?: boolean,
 };
 export type AppSource = {
     source: 'app',
-    app: 'ios' | 'android',
+    kind: 'ios' | 'android',
+    mobile?: undefined,
 };
 export type EntitySource = BrowserSource | AppSource;
 

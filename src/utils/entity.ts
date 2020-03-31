@@ -39,27 +39,27 @@ export function findBookmark(bookmarks: Bookmark[], bookId: string, path: BookPa
 export function sourceToString(source: EntitySource): string {
     switch (source.source) {
         case 'app':
-            switch (source.app) {
+            switch (source.kind) {
                 case 'ios':
                     return 'iOS';
                 case 'android':
                     return 'Android';
                 default:
-                    assertNever(source.app);
+                    assertNever(source.kind);
                     return 'Unknown app';
             }
         case 'browser':
             const suffix = source.mobile === true ? ' Mobile'
                 : source.mobile === false ? ' Desktop'
                     : '';
-            return `${browserToString(source.browser)}${suffix}`;
+            return `${browserToString(source.kind)}${suffix}`;
         default:
             assertNever(source);
             return 'unknown';
     }
 }
 
-function browserToString(browser: BrowserSource['browser']): string {
+function browserToString(browser: BrowserSource['kind']): string {
     switch (browser) {
         case 'chrome':
             return 'Chrome';
