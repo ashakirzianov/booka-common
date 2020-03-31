@@ -4,7 +4,7 @@ import {
     Highlight,
     CurrentPosition,
 } from '../model';
-import { samePath, pathLessThan } from './bookPath';
+import { samePath } from './bookPath';
 import { uuid } from './misc';
 
 export function localBookmark(data: EntityData<Bookmark>): Bookmark {
@@ -32,25 +32,4 @@ export function findBookmark(bookmarks: Bookmark[], bookId: string, path: BookPa
     return bookmarks.find(
         b => b.bookId === bookId && samePath(b.path, path),
     );
-}
-
-type PositionsData = {
-    mostRecent: CurrentPosition,
-    furthest: CurrentPosition,
-};
-export function findPositions(positions: CurrentPosition[]): PositionsData | undefined {
-    let result: PositionsData | undefined = undefined;
-    for (const location of positions) {
-        if (!result) {
-            result = { mostRecent: location, furthest: location };
-        } else {
-            result = {
-                mostRecent: result.mostRecent.created > location.created
-                    ? result.mostRecent : location,
-                furthest: pathLessThan(result.mostRecent.path, location.path)
-                    ? result.mostRecent : location,
-            };
-        }
-    }
-    return result;
 }
