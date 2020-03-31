@@ -1,17 +1,17 @@
 import { DefEntity, EntityData } from './base';
 import { BookPath } from './bookPath';
 
-export type BrowserSource = {
-    source: 'browser',
-    kind: 'safari' | 'chrome' | 'firefox' | 'edge' | 'ie' | 'other',
+export type EntitySourceKind =
+    | 'safari' | 'chrome' | 'firefox' | 'edge' | 'ie' | 'other-browser'
+    | 'native-ios' | 'native-android'
+    | 'unknown'
+    ;
+export type EntitySource = {
+    id: string,
+    kind: EntitySourceKind,
     mobile?: boolean,
+    version?: string,
 };
-export type AppSource = {
-    source: 'app',
-    kind: 'ios' | 'android',
-    mobile?: undefined,
-};
-export type EntitySource = BrowserSource | AppSource;
 
 export type CurrentPosition = DefEntity<'current-position'> & {
     source: EntitySource,

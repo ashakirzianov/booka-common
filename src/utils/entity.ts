@@ -1,10 +1,6 @@
 import {
-    Bookmark, BookPath,
-    EntityData,
-    Highlight,
-    CurrentPosition,
-    EntitySource,
-    BrowserSource,
+    Bookmark, Highlight, CurrentPosition, BookPath, EntityData,
+    EntitySource, EntitySourceKind,
 } from '../model';
 import { samePath } from './bookPath';
 import { uuid, assertNever } from './misc';
@@ -37,30 +33,18 @@ export function findBookmark(bookmarks: Bookmark[], bookId: string, path: BookPa
 }
 
 export function sourceToString(source: EntitySource): string {
-    switch (source.source) {
-        case 'app':
-            switch (source.kind) {
-                case 'ios':
-                    return 'iOS';
-                case 'android':
-                    return 'Android';
-                default:
-                    assertNever(source.kind);
-                    return 'Unknown app';
-            }
-        case 'browser':
-            const suffix = source.mobile === true ? ' Mobile'
-                : source.mobile === false ? ' Desktop'
-                    : '';
-            return `${browserToString(source.kind)}${suffix}`;
-        default:
-            assertNever(source);
-            return 'unknown';
-    }
+    const mobileSuffix = source.mobile === true ? ' Mobile'
+        : source.mobile === false ? ' Desktop'
+            : '';
+    const versionSuffix = source.version
+        ? ` ${source.version}`
+        : '';
+    const result = `${kindToString(source.kind)}${mobileSuffix}${versionSuffix}`;
+    return result;
 }
 
-function browserToString(browser: BrowserSource['kind']): string {
-    switch (browser) {
+function kindToString(kind: EntitySourceKind): string {
+    switch (kind) {
         case 'chrome':
             return 'Chrome';
         case 'safari':
@@ -71,10 +55,16 @@ function browserToString(browser: BrowserSource['kind']): string {
             return 'Edge';
         case 'ie':
             return 'Internet Explorer';
-        case 'other':
+        case 'other-browser':
             return 'Other browser';
+        case 'native-android':
+            return 'Android';
+        case 'native-ios':
+            return 'iOS';
+        case 'unknown':
+            return 'Unknown';
         default:
-            assertNever(browser);
-            return 'Unknown browser';
+            assertNever(kind);
+            return 'Unsupported';
     }
 }
