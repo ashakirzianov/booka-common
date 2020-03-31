@@ -9,6 +9,20 @@ import {
 } from './bookNode';
 import { extractSpanText } from './span';
 
+export function bookLength(book: Book): number {
+    let result = 0;
+    for (const [n] of iterateNodes(book.nodes)) {
+        result += nodeLength(n);
+    }
+
+    return result;
+}
+
+export const pageLength = 1500;
+export function pageForPosition(position: number): number {
+    return Math.floor(position / pageLength) + 1;
+}
+
 export function nodeForPath(book: Book, path: BookPath): BookNode | undefined {
     if (book.nodes.length <= path.node) {
         return undefined;
