@@ -3,7 +3,7 @@ import { BookPath } from './bookPath';
 
 export type BrowserSource = {
     source: 'browser',
-    browser: 'safari' | 'chrome' | 'fire-fox' | 'edge' | 'ie' | 'other',
+    browser: 'safari' | 'chrome' | 'firefox' | 'edge' | 'ie' | 'other',
     mobile?: boolean,
 };
 export type AppSource = {
