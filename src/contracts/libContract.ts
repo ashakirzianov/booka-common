@@ -13,7 +13,7 @@ export type LibContract = {
     },
     '/preview': {
         get: {
-            return: string | undefined,
+            return: { preview: string | undefined },
             query: {
                 bookId: string,
                 node: number,
