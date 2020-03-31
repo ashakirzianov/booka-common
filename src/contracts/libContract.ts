@@ -11,6 +11,14 @@ export type LibContract = {
             auth?: string,
         }>,
     },
+    '/preview': {
+        get: {
+            query: {
+                bookId: string,
+                node: number,
+            },
+        },
+    },
     '/fragment': {
         get: {
             return: {
