@@ -33,7 +33,11 @@ export type LibContract = {
             },
         },
     },
-    '/upload': {
+    '/uploads': {
+        get: {
+            return: CardCollection,
+            auth: string,
+        },
         post: {
             return: string,
             files: 'book',
@@ -59,12 +63,6 @@ export type LibContract = {
                 id: string,
                 previews?: BookPath[],
             }>,
-        },
-    },
-    '/user-uploads': {
-        get: {
-            return: CardCollection,
-            auth: string,
         },
     },
 };
