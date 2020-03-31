@@ -1,5 +1,5 @@
 import {
-    Book, LibraryCard, BookFragment, SearchResult, BookPath,
+    Book, LibraryCard, BookFragment, SearchResult, BookPath, CardCollection,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -33,11 +33,18 @@ export type LibContract = {
             },
         },
     },
-    '/upload': {
+    '/uploads': {
+        get: {
+            return: CardCollection,
+            auth: string,
+        },
         post: {
             return: string,
             files: 'book',
             auth: string,
+            query: {
+                publicDomain?: boolean,
+            },
         },
     },
     '/card': {

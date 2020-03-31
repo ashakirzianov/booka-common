@@ -7,8 +7,7 @@ import {
     NotePost, Note, NoteUpdate,
     IssueReportKind,
     KnownTag, KnownTagName,
-    CardCollections, CardCollectionName,
-    HasId,
+    CardCollectionName, CardCollection,
     CurrentPosition,
 } from '../model';
 import { Paginate } from './helpers';
@@ -81,8 +80,11 @@ export type BackContract = {
     },
     '/collections': {
         get: {
-            return: CardCollections,
+            return: CardCollection,
             auth: string,
+            query: {
+                name: CardCollectionName,
+            },
         },
         post: {
             query: {
