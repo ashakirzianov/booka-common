@@ -1,12 +1,20 @@
 import { BookPath, BookRange } from './bookPath';
 import { EditableNode } from './editable';
-import { LibraryCard } from './card';
 
 type DefEntity<Key extends string> = {
     uuid: string,
 };
 
-export type EntitySource = string;
+export type BrowserSource = {
+    source: 'browser',
+    browser: 'safari' | 'chrome' | 'fire-fox' | 'edge' | 'ie' | 'other',
+    mobile?: boolean,
+};
+export type AppSource = {
+    source: 'app',
+    app: 'ios' | 'android',
+};
+export type EntitySource = BrowserSource | AppSource;
 
 export type CurrentPosition = DefEntity<'current-position'> & {
     source: EntitySource,
