@@ -47,6 +47,11 @@ export type LibContract = {
             },
         },
     },
+    '/popular': {
+        get: {
+            return: LibraryCard[],
+        },
+    }
     '/card': {
         get: {
             query: { id: string },
