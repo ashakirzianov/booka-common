@@ -11,6 +11,15 @@ export type LibContract = {
             auth?: string,
         }>,
     },
+    '/preview': {
+        get: {
+            return: { preview: string | undefined },
+            query: {
+                bookId: string,
+                node: number,
+            },
+        },
+    },
     '/fragment': {
         get: {
             return: {
@@ -47,6 +56,11 @@ export type LibContract = {
             },
         },
     },
+    '/popular': {
+        get: {
+            return: LibraryCard[],
+        },
+    }
     '/card': {
         get: {
             query: { id: string },

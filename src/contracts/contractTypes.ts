@@ -3,7 +3,7 @@ export type AuthContract = {
 };
 export type QueryType = string | string[] | number | number[] | boolean | boolean[] | undefined;
 export type PathMethodContract = {
-    return: object | string | number | boolean,
+    return: object | string | number | boolean | undefined,
     params?: { [k: string]: string | number },
     query?: { [k: string]: QueryType },
     files?: string,

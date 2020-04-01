@@ -1,11 +1,9 @@
 import {
-    Bookmark, BookPath,
-    EntityData,
-    Highlight,
-    CurrentPosition,
+    Bookmark, Highlight, CurrentPosition, BookPath, EntityData,
+    EntitySource, EntitySourceKind,
 } from '../model';
-import { samePath, pathLessThan } from './bookPath';
-import { uuid } from './misc';
+import { samePath } from './bookPath';
+import { uuid, assertNever } from './misc';
 
 export function localBookmark(data: EntityData<Bookmark>): Bookmark {
     return {
@@ -34,23 +32,39 @@ export function findBookmark(bookmarks: Bookmark[], bookId: string, path: BookPa
     );
 }
 
-type PositionsData = {
-    mostRecent: CurrentPosition,
-    furthest: CurrentPosition,
-};
-export function findPositions(positions: CurrentPosition[]): PositionsData | undefined {
-    let result: PositionsData | undefined = undefined;
-    for (const location of positions) {
-        if (!result) {
-            result = { mostRecent: location, furthest: location };
-        } else {
-            result = {
-                mostRecent: result.mostRecent.created > location.created
-                    ? result.mostRecent : location,
-                furthest: pathLessThan(result.mostRecent.path, location.path)
-                    ? result.mostRecent : location,
-            };
-        }
-    }
+export function sourceToString(source: EntitySource): string {
+    const mobileSuffix = source.mobile === true ? ' Mobile'
+        : source.mobile === false ? ' Desktop'
+            : '';
+    const versionSuffix = source.version
+        ? ` v${source.version}`
+        : '';
+    const result = `${kindToString(source.kind)}${mobileSuffix}${versionSuffix}`;
     return result;
+}
+
+function kindToString(kind: EntitySourceKind): string {
+    switch (kind) {
+        case 'chrome':
+            return 'Chrome';
+        case 'safari':
+            return 'Safari';
+        case 'firefox':
+            return 'Firefox';
+        case 'edge':
+            return 'Edge';
+        case 'ie':
+            return 'Internet Explorer';
+        case 'other-browser':
+            return 'Other browser';
+        case 'native-android':
+            return 'Android';
+        case 'native-ios':
+            return 'iOS';
+        case 'unknown':
+            return 'Unknown';
+        default:
+            assertNever(kind);
+            return 'Unsupported';
+    }
 }

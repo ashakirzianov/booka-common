@@ -8,6 +8,7 @@ export type LibraryCard = {
     coverUrl?: string,
     smallCoverUrl?: string,
     tags: KnownTag[],
+    length: number,
 };
 
 export type CardCollectionName =
