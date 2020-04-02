@@ -9,6 +9,13 @@ import {
 } from './bookNode';
 import { extractSpanText } from './span';
 
+export function isPathInFragment(fragment: BookFragment, path: BookPath) {
+    return !pathLessThan(path, fragment.current.path)
+        && (
+            fragment.next === undefined || pathLessThan(path, fragment.next.path)
+        );
+}
+
 export function bookLength(book: Book): number {
     let result = 0;
     for (const [n] of iterateNodes(book.nodes)) {
