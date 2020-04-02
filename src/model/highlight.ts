@@ -2,7 +2,9 @@ import { DefEntity, EntityId } from './base';
 import { BookRange } from './bookPath';
 import { EditableNode } from './editable';
 
-export type HighlightGroup = string;
+export type HighlightGroup =
+    | 'first' | 'second' | 'third' | 'forth' | 'fifth' | 'sixth'
+    ;
 export type Highlight = DefEntity<'highlight'> & {
     group: HighlightGroup,
     bookId: string,
