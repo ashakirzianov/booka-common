@@ -3,6 +3,7 @@ export * from './bookPath';
 export * from './hash';
 export * from './misc';
 export * from './bookNode';
+export * from './book.text';
 export * from './book';
 export * from './bookNode';
 export * from './bookPath';
