@@ -1,5 +1,5 @@
 import {
-    Book, LibraryCard, BookFragment, SearchResult, BookPath, CardCollection,
+    Book, LibraryCard, BookFragment, SearchResult, BookPath, CardCollection, TableOfContents,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -15,9 +15,15 @@ export type LibContract = {
         get: {
             return: { preview: string | undefined },
             query: {
-                bookId: string,
+                id: string,
                 node: number,
             },
+        },
+    },
+    '/toc': {
+        get: {
+            return: TableOfContents | undefined,
+            query: { id: string },
         },
     },
     '/fragment': {
