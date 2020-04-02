@@ -22,7 +22,7 @@ export type LibContract = {
     },
     '/toc': {
         get: {
-            return: TableOfContents | undefined,
+            return: TableOfContents,
             query: { id: string },
         },
     },
