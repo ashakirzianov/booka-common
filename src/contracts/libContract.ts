@@ -67,16 +67,4 @@ export type LibContract = {
             return: LibraryCard,
         },
     },
-    '/card/batch': {
-        post: {
-            return: Array<{
-                card: LibraryCard,
-                previews: Array<string | undefined>,
-            }>,
-            body: Array<{
-                id: string,
-                previews?: BookPath[],
-            }>,
-        },
-    },
 };
