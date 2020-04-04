@@ -8,3 +8,11 @@ export type AccountInfo = {
     pictureUrl?: string,
     joined: Date,
 };
+
+export type NotSignedState = { sign: 'not-signed' };
+export type SignedState = {
+    sign: 'signed',
+    token: AuthToken,
+    accountInfo: AccountInfo,
+};
+export type SignState = NotSignedState | SignedState;
