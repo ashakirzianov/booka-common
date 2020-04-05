@@ -1,5 +1,4 @@
 export * from './account';
-export * from './base';
 export * from './book';
 export * from './bookmark';
 export * from './bookNode';
