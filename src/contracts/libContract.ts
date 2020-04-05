@@ -67,10 +67,10 @@ export type LibContract = {
             return: LibraryCard[],
         },
     }
-    '/card': {
+    '/cards': {
         get: {
-            query: { id: string },
-            return: LibraryCard,
+            query: { ids: string[] },
+            return: LibraryCard[],
         },
     },
 };
