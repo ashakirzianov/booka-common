@@ -1,7 +1,7 @@
-import { DefEntity } from './base';
 import { BookPath } from './bookPath';
 
-export type Bookmark = DefEntity<'bookmark'> & {
+export type Bookmark = {
+    uuid: string,
     bookId: string,
     path: BookPath,
 };
