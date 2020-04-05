@@ -70,7 +70,7 @@ export type LibContract = {
     '/cards': {
         get: {
             query: { ids: string[] },
-            return: LibraryCard[],
+            return: Array<LibraryCard | undefined>,
         },
     },
 };
