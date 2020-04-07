@@ -30,7 +30,6 @@ export type LibContract = {
         get: {
             return: {
                 fragment: BookFragment,
-                card: LibraryCard,
             },
             query: {
                 id: string,
@@ -44,7 +43,6 @@ export type LibContract = {
             query: { id: string },
             return: {
                 book: Book,
-                card: LibraryCard,
             },
         },
     },

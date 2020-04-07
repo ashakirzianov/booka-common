@@ -25,9 +25,11 @@ export type BookFragment = {
     current: BookAnchor,
     next?: BookAnchor,
     previous?: BookAnchor,
-    images?: ImageDic,
-    toc?: TableOfContents,
     nodes: BookNode[],
+};
+export type AugmentedBookFragment = BookFragment & {
+    toc?: TableOfContents,
+    images?: ImageDic,
 };
 
 export type TableOfContentsItem = {
