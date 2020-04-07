@@ -54,7 +54,9 @@ export type LibContract = {
             auth: string,
         },
         post: {
-            return: string,
+            return: {
+                bookId: string,
+            },
             files: 'book',
             auth: string,
             query: {
