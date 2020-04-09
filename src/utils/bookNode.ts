@@ -43,7 +43,7 @@ export function* iterateNodeSpans(node: BookNode) {
 export function findReference(nodes: BookNode[], refId: string): [BookNode, BookPath] | undefined {
     for (const [node, path] of iterateNodes(nodes)) {
         for (const nodeRefId of iterateNodeRefIds(node)) {
-            if (node.refId === nodeRefId) {
+            if (nodeRefId === refId) {
                 return [node, path];
             }
         }

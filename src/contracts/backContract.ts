@@ -2,13 +2,12 @@ import {
     AuthToken, AccountInfo,
     Highlight, HighlightPost, HighlightUpdate,
     Bookmark, BookmarkPost,
-    CurrentPositionPost,
+    CurrentPosition,
     Comment, Vote,
     NotePost, Note, NoteUpdate,
     IssueReportKind,
     KnownTag, KnownTagName,
     CardCollectionName, CardCollection,
-    CurrentPosition,
 } from '../model';
 import { Paginate } from './helpers';
 
@@ -75,7 +74,7 @@ export type BackContract = {
         put: {
             return: CurrentPosition,
             auth: string,
-            body: CurrentPositionPost,
+            body: CurrentPosition,
         },
     },
     '/collections': {

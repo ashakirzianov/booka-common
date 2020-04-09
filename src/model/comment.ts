@@ -1,5 +1,4 @@
 import { BookPath } from './bookPath';
-import { DefEntity } from './base';
 import { EditableNode } from './editable';
 
 export type CommentTargetLocator = {
@@ -11,7 +10,8 @@ export type CommentTargetLocator = {
     commentId: string,
 };
 export type CommentKind = 'question' | 'statement';
-export type Comment = DefEntity<'comment'> & {
+export type Comment = {
+    uuid: string,
     kind: CommentKind,
     content: EditableNode[],
     target: CommentTargetLocator,

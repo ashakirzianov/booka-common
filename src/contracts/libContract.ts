@@ -30,7 +30,6 @@ export type LibContract = {
         get: {
             return: {
                 fragment: BookFragment,
-                card: LibraryCard,
             },
             query: {
                 id: string,
@@ -44,7 +43,6 @@ export type LibContract = {
             query: { id: string },
             return: {
                 book: Book,
-                card: LibraryCard,
             },
         },
     },
@@ -54,7 +52,9 @@ export type LibContract = {
             auth: string,
         },
         post: {
-            return: string,
+            return: {
+                bookId: string,
+            },
             files: 'book',
             auth: string,
             query: {
@@ -67,10 +67,10 @@ export type LibContract = {
             return: LibraryCard[],
         },
     }
-    '/card': {
+    '/cards': {
         get: {
-            query: { id: string },
-            return: LibraryCard,
+            query: { ids: string[] },
+            return: Array<LibraryCard | undefined>,
         },
     },
 };

@@ -1,4 +1,3 @@
-import { DefEntity, EntityData } from './base';
 import { BookPath } from './bookPath';
 
 export type EntitySourceKind =
@@ -13,10 +12,9 @@ export type EntitySource = {
     version?: string,
 };
 
-export type CurrentPosition = DefEntity<'current-position'> & {
+export type CurrentPosition = {
     source: EntitySource,
     bookId: string,
     path: BookPath,
     created: Date,
 };
-export type CurrentPositionPost = EntityData<CurrentPosition>;

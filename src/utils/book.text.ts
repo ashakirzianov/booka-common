@@ -1,7 +1,6 @@
 import { Book, BookPath, BookFragment, BookRange } from '../model';
 import { iterateNodes, nodeLength, extractNodeText } from './bookNode';
-import { isPathInFragment, fragmentNodeForPath } from './book';
-import { pathLessThan } from './bookPath';
+import { fragmentNodeForPath } from './book';
 
 export function bookLength(book: Book): number {
     let result = 0;

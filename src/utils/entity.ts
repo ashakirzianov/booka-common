@@ -1,10 +1,11 @@
 import {
-    Bookmark, Highlight, CurrentPosition, BookPath, EntityData,
+    Bookmark, Highlight, CurrentPosition, BookPath,
     EntitySource, EntitySourceKind,
 } from '../model';
 import { samePath } from './bookPath';
 import { uuid, assertNever } from './misc';
 
+type EntityData<T> = Omit<T, 'uuid'>;
 export function localBookmark(data: EntityData<Bookmark>): Bookmark {
     return {
         uuid: uuid(),
@@ -13,13 +14,6 @@ export function localBookmark(data: EntityData<Bookmark>): Bookmark {
 }
 
 export function localHighlight(data: EntityData<Highlight>): Highlight {
-    return {
-        uuid: uuid(),
-        ...data,
-    };
-}
-
-export function localCurrentPosition(data: EntityData<CurrentPosition>): CurrentPosition {
     return {
         uuid: uuid(),
         ...data,
