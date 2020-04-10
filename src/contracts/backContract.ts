@@ -18,7 +18,7 @@ export type BackContract = {
             query: { token: string },
         },
     },
-    '/me/info': { get: { return: AccountInfo, auth: string } },
+    '/account': { get: { return: AccountInfo, auth: string } },
     '/highlights': {
         get: {
             return: Highlight[],
