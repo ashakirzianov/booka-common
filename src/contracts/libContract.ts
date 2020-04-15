@@ -11,25 +11,16 @@ export type LibContract = {
             auth?: string,
         }>,
     },
-    '/preview': {
-        get: {
-            return: { preview: string | undefined },
-            query: {
-                id: string,
-                node: number,
-            },
-        },
-    },
-    '/position': {
+    '/path-data': {
         get: {
             return: {
+                preview: string,
                 position: number,
                 of: number,
             },
             query: {
                 id: string,
                 node: number,
-                span?: number,
             },
         },
     },
