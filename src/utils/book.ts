@@ -112,6 +112,17 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
     };
 }
 
+export function fullBookFragment(book: Book): BookFragment {
+    return {
+        current: {
+            path: firstPath(),
+            title: book.meta.title,
+            position: 0,
+        },
+        nodes: book.nodes,
+    };
+}
+
 export function positionForPath(fragment: BookFragment, path: BookPath): number {
     let position = fragment.current.position;
     for (const [node, nodePath] of iterateBookFragment(fragment)) {
