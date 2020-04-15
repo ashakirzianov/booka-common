@@ -20,6 +20,19 @@ export type LibContract = {
             },
         },
     },
+    '/position': {
+        get: {
+            return: {
+                position: number,
+                of: number,
+            },
+            query: {
+                id: string,
+                node: number,
+                span?: number,
+            },
+        },
+    },
     '/toc': {
         get: {
             return: TableOfContents,
