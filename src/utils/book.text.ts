@@ -1,6 +1,9 @@
 import { Book, BookPath, BookFragment, BookRange } from '../model';
-import { iterateNodes, nodeLength, extractNodeText } from './bookNode';
+import {
+    iterateNodes, nodeLength, extractNodeText, iterateBookFragment,
+} from './bookNode';
 import { fragmentNodeForPath } from './book';
+import { pathLessThan } from './bookPath';
 
 export function bookLength(book: Book): number {
     let result = 0;
@@ -9,6 +12,28 @@ export function bookLength(book: Book): number {
     }
 
     return result;
+}
+
+export function positionForPathInFragment(fragment: BookFragment, path: BookPath | undefined): number {
+    let position = fragment.current.position;
+    for (const [node, nodePath] of iterateBookFragment(fragment)) {
+        if (path && pathLessThan(path, nodePath)) {
+            break;
+        }
+        position += nodeLength(node);
+    }
+    return position;
+}
+
+export function positionForPath(book: Book, path: BookPath): number {
+    let position = 0;
+    for (const [node, nodePath] of iterateNodes(book.nodes)) {
+        if (path && pathLessThan(path, nodePath)) {
+            break;
+        }
+        position += nodeLength(node);
+    }
+    return position;
 }
 
 export const pageLength = 1500;

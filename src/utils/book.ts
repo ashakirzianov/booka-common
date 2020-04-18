@@ -5,7 +5,7 @@ import {
 import { pathLessThan, firstPath, inRange } from './bookPath';
 import {
     extractNodeText, normalizeNodes, isEmptyContentNode,
-    iterateNodes, nodeLength, iterateBookFragment,
+    iterateNodes, nodeLength,
 } from './bookNode';
 import { extractSpanText } from './span';
 
@@ -112,15 +112,15 @@ export function fragmentForPath(book: Book, path: BookPath, fragmentLength?: num
     };
 }
 
-export function positionForPath(fragment: BookFragment, path: BookPath): number {
-    let position = fragment.current.position;
-    for (const [node, nodePath] of iterateBookFragment(fragment)) {
-        if (pathLessThan(path, nodePath)) {
-            break;
-        }
-        position += nodeLength(node);
-    }
-    return position;
+export function fullBookFragment(book: Book): BookFragment {
+    return {
+        current: {
+            path: firstPath(),
+            title: book.meta.title,
+            position: 0,
+        },
+        nodes: book.nodes,
+    };
 }
 
 export function extractBookText(book: Book): string {
