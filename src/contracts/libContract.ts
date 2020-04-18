@@ -11,7 +11,7 @@ export type LibContract = {
             auth?: string,
         }>,
     },
-    '/path-data': {
+    '/preview': {
         get: {
             return: {
                 preview: string,
